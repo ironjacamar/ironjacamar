@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -66,8 +67,6 @@ import jakarta.resource.spi.work.WorkRejectedException;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
-import org.jboss.threads.BlockingExecutor;
-import org.jboss.threads.ExecutionTimedOutException;
 
 /**
  * The work manager implementation.
@@ -223,7 +222,7 @@ public class WorkManagerImpl implements WorkManager
     * Set the executor for short running tasks
     * @param executor The executor
     */
-   public void setShortRunningThreadPool(BlockingExecutor executor)
+   public void setShortRunningThreadPool(Executor executor)
    {
       if (log.isTraceEnabled())
          log.trace("short running executor:" + (executor != null ? executor.getClass() : "null"));
@@ -254,7 +253,7 @@ public class WorkManagerImpl implements WorkManager
     * Set the executor for long running tasks
     * @param executor The executor
     */
-   public void setLongRunningThreadPool(BlockingExecutor executor)
+   public void setLongRunningThreadPool(Executor executor)
    {
       if (log.isTraceEnabled())
          log.trace("long running executor:" + (executor != null ? executor.getClass() : "null"));
@@ -433,6 +432,8 @@ public class WorkManagerImpl implements WorkManager
    public void doWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
       throws WorkException
    {
+      long creationTime = System.currentTimeMillis();
+
       log.tracef("doWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
 
       WorkException exception = null;
@@ -456,27 +457,15 @@ public class WorkManagerImpl implements WorkManager
 
          final CountDownLatch completedLatch = new CountDownLatch(1);
 
-         wrapper = createWorkWrapper(securityIntegration, work, execContext, workListener, null, completedLatch);
+         wrapper = createWorkWrapper(securityIntegration, work, execContext, workListener, null, completedLatch, creationTime, startTimeout);
 
          setup(wrapper, workListener);
 
-         BlockingExecutor executor = getExecutor(work);
+         Executor executor = getExecutor(work);
 
-         if (startTimeout == WorkManager.INDEFINITE)
-         {
-            executor.executeBlocking(wrapper);
-         }
-         else
-         {
-            executor.executeBlocking(wrapper, startTimeout, TimeUnit.MILLISECONDS);
-         }
+         executor.execute(wrapper);
 
          completedLatch.await();
-      }
-      catch (ExecutionTimedOutException etoe)
-      {
-         exception = new WorkRejectedException(etoe);
-         exception.setErrorCode(WorkRejectedException.START_TIMED_OUT);
       }
       catch (RejectedExecutionException ree)
       {
@@ -534,13 +523,14 @@ public class WorkManagerImpl implements WorkManager
    public long startWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
       throws WorkException
    {
+      long creationTime = System.currentTimeMillis();
+
       log.tracef("startWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
 
       WorkException exception = null;
       WorkWrapper wrapper = null;
       try
       {
-         long started = System.currentTimeMillis();
 
          doFirstChecks(work, startTimeout, execContext);
 
@@ -559,29 +549,21 @@ public class WorkManagerImpl implements WorkManager
 
          final CountDownLatch startedLatch = new CountDownLatch(1);
 
-         wrapper = createWorkWrapper(securityIntegration, work, execContext, workListener, startedLatch, null);
+         wrapper = createWorkWrapper(securityIntegration, work, execContext, workListener, startedLatch, null, creationTime, startTimeout);
 
          setup(wrapper, workListener);
 
-         BlockingExecutor executor = getExecutor(work);
+         Executor executor = getExecutor(work);
 
-         if (startTimeout == WorkManager.INDEFINITE)
+         executor.execute(wrapper);
+
+         try
          {
-            executor.executeBlocking(wrapper);
+            startedLatch.await();
          }
-         else
-         {
-            executor.executeBlocking(wrapper, startTimeout, TimeUnit.MILLISECONDS);
-         }
+         catch (InterruptedException ignored) {}
 
-         startedLatch.await();
-
-         return System.currentTimeMillis() - started;
-      }
-      catch (ExecutionTimedOutException etoe)
-      {
-         exception = new WorkRejectedException(etoe);
-         exception.setErrorCode(WorkRejectedException.START_TIMED_OUT);
+         return System.currentTimeMillis() - creationTime;
       }
       catch (RejectedExecutionException ree)
       {
@@ -595,11 +577,6 @@ public class WorkManagerImpl implements WorkManager
       catch (WorkException we)
       {
          exception = we;
-      }
-      catch (InterruptedException ie)
-      {
-         Thread.currentThread().interrupt();
-         exception = new WorkRejectedException(bundle.interruptedWhileRequestingPermit());
       }
       finally
       {
@@ -639,6 +616,8 @@ public class WorkManagerImpl implements WorkManager
    public void scheduleWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
       throws WorkException
    {
+      final long creationTime = System.currentTimeMillis();
+
       log.tracef("scheduleWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
 
       WorkException exception = null;
@@ -660,25 +639,13 @@ public class WorkManagerImpl implements WorkManager
             execContext = new ExecutionContext();
          }
 
-         wrapper = createWorkWrapper(securityIntegration, work, execContext, workListener, null, null);
+         wrapper = createWorkWrapper(securityIntegration, work, execContext, workListener, null, null, creationTime, startTimeout);
 
          setup(wrapper, workListener);
 
-         BlockingExecutor executor = getExecutor(work);
+         Executor executor = getExecutor(work);
 
-         if (startTimeout == WorkManager.INDEFINITE)
-         {
-            executor.executeBlocking(wrapper);
-         }
-         else
-         {
-            executor.executeBlocking(wrapper, startTimeout, TimeUnit.MILLISECONDS);
-         }
-      }
-      catch (ExecutionTimedOutException etoe)
-      {
-         exception = new WorkRejectedException(etoe);
-         exception.setErrorCode(WorkRejectedException.START_TIMED_OUT);
+         executor.execute(wrapper);
       }
       catch (RejectedExecutionException ree)
       {
@@ -692,11 +659,6 @@ public class WorkManagerImpl implements WorkManager
       catch (WorkException we)
       {
          exception = we;
-      }
-      catch (InterruptedException ie)
-      {
-         Thread.currentThread().interrupt();
-         exception = new WorkRejectedException(bundle.interruptedWhileRequestingPermit());
       }
       finally
       {
@@ -733,10 +695,10 @@ public class WorkManagerImpl implements WorkManager
     */
    protected WorkWrapper createWorkWrapper(SecurityIntegration securityIntegration, Work work,
          ExecutionContext executionContext, WorkListener workListener, CountDownLatch startedLatch,
-         CountDownLatch completedLatch)
+         CountDownLatch completedLatch, long creationTime, long startTimeout)
    {
       return new WorkWrapper(this, securityIntegration, work, executionContext, workListener,
-            startedLatch, completedLatch, System.currentTimeMillis());
+            startedLatch, completedLatch, creationTime, startTimeout);
    }
 
    /**
@@ -1017,9 +979,9 @@ public class WorkManagerImpl implements WorkManager
     * @param work The work instance
     * @return The executor
     */
-   private BlockingExecutor getExecutor(Work work)
+   private Executor getExecutor(Work work)
    {
-      BlockingExecutor executor = shortRunningExecutor;
+      Executor executor = shortRunningExecutor;
       if (longRunningExecutor != null && WorkManagerUtil.isLongRunning(work))
       {
          executor = longRunningExecutor;

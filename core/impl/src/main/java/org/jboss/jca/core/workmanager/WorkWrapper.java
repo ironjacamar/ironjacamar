@@ -22,6 +22,8 @@
 
 package org.jboss.jca.core.workmanager;
 
+import jakarta.resource.spi.work.WorkManager;
+import jakarta.resource.spi.work.WorkRejectedException;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.security.SecurityIntegration;
@@ -87,8 +89,11 @@ public class WorkWrapper implements Runnable
    /** The security integration */
    protected SecurityIntegration securityIntegration;
 
-   /** The start time */
-   private long startTime;
+   /** The creation time */
+   private long creationTime;
+
+   /** The start timeout */
+   private long startTimeOut;
 
    /** Any exception */
    private WorkException exception;
@@ -109,7 +114,7 @@ public class WorkWrapper implements Runnable
     * @param workListener the WorkListener
     * @param startedLatch The latch for when work has started
     * @param completedLatch The latch for when work has completed
-    * @param startTime The start time
+    * @param creationTime The creation time
     * @throws IllegalArgumentException for null work, execution context or a negative start timeout
     */
    public WorkWrapper(WorkManagerImpl workManager, 
@@ -119,7 +124,8 @@ public class WorkWrapper implements Runnable
                       WorkListener workListener,
                       CountDownLatch startedLatch,
                       CountDownLatch completedLatch,
-                      long startTime)
+                      long creationTime,
+                      long startTimeout)
    {
       super();
 
@@ -139,7 +145,8 @@ public class WorkWrapper implements Runnable
       this.workListener = workListener;
       this.startedLatch = startedLatch;
       this.completedLatch = completedLatch;
-      this.startTime = startTime;
+      this.creationTime = creationTime;
+      this.startTimeOut = startTimeout;
       this.workContexts = null;
    }
    
@@ -207,6 +214,8 @@ public class WorkWrapper implements Runnable
     */
    public void run()
    {
+      long startTime = System.currentTimeMillis();
+
       ClassLoader oldCL = SecurityActions.getThreadContextClassLoader();
       SecurityActions.setThreadContextClassLoader(work.getClass().getClassLoader());
 
@@ -214,11 +223,19 @@ public class WorkWrapper implements Runnable
 
       try
       {
-         start();
-         workManager.addWorkWrapper(this);
+         checkStartTimeout(startTime);
 
-         if (startedLatch != null)
-            startedLatch.countDown();
+         synchronized(this)
+         {
+            if (startedLatch != null)
+            {
+               startedLatch.countDown();
+            }
+         }
+
+         start();
+
+         workManager.addWorkWrapper(this);
 
          runWork();
 
@@ -226,7 +243,11 @@ public class WorkWrapper implements Runnable
       }
       catch (Throwable t)
       {
-         if (t instanceof WorkCompletedException)
+         if (t instanceof WorkRejectedException)
+         {
+            exception = (WorkRejectedException)t;
+         }
+         else if (t instanceof WorkCompletedException)
          {
             exception = (WorkCompletedException) t;
          }
@@ -264,6 +285,24 @@ public class WorkWrapper implements Runnable
       }
    }
 
+   private void checkStartTimeout(long currentTime) throws WorkRejectedException
+   {
+      if ((startTimeOut < WorkManager.INDEFINITE) && ((currentTime - creationTime) >= startTimeOut))
+      {
+         if(startedLatch != null)
+         {
+            startedLatch.countDown();
+         }
+         if(completedLatch != null)
+         {
+            completedLatch.countDown();
+         }
+         WorkRejectedException wre = new WorkRejectedException("Start timed out");
+         wre.setErrorCode(WorkRejectedException.START_TIMED_OUT);
+         throw wre;
+      }
+   }
+
    /**
     * Start
     * @throws WorkException for any error 
@@ -274,7 +313,7 @@ public class WorkWrapper implements Runnable
 
       if (workListener != null)
       {
-         long duration = System.currentTimeMillis() - startTime;
+         long duration = System.currentTimeMillis() - creationTime;
          if (duration < 0)
             duration = jakarta.resource.spi.work.WorkManager.UNKNOWN;
 

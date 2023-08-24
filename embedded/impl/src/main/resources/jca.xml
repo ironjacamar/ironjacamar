@@ -44,46 +44,24 @@
     </constructor>
   </bean>
 
+  <bean name="ExecutorBuilder" class="org.jboss.threads.EnhancedQueueExecutor$Builder"/>
+
   <!-- Short running thread pool -->
-  <bean name="ShortRunningThreadPool" class="org.jboss.threads.QueueExecutor">
+  <bean name="ShortRunningThreadPool" class="org.jboss.threads.EnhancedQueueExecutor">
     <constructor>
-      <!-- Core threads -->
-      <parameter>20</parameter>
-      <!-- Max threads -->
-      <parameter>100</parameter>
-      <!-- 60 seconds keepalive -->
-      <parameter>60</parameter>
-      <parameter><inject bean="KeepAliveTimeUnit"/></parameter>
-      <!-- Queue size -->
-      <parameter>1024</parameter>
-      <!-- Thread factory -->
-      <parameter><inject bean="ThreadFactory"/></parameter>
-      <!-- Blocking -->
-      <parameter>true</parameter>
-      <!-- Handoff executor -->
-      <parameter><inject bean="RejectingExecutor"/></parameter>
+      <parameter>
+        <inject bean="ExecutorBuilder"/>
+      </parameter>
     </constructor>
     <destroy method="shutdown"/>
   </bean>
 
   <!-- Long running thread pool -->
-  <bean name="LongRunningThreadPool" class="org.jboss.threads.QueueExecutor">
+  <bean name="LongRunningThreadPool" class="org.jboss.threads.EnhancedQueueExecutor">
     <constructor>
-      <!-- Core threads -->
-      <parameter>20</parameter>
-      <!-- Max threads -->
-      <parameter>100</parameter>
-      <!-- 60 seconds keepalive -->
-      <parameter>60</parameter>
-      <parameter><inject bean="KeepAliveTimeUnit"/></parameter>
-      <!-- Queue size -->
-      <parameter>1024</parameter>
-      <!-- Thread factory -->
-      <parameter><inject bean="ThreadFactory"/></parameter>
-      <!-- Blocking -->
-      <parameter>true</parameter>
-      <!-- Handoff executor -->
-      <parameter><inject bean="RejectingExecutor"/></parameter>
+      <parameter>
+        <inject bean="ExecutorBuilder"/>
+      </parameter>
     </constructor>
     <destroy method="shutdown"/>
   </bean>

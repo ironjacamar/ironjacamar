@@ -29,7 +29,7 @@ import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
 import jakarta.resource.spi.ResourceAdapter;
 
-import org.jboss.threads.BlockingExecutor;
+import java.util.concurrent.Executor;
 
 /**
  * The JBoss specific work manager interface
@@ -76,7 +76,7 @@ public interface WorkManager extends jakarta.resource.spi.work.WorkManager, Grac
     * Set the executor for short running tasks
     * @param executor The executor
     */
-   public void setShortRunningThreadPool(BlockingExecutor executor);
+   public void setShortRunningThreadPool(Executor executor);
 
    /**
     * Retrieve the executor for long running tasks
@@ -88,7 +88,7 @@ public interface WorkManager extends jakarta.resource.spi.work.WorkManager, Grac
     * Set the executor for long running tasks
     * @param executor The executor
     */
-   public void setLongRunningThreadPool(BlockingExecutor executor);
+   public void setLongRunningThreadPool(Executor executor);
 
    /**
     * Get the XATerminator

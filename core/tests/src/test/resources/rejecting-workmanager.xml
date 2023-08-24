@@ -3,16 +3,10 @@
 <deployment>
 
   <!-- Short running thread pool -->
-  <bean name="ShortRunningThreadPool1">
-    <constructor factoryMethod="blockingRejectingExecutor" 
-                 factoryClass="org.jboss.threads.JBossExecutors"/>
-  </bean>
+  <bean name="ShortRunningThreadPool1" class="org.jboss.threads.RejectingExecutor"/>
 
   <!-- Long running thread pool -->
-  <bean name="LongRunningThreadPool1">
-    <constructor factoryMethod="blockingRejectingExecutor" 
-                 factoryClass="org.jboss.threads.JBossExecutors"/>
-  </bean>
+  <bean name="LongRunningThreadPool1" class="org.jboss.threads.RejectingExecutor"/>
 
   <!-- PicketBox -->
   <bean name="RejectingPicketBox"

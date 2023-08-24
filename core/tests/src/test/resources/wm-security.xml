@@ -24,24 +24,14 @@
     </constructor>
   </bean>
 
+  <bean name="ExecutorBuilder" class="org.jboss.threads.EnhancedQueueExecutor$Builder"/>
+
   <!-- ShortRunningThreadPool -->
-  <bean name="WorkManagerSecurityShortRunningThreadPool" class="org.jboss.threads.QueueExecutor">
+  <bean name="ShortRunningThreadPool" class="org.jboss.threads.EnhancedQueueExecutor">
     <constructor>
-      <!-- Core threads -->
-      <parameter>20</parameter>
-      <!-- Max threads -->
-      <parameter>100</parameter>
-      <!-- 60 seconds keepalive -->
-      <parameter>60</parameter>
-      <parameter><inject bean="KeepAliveTimeUnit"/></parameter>
-      <!-- Queue size -->
-      <parameter>1024</parameter>
-      <!-- Thread factory -->
-      <parameter><inject bean="WorkManagerSecurityThreadFactory"/></parameter>
-      <!-- Blocking -->
-      <parameter>true</parameter>
-      <!-- Handoff executor -->
-      <parameter><inject bean="RejectingExecutor"/></parameter>
+      <parameter>
+        <inject bean="ExecutorBuilder"/>
+      </parameter>
     </constructor>
     <destroy method="shutdown"/>
   </bean>
@@ -58,9 +48,6 @@
 
     <!-- The name -->
     <property name="Name">WMSec</property>
-
-    <!-- The short running thread pool -->
-    <property name="ShortRunningThreadPool"><inject bean="WorkManagerSecurityShortRunningThreadPool"/></property>
 
     <!-- The XA terminator -->
     <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>

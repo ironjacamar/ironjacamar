@@ -82,6 +82,7 @@ public class MyWorkAdapter extends WorkAdapter
    @Override
    public void workStarted(WorkEvent e)
    {
+
       if (e.getType() != WorkEvent.WORK_STARTED)
          fail("Wrong started type");
 

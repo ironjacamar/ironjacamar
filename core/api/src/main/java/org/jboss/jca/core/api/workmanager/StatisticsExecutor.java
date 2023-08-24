@@ -22,14 +22,14 @@
 
 package org.jboss.jca.core.api.workmanager;
 
-import org.jboss.threads.BlockingExecutor;
+import java.util.concurrent.Executor;
 
 /**
- * A BlockingExecutor delegator to keep track of numberOfFreeThreads
+ * An Executor delegator to keep track of numberOfFreeThreads
   *
   * @author Stefano Maestri
  */
-public interface StatisticsExecutor extends BlockingExecutor
+public interface StatisticsExecutor extends Executor
 {
    /**
     * get the calculated number of free threads

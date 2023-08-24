@@ -29,9 +29,9 @@ import org.jboss.jca.core.workmanager.spec.chapter10.common.PriorityWork;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
 
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.threads.BlockingExecutor;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -66,10 +66,10 @@ public class ManageThreadTestCase
    {
       assertNotNull(workManager);
       assertTrue(workManager instanceof jakarta.resource.spi.work.WorkManager);
-      BlockingExecutor shortRunning = workManager.getShortRunningThreadPool();
+      Executor shortRunning = workManager.getShortRunningThreadPool();
       assertNotNull(shortRunning);
 
-      BlockingExecutor longRunning = workManager.getLongRunningThreadPool();
+      Executor longRunning = workManager.getLongRunningThreadPool();
       assertNotNull(longRunning);
       assertFalse(shortRunning.equals(longRunning));
    }

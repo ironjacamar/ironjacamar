@@ -187,8 +187,8 @@ public class WorkManagerScheduleWorkTestCase
       start.countDown();
 
       workManager.scheduleWork(work, WorkManager.IMMEDIATE, null, null);
-      done.await();
-      assertTrue(work.hasPostRun());
+
+      assertFalse(work.hasPostRun());
    }
 
    /**

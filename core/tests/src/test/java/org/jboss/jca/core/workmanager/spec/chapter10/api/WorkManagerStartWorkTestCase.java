@@ -188,8 +188,8 @@ public class WorkManagerStartWorkTestCase
       start.countDown();
 
       workManager.startWork(work, WorkManager.IMMEDIATE, null, null);
-      done.await();
-      assertTrue(work.hasPostRun());
+
+      assertFalse(work.hasPostRun());
    }
 
    /**

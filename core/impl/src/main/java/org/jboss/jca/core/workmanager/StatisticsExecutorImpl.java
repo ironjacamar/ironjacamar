@@ -24,12 +24,11 @@ package org.jboss.jca.core.workmanager;
 
 import org.jboss.jca.core.api.workmanager.StatisticsExecutor;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.jboss.threads.BlockingExecutor;
-import org.jboss.threads.JBossThreadPoolExecutor;
-import org.jboss.threads.management.ThreadPoolExecutorMBean;
+import org.jboss.threads.EnhancedQueueExecutor;
 
 /**
  * A StatisticsExecutor implementation keeping track of numberOfFreeThreads
@@ -39,13 +38,13 @@ import org.jboss.threads.management.ThreadPoolExecutorMBean;
 
 public class StatisticsExecutorImpl implements StatisticsExecutor
 {
-   private final BlockingExecutor realExecutor;
+   private final Executor realExecutor;
 
    /**
     * StatisticsExecutorImpl constructor
     * @param realExecutor the real executor we are delegating
     */
-   public StatisticsExecutorImpl(BlockingExecutor realExecutor)
+   public StatisticsExecutorImpl(Executor realExecutor)
    {
       this.realExecutor = realExecutor;
    }
@@ -58,41 +57,16 @@ public class StatisticsExecutorImpl implements StatisticsExecutor
    }
 
    @Override
-   public void executeBlocking(Runnable runnable) throws RejectedExecutionException, InterruptedException
-   {
-      realExecutor.executeBlocking(runnable);
-   }
-
-   @Override
-   public void executeBlocking(Runnable runnable, long l, TimeUnit timeUnit) throws RejectedExecutionException,
-                                                                                    InterruptedException
-   {
-      realExecutor.executeBlocking(runnable, l, timeUnit);
-   }
-
-   @Override
-   public void executeNonBlocking(Runnable runnable) throws RejectedExecutionException
-   {
-      realExecutor.executeNonBlocking(runnable);
-   }
-
-   @Override
    public long getNumberOfFreeThreads()
    {
-      if (realExecutor instanceof JBossThreadPoolExecutor)
+      if (realExecutor instanceof EnhancedQueueExecutor)
       {
-         return ((JBossThreadPoolExecutor) realExecutor).getMaximumPoolSize() -
-                ((JBossThreadPoolExecutor) realExecutor).getActiveCount();
-      }
-      else if (realExecutor instanceof ThreadPoolExecutorMBean)
-      {
-         return ((ThreadPoolExecutorMBean) realExecutor).getMaxThreads() -
-                ((ThreadPoolExecutorMBean) realExecutor).getCurrentThreadCount();
+         return ((EnhancedQueueExecutor) realExecutor).getMaximumPoolSize() -
+                ((EnhancedQueueExecutor) realExecutor).getActiveCount();
       }
       else
       {
          return 0;
       }
-
    }
 }

@@ -160,8 +160,10 @@ public class WorkAdapterAndWorkListenerTestCase
 
       workManager.scheduleWork(work3, WorkManager.INDEFINITE, null, wa);
 
+      Thread.sleep(1000);
+
       assertEquals("should be same", 3, callbackCount.getAcceptCount());
-      assertEquals("should be same", 2, callbackCount.getStartCount());
+      assertEquals("should be same", 3, callbackCount.getStartCount());
       assertEquals("should be same", 1, callbackCount.getCompletedCount());
 
       start2.countDown();

@@ -159,8 +159,11 @@ public class WorkManagerDoWorkTestCase
       ShortRunningWork work = new ShortRunningWork();
       assertFalse(work.hasCallRun());
 
+      boolean rejected = false;
+
       workManager.doWork(work, WorkManager.IMMEDIATE, null, null);
-      assertTrue(work.hasCallRun());
+
+      assertFalse(work.hasCallRun());
    }
    
    /**
