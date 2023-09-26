@@ -24,16 +24,19 @@ package org.jboss.jca.core.connectionmanager.unit.pool.mcp;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.ManagedConnection;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.connections.adapter.TestConnectionRequestInfo;
+import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.api.Capacity;
 import org.jboss.jca.core.connectionmanager.pool.api.CapacityDecrementer;
 import org.jboss.jca.core.connectionmanager.pool.api.CapacityIncrementer;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.capacity.ExplicitCapacity;
 import org.jboss.jca.core.connectionmanager.pool.capacity.SizeIncrementer;
+import org.jboss.jca.core.connectionmanager.pool.capacity.TimedOutDecrementer;
 import org.jboss.jca.core.connectionmanager.pool.capacity.WatermarkDecrementer;
 import org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreArrayListManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
@@ -69,10 +72,7 @@ public class SemaphoreArrayListManagedConnectionPoolTestCase
       SemaphoreArrayListManagedConnectionPool mcp = new SemaphoreArrayListManagedConnectionPool();
       mcp.initialize(mcf, cm, null, null, poolConfig, pool);
 
-      while (mcp.getActive() != POOL_SIZE)
-      {
-         Thread.sleep(100);
-      }
+      waitForChangesToPropagate(mcp);
 
       mcf.setFailing(true);
 
@@ -149,6 +149,34 @@ public class SemaphoreArrayListManagedConnectionPoolTestCase
       Assert.assertEquals(5, mcp.getActive());
    }
 
+   @Test public void testPrefillPoolAfterReturnedConnectionHasBeenDestroyed() throws ResourceException, InterruptedException
+   {
+      poolConfig.setValidateOnMatch(false);
+      poolConfig.setUseFastFail(false);
+      poolConfig.setInitialSize(POOL_SIZE);
+      final SizeIncrementer sizeIncrementer = new SizeIncrementer();
+      final TimedOutDecrementer timedOutDecrementer = new TimedOutDecrementer();
+      pool.setCapacity(new ExplicitCapacity(sizeIncrementer, timedOutDecrementer));
+      SemaphoreArrayListManagedConnectionPool mcp = new SemaphoreArrayListManagedConnectionPool();
+      mcp.initialize(mcf, cm, null, null, poolConfig, pool);
+
+      waitForChangesToPropagate(mcp);
+      Assert.assertEquals(POOL_SIZE, mcp.getActive());
+
+      ConnectionListener cl = mcp.getConnection(null, null);
+      mcp.returnConnection(cl, true);
+
+      waitForChangesToPropagate(mcp);
+      Assert.assertEquals(POOL_SIZE, mcp.getActive());
+   }
+
+   private static void waitForChangesToPropagate(SemaphoreArrayListManagedConnectionPool mcp) throws InterruptedException
+   {
+      while (mcp.getActive() != POOL_SIZE)
+      {
+         Thread.sleep(100);
+      }
+   }
 
    private PoolConfiguration incrementerPoolConfiguration()
    {
