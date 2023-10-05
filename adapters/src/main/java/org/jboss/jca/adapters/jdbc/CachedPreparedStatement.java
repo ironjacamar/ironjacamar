@@ -513,6 +513,7 @@ public abstract class CachedPreparedStatement extends JBossWrapper implements Pr
                ps.setFetchSize(defaultFetchSize);
                currentFetchSize = defaultFetchSize;
             }
+            ps.clearParameters();
          }
       }
    }
