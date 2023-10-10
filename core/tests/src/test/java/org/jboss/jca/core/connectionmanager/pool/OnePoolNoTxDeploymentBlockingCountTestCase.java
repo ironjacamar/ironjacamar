@@ -65,6 +65,15 @@ public class OnePoolNoTxDeploymentBlockingCountTestCase extends OnePoolNoTxTestC
       AbstractPool pool = getPool();
       assertEquals(pool.getManagedConnectionPools().size(), 1);
       PoolStatistics ps = pool.getStatistics();
+
+      // wait until pool is prefilled
+      int attemptCounter = 0;
+      while (ps.getActiveCount() != 2 && attemptCounter < 5)
+      {
+         Thread.sleep(100);
+         attemptCounter++;
+      }
+
       checkStatistics(ps, 5, 0, 2);
 
       SimpleConnection c = cf.getConnection();
