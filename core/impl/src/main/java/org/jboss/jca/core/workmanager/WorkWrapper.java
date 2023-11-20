@@ -70,6 +70,14 @@ public class WorkWrapper implements Runnable
 
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+
+   /***
+    * Specification 11.3.3 states that when startout timeout is set to WorkManager.IMMEDIATE, the job should be executed
+    * as soon as possible, and timed out quickly if not possible. Setting the immediate timeout will guarantee that all jobs
+    * that don't wait for the free threads will be executed and other ones will be timed out. Specification does not
+    * demand real-time guarantees for those executions.
+    */
+   private static long IMMEDIATE_STARTUP_TIMEOUT = 100l;
    
    /** The work */
    private Work work;
@@ -93,7 +101,7 @@ public class WorkWrapper implements Runnable
    private long creationTime;
 
    /** The start timeout */
-   private long startTimeOut;
+   private long startTimeout;
 
    /** Any exception */
    private WorkException exception;
@@ -146,7 +154,7 @@ public class WorkWrapper implements Runnable
       this.startedLatch = startedLatch;
       this.completedLatch = completedLatch;
       this.creationTime = creationTime;
-      this.startTimeOut = startTimeout;
+      this.startTimeout = startTimeout == WorkManager.IMMEDIATE ? IMMEDIATE_STARTUP_TIMEOUT : startTimeout;
       this.workContexts = null;
    }
    
@@ -287,7 +295,7 @@ public class WorkWrapper implements Runnable
 
    private void checkStartTimeout(long currentTime) throws WorkRejectedException
    {
-      if ((startTimeOut < WorkManager.INDEFINITE) && ((currentTime - creationTime) >= startTimeOut))
+      if ((startTimeout < WorkManager.INDEFINITE) && ((currentTime - creationTime) >= startTimeout))
       {
          if(startedLatch != null)
          {

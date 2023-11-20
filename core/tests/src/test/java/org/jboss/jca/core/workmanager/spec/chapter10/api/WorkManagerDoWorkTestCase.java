@@ -52,7 +52,8 @@ import static org.junit.Assert.*;
  * @version $Revision: $
  */
 @RunWith(Arquillian.class)
-public class WorkManagerDoWorkTestCase
+public class
+WorkManagerDoWorkTestCase
 {
    /**
     * Injecting embedded work manager
@@ -159,11 +160,9 @@ public class WorkManagerDoWorkTestCase
       ShortRunningWork work = new ShortRunningWork();
       assertFalse(work.hasCallRun());
 
-      boolean rejected = false;
-
       workManager.doWork(work, WorkManager.IMMEDIATE, null, null);
 
-      assertFalse(work.hasCallRun());
+      assertTrue(work.hasCallRun());
    }
    
    /**
