@@ -1715,8 +1715,8 @@ public abstract class AbstractResourceAdapterDeployer
                                              log.debug("RecoverSecurityDomain=" + recoverSecurityDomain);
                                           }
 
-                                          if ((recoverUser != null && !recoverUser.trim().equals("") &&
-                                               recoverPassword != null && !recoverPassword.trim().equals("")) ||
+                                          if ((recoverUser != null &&
+                                               recoverPassword != null) ||
                                               (recoverSecurityDomain != null &&
                                                     !recoverSecurityDomain.trim().equals("")))
                                           {
