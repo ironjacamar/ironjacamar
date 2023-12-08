@@ -33,7 +33,7 @@
     <groupId>org.jboss.ironjacamar</groupId>
     <artifactId>ironjacamar-parent</artifactId>
 
-    <version>1.5.16.Final-SNAPSHOT</version>
+    <version>1.5.17.Final-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
