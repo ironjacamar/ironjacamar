@@ -732,6 +732,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          else
          {
             local.rollback();
+            localTransaction.set(false);
             log.debugf("Unfinished local transaction was rolled back.%s", this);
          }
       }
