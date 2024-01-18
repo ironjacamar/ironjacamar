@@ -48,7 +48,7 @@ public class Semaphore extends java.util.concurrent.Semaphore
 
    /**
     * Constructor
-    * @param maxSize The maxumum size
+    * @param maxSize The maximum size
     * @param fairness The fairness
     * @param statistics The statistics module
     */
