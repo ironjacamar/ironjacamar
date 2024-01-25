@@ -200,7 +200,14 @@ public class XAManagedConnection extends BaseWrapperManagedConnection implements
     */
    protected void broadcastConnectionError(SQLException e)
    {
-      super.broadcastConnectionError(e);
+      if (failedToEndXids == null) {
+         this.failedToEndXids = new HashSet<>();
+      }
+      // only broadcast the error if it hasn't been broadcast before
+      if (this.failedToEndXids.add(currentXid))
+      {
+         super.broadcastConnectionError(e);
+      }
    }
 
    /**
@@ -302,16 +309,8 @@ public class XAManagedConnection extends BaseWrapperManagedConnection implements
          {
             if (isFailedXA(e.errorCode))
             {
-               if (failedToEndXids == null) {
-                  this.failedToEndXids = new HashSet<>();
-               }
-               // only broadcast the error if it hasn't been broadcast before
-               if (this.failedToEndXids.add(xid))
-               {
-                  broadcastConnectionError(e);
-               }
+               broadcastConnectionError(e);
             }
-
             throw e;
          }
 
