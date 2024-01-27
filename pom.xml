@@ -55,7 +55,7 @@
         <module>as</module>
         <module>codegenerator</module>
         <module>common</module>
-	    <module>core</module>
+        <module>core</module>
         <module>deployers</module>
          <!--<module>eclipse</module>-->
         <module>eis</module>
