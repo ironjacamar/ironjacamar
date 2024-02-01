@@ -198,7 +198,8 @@ public class XAManagedConnection extends BaseWrapperManagedConnection implements
    /**
     * {@inheritDoc}
     */
-   protected void broadcastConnectionError(SQLException e)
+   @Override
+   protected void broadcastConnectionError(Throwable e)
    {
       if (failedToEndXids == null) {
          this.failedToEndXids = new HashSet<>();
