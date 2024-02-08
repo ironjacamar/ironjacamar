@@ -62,7 +62,7 @@
         <module>embedded</module>
         <module>sjc</module>
         <module>validator</module>
-        <module>web</module>
+	<!--<module>web</module>-->
     </modules>
 
     <properties>
