@@ -573,7 +573,14 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
          {
             if (pool.getInternalStatistics().isEnabled())
                pool.getInternalStatistics().deltaBlockingFailureCount();
-
+            synchronized (cls) {
+               if (cls.isEmpty()) {
+                  if (debug) {
+                     log.debug("Timeout trying acquire lock but cls is empty. Releasing the orphaned lock");
+                  }
+                  pool.getLock().release();
+               }
+            }
             // We timed out
             throw new ResourceException(
                bundle.noMManagedConnectionsAvailableWithinConfiguredBlockingTimeout(
@@ -746,7 +753,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
          cl.destroy();
       }
 
-      if (releasePermit)
+      if (releasePermit || (clw != null && clw.hasPermit()))
       {
          pool.getLock().release();
       }
