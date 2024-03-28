@@ -246,10 +246,10 @@ public abstract class BaseWrapperManagedConnectionFactory
    private Boolean reauthEnabled = Boolean.FALSE;
 
    /** Reauth plugin class name */
-   private String reauthPluginClassName;
+   private volatile String reauthPluginClassName;
 
    /** Reauth plugin properties - format: [key|value](,key|value)+ */
-   private String reauthPluginProperties;
+   private volatile String reauthPluginProperties;
 
    /** Reauth plugin */
    private ReauthPlugin reauthPlugin;
@@ -263,13 +263,13 @@ public abstract class BaseWrapperManagedConnectionFactory
    private Boolean jta = Boolean.TRUE;
 
    /** Connection listener plugin class name */
-   private String connectionListenerClassName;
+   private volatile String connectionListenerClassName;
 
    /** Connection listener plugin properties - format: [key|value](,key|value)+ */
-   private String connectionListenerProperties;
+   private volatile String connectionListenerProperties;
 
    /** Connection listener plugin */
-   private ConnectionListener connectionListenerPlugin;
+   private volatile ConnectionListener connectionListenerPlugin;
 
    private ClassLoader originalTCCL;
 
