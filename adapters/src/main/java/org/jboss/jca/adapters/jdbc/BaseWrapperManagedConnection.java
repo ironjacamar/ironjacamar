@@ -101,7 +101,7 @@ public abstract class BaseWrapperManagedConnection implements NotifyingManagedCo
    protected final Object stateLock = new Object();
 
    /** Is inside a managed transaction */
-   protected boolean inManagedTransaction = false;
+   protected volatile boolean inManagedTransaction = false;
 
    /** Is inside a local transaction */
    protected AtomicBoolean inLocalTransaction = new AtomicBoolean(false);
@@ -115,7 +115,7 @@ public abstract class BaseWrapperManagedConnection implements NotifyingManagedCo
    protected static boolean setAutoCommitOnCleanup = true;
 
    /** Underlying auto-commit */
-   protected boolean underlyingAutoCommit = true;
+   protected volatile boolean underlyingAutoCommit = true;
 
    // See JBAS-5678
    private boolean shouldRollbackOnDestroy = false;

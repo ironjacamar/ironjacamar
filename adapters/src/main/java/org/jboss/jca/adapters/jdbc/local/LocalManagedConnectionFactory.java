@@ -67,7 +67,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
 
    private String dataSourceClass;
 
-   private transient Driver driver;
+   private transient volatile Driver driver;
 
    private transient DataSource dataSource;
 
