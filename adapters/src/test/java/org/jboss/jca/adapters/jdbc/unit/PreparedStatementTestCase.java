@@ -326,7 +326,7 @@ public class PreparedStatementTestCase
          assertNotNull(st);
 
          // Create
-         st.execute("CREATE ALIAS SLEEP FOR \"java.lang.Thread.sleep\"");
+         st.execute("CREATE ALIAS SLEEP FOR \"java.lang.Thread.sleep(long)\"");
 
          // Prepared statement, sleep for 10 seconds
          pstmt = c.prepareStatement("SELECT SLEEP(?) FROM SYSTEM_RANGE(1, 10000) LIMIT ?");
