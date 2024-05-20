@@ -487,6 +487,10 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
 
                try
                {
+                  /* Attach connection to the transaction. This resource is later used to obtain the connection
+                   * associated with the give transaction.
+                   * see org.jboss.jca.core.connectionmanager.pool.AbstractPool#getTransactionOldConnection
+                   */
                   transactionSynchronizationRegistry.putResource(mcp, cl);
                }
                catch (Throwable t)
