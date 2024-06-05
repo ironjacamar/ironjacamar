@@ -1538,55 +1538,56 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    private boolean detachConnectionListener()
    {
+      ConnectionListener toDetach = null;
       synchronized (cls)
       {
-         ConnectionListener cl = null;
-         try
+         for (ConnectionListener cl : checkedOut)
          {
-            Iterator<ConnectionListener> it = checkedOut.iterator();
-            while (it.hasNext())
+            if (!cl.isEnlisted() && cl.getManagedConnection() instanceof DissociatableManagedConnection)
             {
-               cl = it.next();
-               if (!cl.isEnlisted() && cl.getManagedConnection() instanceof DissociatableManagedConnection)
-               {
-                  log.tracef("Detach: %s", cl);
-
-                  DissociatableManagedConnection dmc = (DissociatableManagedConnection)cl.getManagedConnection();
-                  dmc.dissociateConnections();
-
-                  cl.unregisterConnections();
-
-                  if (Tracer.isEnabled())
-                     Tracer.returnConnectionListener(pool.getName(), this, cl, false, pool.isInterleaving(),
-                                                     Tracer.isRecordCallstacks() ?
-                                                     new Throwable("CALLSTACK") : null);
-
-                  returnConnection(cl, false, false);
-
-                  return true;
-               }
-            }
-         }
-         catch (Throwable t)
-         {
-            // Ok - didn't work; nuke it and disable
-            if (debug)
-               log.debug("Exception during detach for: " + pool.getName(), t);
-
-            supportsLazyAssociation = Boolean.FALSE;
-
-            if (cl != null)
-            {
-               if (Tracer.isEnabled())
-                  Tracer.returnConnectionListener(pool.getName(), this, cl, true, pool.isInterleaving(),
-                                                  Tracer.isRecordCallstacks() ?
-                                                  new Throwable("CALLSTACK") : null);
-
-               returnConnection(cl, true, true);
+               toDetach = cl;
             }
          }
       }
 
+      if (toDetach == null)
+      {
+         return false;
+      }
+
+      try
+      {
+         log.tracef("Detach: %s", toDetach);
+
+         DissociatableManagedConnection dmc = (DissociatableManagedConnection)toDetach.getManagedConnection();
+         dmc.dissociateConnections();
+
+         toDetach.unregisterConnections();
+
+         if (Tracer.isEnabled())
+         {
+            Tracer.returnConnectionListener(pool.getName(), this, toDetach, false, pool.isInterleaving(),
+                    Tracer.isRecordCallstacks() ? new Throwable("CALLSTACK") : null);
+         }
+         returnConnection(toDetach, false, false);
+         return true;
+      }
+      catch (Throwable t)
+      {
+         // Ok - didn't work; nuke it and disable
+         if (debug)
+         {
+            log.debug("Exception during detach for: " + pool.getName(), t);
+         }
+         supportsLazyAssociation = Boolean.FALSE;
+
+         if (Tracer.isEnabled())
+         {
+            Tracer.returnConnectionListener(pool.getName(), this, toDetach, true, pool.isInterleaving(),
+                    Tracer.isRecordCallstacks() ? new Throwable("CALLSTACK") : null);
+         }
+         returnConnection(toDetach, true, true);
+      }
       return false;
    }
 
