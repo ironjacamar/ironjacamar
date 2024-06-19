@@ -127,6 +127,8 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
    /** Last idle check */
    private long lastIdleCheck;
 
+   private Object idleRemoverLock = new Object();
+
    /** Last used */
    private long lastUsed;
 
@@ -267,328 +269,321 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
    /**
     * {@inheritDoc}
     */
-   public ConnectionListener getConnection(Subject subject, ConnectionRequestInfo cri) throws ResourceException 
+   public ConnectionListener getConnection(Subject subject, ConnectionRequestInfo cri) throws ResourceException
    {
-      if (log.isTraceEnabled()) 
+      synchronized (idleRemoverLock)
       {
-         synchronized (cls)
+         if (log.isTraceEnabled())
+         {
+            synchronized (cls)
+            {
+               String method = "getConnection(" + subject + ", " + cri + ")";
+               SortedSet<ConnectionListener> checkedOut = new TreeSet<ConnectionListener>();
+               SortedSet<ConnectionListener> available = new TreeSet<ConnectionListener>();
+               for (Entry<ConnectionListener, ConnectionListenerWrapper> entry : cls.entrySet())
+               {
+                  if (entry.getValue().isCheckedOut())
+                     checkedOut.add(entry.getKey());
+                  else
+                     available.add(entry.getKey());
+               }
+               log.trace(ManagedConnectionPoolUtility.fullDetails(this, method, mcf, cm, pool,
+                   poolConfiguration, available, checkedOut,
+                   pool.getInternalStatistics(), subject, cri));
+            }
+         } else if (debug)
          {
             String method = "getConnection(" + subject + ", " + cri + ")";
-            SortedSet<ConnectionListener> checkedOut = new TreeSet<ConnectionListener>();
-            SortedSet<ConnectionListener> available = new TreeSet<ConnectionListener>();
-            for (Entry<ConnectionListener, ConnectionListenerWrapper> entry : cls.entrySet()) 
-            {
-               if (entry.getValue().isCheckedOut())
-                  checkedOut.add(entry.getKey());
-               else
-                  available.add(entry.getKey());
-            }
-            log.trace(ManagedConnectionPoolUtility.fullDetails(this, method, mcf, cm, pool,
-                                                               poolConfiguration, available, checkedOut,
-                                                               pool.getInternalStatistics(), subject, cri));
+            log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
+                pool.getInternalStatistics().getInUseCount(), maxSize));
          }
-      } 
-      else if (debug) 
-      {
-         String method = "getConnection(" + subject + ", " + cri + ")";
-         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
-                                                        pool.getInternalStatistics().getInUseCount(), maxSize));
-      }
 
-      subject = (subject == null) ? defaultSubject : subject;
-      cri = (cri == null) ? defaultCri : cri;
+         subject = (subject == null) ? defaultSubject : subject;
+         cri = (cri == null) ? defaultCri : cri;
 
-      if (pool.isFull()) 
-      {
-         if (pool.getInternalStatistics().isEnabled())
-            pool.getInternalStatistics().deltaWaitCount();
-
-         if (pool.isSharable() && (supportsLazyAssociation == null || supportsLazyAssociation.booleanValue())) 
-         {
-            if (supportsLazyAssociation == null)
-               checkLazyAssociation();
-
-            if (supportsLazyAssociation != null && supportsLazyAssociation.booleanValue()) 
-            {
-               if (log.isTraceEnabled())
-                  log.tracef("Trying to detach - Pool: %s MCP: %s", pool.getName(), 
-                             Integer.toHexString(System.identityHashCode(this)));
-
-               if (!detachConnectionListener()) 
-               {
-                  if (log.isTraceEnabled())
-                     log.tracef("Detaching didn't succeed - Pool: %s MCP: %s", pool.getName(), 
-                                Integer.toHexString(System.identityHashCode(this)));
-               }
-            }
-         }
-      }
-
-      long startWait = pool.getInternalStatistics().isEnabled() ? System.currentTimeMillis() : 0L;
-      try 
-      {
-         if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS)) 
+         if (pool.isFull())
          {
             if (pool.getInternalStatistics().isEnabled())
-               pool.getInternalStatistics().deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
+               pool.getInternalStatistics().deltaWaitCount();
 
-            // We have a permit to get a connection. Is there one in the pool already?
-            ConnectionListenerWrapper clw = null;
-            do 
+            if (pool.isSharable() && (supportsLazyAssociation == null || supportsLazyAssociation.booleanValue()))
             {
-               if (!isRunning()) 
-               {
-                  pool.getLock().release();
+               if (supportsLazyAssociation == null)
+                  checkLazyAssociation();
 
-                  throw new ResourceException(
-                     bundle.thePoolHasBeenShutdown(pool.getName(),
-                                                   Integer.toHexString(System.identityHashCode(this))));
-               }
+               if (supportsLazyAssociation != null && supportsLazyAssociation.booleanValue())
+               {
+                  if (log.isTraceEnabled())
+                     log.tracef("Trying to detach - Pool: %s MCP: %s", pool.getName(),
+                         Integer.toHexString(System.identityHashCode(this)));
 
-               if (fifo)
-               {
-                  clw = clq.pollFirst();
+                  if (!detachConnectionListener())
+                  {
+                     if (log.isTraceEnabled())
+                        log.tracef("Detaching didn't succeed - Pool: %s MCP: %s", pool.getName(),
+                            Integer.toHexString(System.identityHashCode(this)));
+                  }
                }
-               else
-               {
-                  clw = clq.pollLast();
-               }
+            }
+         }
 
-               if (clw != null) 
+         long startWait = pool.getInternalStatistics().isEnabled() ? System.currentTimeMillis() : 0L;
+         try
+         {
+            if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
+            {
+               if (pool.getInternalStatistics().isEnabled())
+                  pool.getInternalStatistics().deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
+
+               // We have a permit to get a connection. Is there one in the pool already?
+               ConnectionListenerWrapper clw = null;
+               do
                {
+                  if (!isRunning())
+                  {
+                     pool.getLock().release();
+
+                     throw new ResourceException(
+                         bundle.thePoolHasBeenShutdown(pool.getName(),
+                             Integer.toHexString(System.identityHashCode(this))));
+                  }
+
+                  if (fifo)
+                  {
+                     clw = clq.pollFirst();
+                  } else
+                  {
+                     clw = clq.pollLast();
+                  }
+
+                  if (clw != null)
+                  {
+                     clw.setCheckedOut(true);
+                     checkedOutSize.incrementAndGet();
+
+                     // Yes, we retrieved a ManagedConnection from the pool.
+                     // Does it match?
+                     try
+                     {
+                        Object matchedMC = mcf.matchManagedConnections(Collections.singleton(
+                            clw.getConnectionListener().getManagedConnection()), subject, cri);
+
+                        boolean valid = true;
+
+                        if (matchedMC != null)
+                        {
+                           if (poolConfiguration.isValidateOnMatch())
+                           {
+                              if (mcf instanceof ValidatingManagedConnectionFactory)
+                              {
+                                 try
+                                 {
+                                    ValidatingManagedConnectionFactory vcf = (ValidatingManagedConnectionFactory) mcf;
+                                    Set candidateSet =
+                                        Collections.singleton(clw.getConnectionListener().getManagedConnection());
+                                    candidateSet = vcf.getInvalidConnections(candidateSet);
+
+                                    if (candidateSet != null && candidateSet.size() > 0)
+                                    {
+                                       valid = false;
+                                    }
+                                 } catch (Throwable t)
+                                 {
+                                    valid = false;
+                                    if (log.isTraceEnabled())
+                                       log.trace("Exception while ValidateOnMatch: " + t.getMessage(), t);
+                                 }
+                              } else
+                              {
+                                 log.validateOnMatchNonCompliantManagedConnectionFactory(mcf.getClass().getName());
+                              }
+                           }
+
+                           if (valid)
+                           {
+                              log.tracef("supplying ManagedConnection from pool: %s", clw.getConnectionListener());
+
+                              lastUsed = System.currentTimeMillis();
+                              clw.getConnectionListener().setLastCheckedOutTime(lastUsed);
+
+                              if (pool.getInternalStatistics().isEnabled())
+                              {
+                                 pool.getInternalStatistics().deltaTotalGetTime(lastUsed - startWait);
+                                 pool.getInternalStatistics().deltaTotalPoolTime(lastUsed -
+                                     clw.getConnectionListener().getLastReturnedTime());
+                              }
+
+                              if (Tracer.isEnabled())
+                                 Tracer.getConnectionListener(pool.getName(), this, clw.getConnectionListener(),
+                                     true, pool.isInterleaving(),
+                                     Tracer.isRecordCallstacks() ?
+                                         new Throwable("CALLSTACK") : null);
+
+                              clw.setHasPermit(true);
+
+                              return clw.getConnectionListener();
+                           }
+                        }
+
+                        // Match did not succeed but no exception was
+                        // thrown.
+                        // Either we have the matching strategy wrong or the
+                        // connection died while being checked. We need to
+                        // distinguish these cases, but for now we always
+                        // destroy the connection.
+                        if (valid)
+                        {
+                           log.destroyingConnectionNotSuccessfullyMatched(clw.getConnectionListener());
+                        } else
+                        {
+                           if (poolValidationLoggingEnabled)
+                           {
+                              log.destroyingConnectionNotValidated(clw.getConnectionListener());
+                           }
+                        }
+
+                        if (pool.getInternalStatistics().isEnabled())
+                        {
+                           pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
+                               clw.getConnectionListener().getLastReturnedTime());
+                        }
+
+                        if (Tracer.isEnabled())
+                           Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
+                               false, false, true, false, false, false, false,
+                               Tracer.isRecordCallstacks() ?
+                                   new Throwable("CALLSTACK") : null);
+
+                        removeConnectionListenerFromPool(clw);
+                        clw.getConnectionListener().destroy();
+                        clw = null;
+                     } catch (Throwable t)
+                     {
+                        log.throwableWhileTryingMatchManagedConnectionThenDestroyingConnection(
+                            clw.getConnectionListener(), t);
+
+                        if (pool.getInternalStatistics().isEnabled())
+                        {
+                           pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
+                               clw.getConnectionListener().getLastReturnedTime());
+                        }
+
+                        if (Tracer.isEnabled())
+                           Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
+                               false, false, false, false, true, false, false,
+                               Tracer.isRecordCallstacks() ?
+                                   new Throwable("CALLSTACK") : null);
+
+                        removeConnectionListenerFromPool(clw);
+                        clw.getConnectionListener().destroy();
+                        clw = null;
+                     }
+
+                     // We made it here, something went wrong and we should
+                     // validate
+                     // if we should continue attempting to acquire a
+                     // connection
+                     if (poolConfiguration.isUseFastFail())
+                     {
+                        if (log.isTraceEnabled())
+                           log.trace("Fast failing for connection attempt. No more attempts will be made to "
+                               + "acquire connection from pool and a new connection will be created immeadiately");
+                        break;
+                     }
+
+                  }
+               }
+               while (clq.size() > 0);
+
+               // OK, we couldnt find a working connection from the pool. Make
+               // a new one.
+               try
+               {
+                  // No, the pool was empty, so we have to make a new one.
+                  clw = new ConnectionListenerWrapper(createConnectionEventListener(subject, cri), true, true);
+
+                  if (Tracer.isEnabled())
+                     Tracer.createConnectionListener(pool.getName(), this, clw.getConnectionListener(),
+                         clw.getConnectionListener().getManagedConnection(),
+                         true, false, false,
+                         Tracer.isRecordCallstacks() ?
+                             new Throwable("CALLSTACK") : null);
+
                   clw.setCheckedOut(true);
                   checkedOutSize.incrementAndGet();
 
-                  // Yes, we retrieved a ManagedConnection from the pool.
-                  // Does it match?
-                  try 
-                  {
-                     Object matchedMC = mcf.matchManagedConnections(Collections.singleton(
-                        clw.getConnectionListener().getManagedConnection()), subject, cri);
+                  cls.put(clw.getConnectionListener(), clw);
 
-                     boolean valid = true;
+                  log.tracef("supplying new ManagedConnection: %s", clw.getConnectionListener());
 
-                     if (matchedMC != null)
-                     {
-                        if (poolConfiguration.isValidateOnMatch())
-                        {
-                           if (mcf instanceof ValidatingManagedConnectionFactory)
-                           {
-                              try
-                              {
-                                 ValidatingManagedConnectionFactory vcf = (ValidatingManagedConnectionFactory) mcf;
-                                 Set candidateSet =
-                                    Collections.singleton(clw.getConnectionListener().getManagedConnection());
-                                 candidateSet = vcf.getInvalidConnections(candidateSet);
+                  lastUsed = System.currentTimeMillis();
 
-                                 if (candidateSet != null && candidateSet.size() > 0)
-                                 {
-                                    valid = false;
-                                 }
-                              }
-                              catch (Throwable t)
-                              {
-                                 valid = false;
-                                 if (log.isTraceEnabled())
-                                    log.trace("Exception while ValidateOnMatch: " + t.getMessage(), t);
-                              }
-                           }
-                           else
-                           {
-                              log.validateOnMatchNonCompliantManagedConnectionFactory(mcf.getClass().getName());
-                           }
-                        }
+                  if (pool.getInternalStatistics().isEnabled())
+                     pool.getInternalStatistics().deltaTotalGetTime(lastUsed - startWait);
 
-                        if (valid)
-                        {
-                           log.tracef("supplying ManagedConnection from pool: %s", clw.getConnectionListener());
+                  prefill();
 
-                           lastUsed = System.currentTimeMillis();
-                           clw.getConnectionListener().setLastCheckedOutTime(lastUsed);
+                  // Trigger capacity increase
+                  if (pool.getCapacity().getIncrementer() != null)
+                     CapacityFiller.schedule(new CapacityRequest(this, subject, cri));
 
-                           if (pool.getInternalStatistics().isEnabled())
-                           {
-                              pool.getInternalStatistics().deltaTotalGetTime(lastUsed - startWait);
-                              pool.getInternalStatistics().deltaTotalPoolTime(lastUsed -
-                                 clw.getConnectionListener().getLastReturnedTime());
-                           }
-
-                           if (Tracer.isEnabled())
-                              Tracer.getConnectionListener(pool.getName(), this, clw.getConnectionListener(),
-                                                           true, pool.isInterleaving(),
-                                                           Tracer.isRecordCallstacks() ?
-                                                           new Throwable("CALLSTACK") : null);
-
-                           clw.setHasPermit(true);
-
-                           return clw.getConnectionListener();
-                        }
-                     }
-
-                     // Match did not succeed but no exception was
-                     // thrown.
-                     // Either we have the matching strategy wrong or the
-                     // connection died while being checked. We need to
-                     // distinguish these cases, but for now we always
-                     // destroy the connection.
-                     if (valid)
-                     {
-                        log.destroyingConnectionNotSuccessfullyMatched(clw.getConnectionListener());
-                     }
-                     else
-                     {
-                        if (poolValidationLoggingEnabled)
-                        {
-                           log.destroyingConnectionNotValidated(clw.getConnectionListener());
-                        }
-                     }
-
-                     if (pool.getInternalStatistics().isEnabled())
-                     {
-                        pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
-                           clw.getConnectionListener().getLastReturnedTime());
-                     }
-
-                     if (Tracer.isEnabled())
-                        Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
-                                                         false, false, true, false, false, false, false,
-                                                         Tracer.isRecordCallstacks() ?
-                                                         new Throwable("CALLSTACK") : null);
-                     
-                     removeConnectionListenerFromPool(clw);
-                     clw.getConnectionListener().destroy();
-                     clw = null;
-                  } 
-                  catch (Throwable t) 
-                  {
-                     log.throwableWhileTryingMatchManagedConnectionThenDestroyingConnection(
-                        clw.getConnectionListener(), t);
-
-                     if (pool.getInternalStatistics().isEnabled())
-                     {
-                        pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
-                           clw.getConnectionListener().getLastReturnedTime());
-                     }
-
-                     if (Tracer.isEnabled())
-                        Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
-                                                         false, false, false, false, true, false, false,
-                                                         Tracer.isRecordCallstacks() ?
-                                                         new Throwable("CALLSTACK") : null);
-                     
-                     removeConnectionListenerFromPool(clw);
-                     clw.getConnectionListener().destroy();
-                     clw = null;
-                  }
-
-                  // We made it here, something went wrong and we should
-                  // validate
-                  // if we should continue attempting to acquire a
-                  // connection
-                  if (poolConfiguration.isUseFastFail()) 
-                  {
-                     if (log.isTraceEnabled())
-                        log.trace("Fast failing for connection attempt. No more attempts will be made to "
-                              + "acquire connection from pool and a new connection will be created immeadiately");
-                     break;
-                  }
-
-               } 
-            } 
-            while (clq.size() > 0);
-
-            // OK, we couldnt find a working connection from the pool. Make
-            // a new one.
-            try 
-            {
-               // No, the pool was empty, so we have to make a new one.
-               clw = new ConnectionListenerWrapper(createConnectionEventListener(subject, cri), true, true);
-
-               if (Tracer.isEnabled())
-                  Tracer.createConnectionListener(pool.getName(), this, clw.getConnectionListener(),
-                                                  clw.getConnectionListener().getManagedConnection(),
-                                                  true, false, false,
-                                                  Tracer.isRecordCallstacks() ?
-                                                  new Throwable("CALLSTACK") : null);
-
-               clw.setCheckedOut(true);
-               checkedOutSize.incrementAndGet();
-
-               cls.put(clw.getConnectionListener(), clw);
-
-               log.tracef("supplying new ManagedConnection: %s", clw.getConnectionListener());
-
-               lastUsed = System.currentTimeMillis();
-
-               if (pool.getInternalStatistics().isEnabled())
-                  pool.getInternalStatistics().deltaTotalGetTime(lastUsed - startWait);
-
-               prefill();
-
-               // Trigger capacity increase
-               if (pool.getCapacity().getIncrementer() != null)
-                  CapacityFiller.schedule(new CapacityRequest(this, subject, cri));
-
-               if (Tracer.isEnabled())
-                  Tracer.getConnectionListener(pool.getName(), this, clw.getConnectionListener(), false, 
-                                               pool.isInterleaving(),
-                                               Tracer.isRecordCallstacks() ?
-                                               new Throwable("CALLSTACK") : null);
-
-               return clw.getConnectionListener();
-            } 
-            catch (Throwable t) 
-            {
-               if (clw != null || !(t instanceof RetryableException))
-                  log.throwableWhileAttemptingGetNewGonnection(clw != null ? clw.getConnectionListener() : null, t);
-
-               // Return permit and rethrow
-               if (clw != null) 
-               {
                   if (Tracer.isEnabled())
-                     Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
-                                                      false, false, false, false, true, false, false,
-                                                      Tracer.isRecordCallstacks() ?
-                                                      new Throwable("CALLSTACK") : null);
-                     
-                  removeConnectionListenerFromPool(clw);
-                  clw.getConnectionListener().destroy();
-               }
+                     Tracer.getConnectionListener(pool.getName(), this, clw.getConnectionListener(), false,
+                         pool.isInterleaving(),
+                         Tracer.isRecordCallstacks() ?
+                             new Throwable("CALLSTACK") : null);
 
-               pool.getLock().release();
+                  return clw.getConnectionListener();
+               } catch (Throwable t)
+               {
+                  if (clw != null || !(t instanceof RetryableException))
+                     log.throwableWhileAttemptingGetNewGonnection(clw != null ? clw.getConnectionListener() : null, t);
 
-               if (t instanceof ResourceException)
-               {
-                  throw (ResourceException)t;
-               }
-               else
-               {
-                  throw new ResourceException(
-                     bundle.unexpectedThrowableWhileTryingCreateConnection(
+                  // Return permit and rethrow
+                  if (clw != null)
+                  {
+                     if (Tracer.isEnabled())
+                        Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
+                            false, false, false, false, true, false, false,
+                            Tracer.isRecordCallstacks() ?
+                                new Throwable("CALLSTACK") : null);
+
+                     removeConnectionListenerFromPool(clw);
+                     clw.getConnectionListener().destroy();
+                  }
+
+                  pool.getLock().release();
+
+                  if (t instanceof ResourceException)
+                  {
+                     throw (ResourceException) t;
+                  } else
+                  {
+                     throw new ResourceException(
+                         bundle.unexpectedThrowableWhileTryingCreateConnection(
                              clw != null ? clw.getConnectionListener() : null), t);
+                  }
                }
+            } else
+            {
+               if (pool.getInternalStatistics().isEnabled())
+                  pool.getInternalStatistics().deltaBlockingFailureCount();
+
+               // We timed out
+               throw new ResourceException(
+                   bundle.noMManagedConnectionsAvailableWithinConfiguredBlockingTimeout(
+                       poolConfiguration.getBlockingTimeout()));
             }
-         } 
-         else 
+
+         } catch (InterruptedException ie)
          {
-            if (pool.getInternalStatistics().isEnabled())
-               pool.getInternalStatistics().deltaBlockingFailureCount();
+            Thread.interrupted();
 
-            // We timed out
-            throw new ResourceException(
-               bundle.noMManagedConnectionsAvailableWithinConfiguredBlockingTimeout(
-                  poolConfiguration.getBlockingTimeout()));
+            long end = pool.getInternalStatistics().isEnabled() ? (System.currentTimeMillis() - startWait) : 0L;
+            pool.getInternalStatistics().deltaTotalBlockingTime(end);
+            throw new ResourceException(bundle.interruptedWhileRequestingPermit(end));
          }
-
-      } 
-      catch (InterruptedException ie) 
-      {
-         Thread.interrupted();
-
-         long end = pool.getInternalStatistics().isEnabled() ? (System.currentTimeMillis() - startWait) : 0L;
-         pool.getInternalStatistics().deltaTotalBlockingTime(end);
-         throw new ResourceException(bundle.interruptedWhileRequestingPermit(end));
-      } 
+      }
    }
 
    /**
@@ -897,149 +892,130 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
    /**
     * {@inheritDoc}
     */
-   public void removeIdleConnections() 
+   public void removeIdleConnections()
    {
-      long now = System.currentTimeMillis();
-      long timeoutSetting = poolConfiguration.getIdleTimeoutMinutes() * 1000L * 60;
-
-      CapacityDecrementer decrementer = pool.getCapacity().getDecrementer();
-
-      if (decrementer == null)
-         decrementer = DefaultCapacity.DEFAULT_DECREMENTER;
-
-      if (TimedOutDecrementer.class.getName().equals(decrementer.getClass().getName()) ||
-          TimedOutFIFODecrementer.class.getName().equals(decrementer.getClass().getName()))
+      synchronized(idleRemoverLock)
       {
-         // Allow through each minute
-         if (now < (lastIdleCheck + 60000L))
-            return;
-      }
-      else
-      {
-         // Otherwise, strict check
-         if (now < (lastIdleCheck + timeoutSetting))
-            return;
-      }
+         long now = System.currentTimeMillis();
+         long timeoutSetting = poolConfiguration.getIdleTimeoutMinutes() * 1000L * 60;
 
-      lastIdleCheck = now;
+         CapacityDecrementer decrementer = pool.getCapacity().getDecrementer();
 
-      ArrayList<ConnectionListenerWrapper> destroyConnections = new ArrayList<ConnectionListenerWrapper>();
-      long timeout = now - timeoutSetting;
+         if (decrementer == null)
+            decrementer = DefaultCapacity.DEFAULT_DECREMENTER;
 
-      boolean destroy = true;
-      int destroyed = 0;
-
-      if (log.isTraceEnabled()) 
-      {
-         synchronized (cls) 
-         {
-            String method = "removeIdleConnections(" + timeout + ")";
-            SortedSet<ConnectionListener> checkedOut = new TreeSet<ConnectionListener>();
-            SortedSet<ConnectionListener> available = new TreeSet<ConnectionListener>();
-            for (Entry<ConnectionListener, ConnectionListenerWrapper> entry : cls.entrySet()) 
-            {
-               if (entry.getValue().isCheckedOut())
-                  checkedOut.add(entry.getKey());
-               else
-                  available.add(entry.getKey());
-            }
-            log.trace(ManagedConnectionPoolUtility.fullDetails(
-                  this, method, mcf, cm, pool,
-                  poolConfiguration, available, checkedOut, pool.getInternalStatistics(), defaultSubject, defaultCri));
-         }
-      } 
-      else if (debug) 
-      {
-         String method = "removeIdleConnections(" + timeout + ")";
-         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
-                                                        pool.getInternalStatistics().getInUseCount(), maxSize));
-      }
-
-      Iterator<ConnectionListenerWrapper> clwIter = clq.iterator();
-      while (clwIter.hasNext() && destroy) 
-      {
-         // Nothing left to destroy
-         if (clq.size() == 0)
-            break;
-
-         ConnectionListenerWrapper clw = clwIter.next();
-
-         destroy = decrementer.shouldDestroy(clw.getConnectionListener(),
-                                             timeout, poolSize.get(),
-                                             poolConfiguration.getMinSize(), destroyed);
-
-         if (destroy) 
-         {
-            if (shouldRemove() || !isRunning())
-            {
-               if (pool.getInternalStatistics().isEnabled())
-                  pool.getInternalStatistics().deltaTimedOut();
-
-               log.tracef("Idle connection cl=%s", clw.getConnectionListener());
-
-               // We need to destroy this one, so deregister now
-               if (doRemoveConnectionListenerFromPool(clw.getConnectionListener()) == null)
-                  log.tracef("Connection Pool did not contain: %s", clw.getConnectionListener());
-
-               if (!clq.remove(clw)) 
-                  log.tracef("Available connection queue did not contain: %s", clw.getConnectionListener());
-
-               destroyConnections.add(clw);
-               destroyed++;
-            } 
-            else 
-            {
-               destroy = false;
-            }
-         }
-      }
-
-      // We found some connections to destroy
-      if (destroyConnections.size() > 0 || isEmpty())
-      {
-         for (ConnectionListenerWrapper clw : destroyConnections) 
-         {
-            log.tracef("Destroying connection %s", clw.getConnectionListener());
-
-            if (pool.getInternalStatistics().isEnabled())
-               pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
-                                                               clw.getConnectionListener().getLastReturnedTime());
-
-            if (Tracer.isEnabled())
-               Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
-                                                false, true, false, false, false, false, false,
-                                                Tracer.isRecordCallstacks() ?
-                                                new Throwable("CALLSTACK") : null);
-                     
-            removeConnectionListenerFromPool(clw);
-            clw.getConnectionListener().destroy();
-            clw = null;
+         if (TimedOutDecrementer.class.getName().equals(decrementer.getClass().getName()) ||
+                 TimedOutFIFODecrementer.class.getName().equals(decrementer.getClass().getName())) {
+            // Allow through each minute
+            if (now < (lastIdleCheck + 60000L))
+               return;
+         } else {
+            // Otherwise, strict check
+            if (now < (lastIdleCheck + timeoutSetting))
+               return;
          }
 
-         if (isRunning()) 
-         {
-            // Let prefill and use-strict-min be the same
-            boolean emptyManagedConnectionPool = false;
+         lastIdleCheck = now;
 
-            if ((poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) && pool instanceof PrefillPool) 
-            {
-               if (poolConfiguration.getMinSize() > 0) 
-               {
-                  prefill();
+         ArrayList<ConnectionListenerWrapper> destroyConnections = new ArrayList<ConnectionListenerWrapper>();
+         long timeout = now - timeoutSetting;
+
+         boolean destroy = true;
+         int destroyed = 0;
+
+         if (log.isTraceEnabled()) {
+            synchronized (cls) {
+               String method = "removeIdleConnections(" + timeout + ")";
+               SortedSet<ConnectionListener> checkedOut = new TreeSet<ConnectionListener>();
+               SortedSet<ConnectionListener> available = new TreeSet<ConnectionListener>();
+               for (Entry<ConnectionListener, ConnectionListenerWrapper> entry : cls.entrySet()) {
+                  if (entry.getValue().isCheckedOut())
+                     checkedOut.add(entry.getKey());
+                  else
+                     available.add(entry.getKey());
                }
-               else 
-               {
+               log.trace(ManagedConnectionPoolUtility.fullDetails(
+                       this, method, mcf, cm, pool,
+                       poolConfiguration, available, checkedOut, pool.getInternalStatistics(), defaultSubject, defaultCri));
+            }
+         } else if (debug) {
+            String method = "removeIdleConnections(" + timeout + ")";
+            log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
+                    pool.getInternalStatistics().getInUseCount(), maxSize));
+         }
+
+         Iterator<ConnectionListenerWrapper> clwIter = clq.iterator();
+         while (clwIter.hasNext() && destroy) {
+            // Nothing left to destroy
+            if (clq.size() == 0)
+               break;
+
+            ConnectionListenerWrapper clw = clwIter.next();
+
+            destroy = decrementer.shouldDestroy(clw.getConnectionListener(),
+                    timeout, poolSize.get(),
+                    poolConfiguration.getMinSize(), destroyed);
+
+            if (destroy) {
+               if (shouldRemove() || !isRunning()) {
+                  if (pool.getInternalStatistics().isEnabled())
+                     pool.getInternalStatistics().deltaTimedOut();
+
+                  log.tracef("Idle connection cl=%s", clw.getConnectionListener());
+
+                  // We need to destroy this one, so deregister now
+                  if (doRemoveConnectionListenerFromPool(clw.getConnectionListener()) == null)
+                     log.tracef("Connection Pool did not contain: %s", clw.getConnectionListener());
+
+                  if (!clq.remove(clw))
+                     log.tracef("Available connection queue did not contain: %s", clw.getConnectionListener());
+
+                  destroyConnections.add(clw);
+                  destroyed++;
+               } else {
+                  destroy = false;
+               }
+            }
+         }
+
+         // We found some connections to destroy
+         if (destroyConnections.size() > 0 || isEmpty()) {
+            for (ConnectionListenerWrapper clw : destroyConnections) {
+               log.tracef("Destroying connection %s", clw.getConnectionListener());
+
+               if (pool.getInternalStatistics().isEnabled())
+                  pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
+                          clw.getConnectionListener().getLastReturnedTime());
+
+               if (Tracer.isEnabled())
+                  Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
+                          false, true, false, false, false, false, false,
+                          Tracer.isRecordCallstacks() ?
+                                  new Throwable("CALLSTACK") : null);
+
+               removeConnectionListenerFromPool(clw);
+               clw.getConnectionListener().destroy();
+               clw = null;
+            }
+
+            if (isRunning()) {
+               // Let prefill and use-strict-min be the same
+               boolean emptyManagedConnectionPool = false;
+
+               if ((poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) && pool instanceof PrefillPool) {
+                  if (poolConfiguration.getMinSize() > 0) {
+                     prefill();
+                  } else {
+                     emptyManagedConnectionPool = true;
+                  }
+               } else {
                   emptyManagedConnectionPool = true;
                }
-            } 
-            else 
-            {
-               emptyManagedConnectionPool = true;
-            }
 
-            // Empty pool
-            if (emptyManagedConnectionPool && isEmpty())
-               pool.emptyManagedConnectionPool(this);
+               // Empty pool
+               if (emptyManagedConnectionPool && isEmpty())
+                  pool.emptyManagedConnectionPool(this);
+            }
          }
       }
    }
