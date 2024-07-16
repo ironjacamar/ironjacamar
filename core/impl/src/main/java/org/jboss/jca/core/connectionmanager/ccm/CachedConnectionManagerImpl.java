@@ -519,7 +519,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       boolean unclosed = false;
 
       Collection<CopyOnWriteArrayList<ConnectionRecord>> connections = cmToConnectionsMap.values();
-      if (connections.size() != 0)
+      if ( !connections.isEmpty() )
       {
          for (Iterator<CopyOnWriteArrayList<ConnectionRecord>> i = connections.iterator(); i.hasNext();)
          {
