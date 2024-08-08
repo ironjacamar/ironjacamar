@@ -46,6 +46,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.resource.ResourceException;
@@ -109,7 +110,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    private int maxSize;
 
    /** The available connection event listeners */
-   private ArrayList<ConnectionListener> cls;
+   private CopyOnWriteArrayList<ConnectionListener> cls;
 
    /** The map of connection listeners which has a permit */
    private final ConcurrentMap<ConnectionListener, ConnectionListener> clPermits =
@@ -163,7 +164,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.log = pool.getLogger();
       this.poolValidationLoggingEnabled = !PoolConfiguration.getPoolsWithDisabledValidationLogging().contains(pool.getName());
       this.debug = log.isDebugEnabled();
-      this.cls = new ArrayList<ConnectionListener>(this.maxSize);
+      this.cls = new CopyOnWriteArrayList<ConnectionListener>();
       this.supportsLazyAssociation = null;
       this.lastIdleCheck = System.currentTimeMillis();
       this.lastUsed = Long.MAX_VALUE;
@@ -596,15 +597,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    public ConnectionListener findConnectionListener(ManagedConnection mc, Object connection)
    {
-      synchronized (cls)
-      {
-         for (ConnectionListener cl : checkedOut)
-         {
-            if (cl.controls(mc, connection))
-               return cl;
-         }
+      for (ConnectionListener cl : checkedOut) {
+         if (cl.controls(mc, connection))
+            return cl;
       }
-
       return null;
    }
 
