@@ -42,7 +42,7 @@ import org.junit.Test;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -96,7 +96,7 @@ public class RADeployerTestCase
       given(failure.getSeverity()).willReturn(Severity.WARNING);
       List<Failure> failures = Arrays.asList(failure);
       FailureHelper fh = mock(FailureHelper.class);
-      given(fh.asText((ResourceBundle) anyObject())).willReturn("myText");
+      given(fh.asText((ResourceBundle) any())).willReturn("myText");
 
       deployer.getConfiguration().setArchiveValidationFailOnWarn(true);
 
@@ -127,7 +127,7 @@ public class RADeployerTestCase
       given(failure.getSeverity()).willReturn(Severity.ERROR);
       List<Failure> failures = Arrays.asList(failure);
       FailureHelper fh = mock(FailureHelper.class);
-      given(fh.asText((ResourceBundle) anyObject())).willReturn("myText");
+      given(fh.asText((ResourceBundle) any())).willReturn("myText");
 
       deployer.getConfiguration().setArchiveValidationFailOnError(true);
 
@@ -158,7 +158,7 @@ public class RADeployerTestCase
       given(failure.getSeverity()).willReturn(Severity.ERROR);
       List<Failure> failures = Arrays.asList(failure);
       FailureHelper fh = mock(FailureHelper.class);
-      given(fh.asText((ResourceBundle) anyObject())).willReturn("myText");
+      given(fh.asText((ResourceBundle) any())).willReturn("myText");
       String fileName = "myFileName.rar";
 
       File directory = new File("tmp-ratest");

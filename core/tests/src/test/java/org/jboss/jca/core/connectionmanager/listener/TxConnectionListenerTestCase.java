@@ -59,16 +59,16 @@ import org.junit.Test;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -152,14 +152,14 @@ public class TxConnectionListenerTestCase
       com.arjuna.ats.jta.transaction.Transaction threadTx = mock(com.arjuna.ats.jta.transaction.Transaction.class);
       when(threadTx.isAlive()).thenReturn(true);
       when(threadTx.getStatus()).thenReturn(Status.STATUS_ACTIVE);
-      when(threadTx.enlistResource((XAResource) anyObject())).thenReturn(true);
-      when(threadTx.delistResource((XAResource) anyObject(), anyInt())).thenReturn(true);
+      when(threadTx.enlistResource((XAResource) any())).thenReturn(true);
+      when(threadTx.delistResource((XAResource) any(), anyInt())).thenReturn(true);
 
       when(tm.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
-      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
+      when(ti.getIdentifier((Transaction) any())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -192,15 +192,15 @@ public class TxConnectionListenerTestCase
       com.arjuna.ats.jta.transaction.Transaction threadTx = mock(com.arjuna.ats.jta.transaction.Transaction.class);
       when(threadTx.isAlive()).thenReturn(true);
       when(threadTx.getStatus()).thenReturn(Status.STATUS_ACTIVE);
-      when(threadTx.enlistResource((XAResource) anyObject())).thenReturn(true);
+      when(threadTx.enlistResource((XAResource) any())).thenReturn(true);
       /*******this is the important GIVEN *******/
-      when(threadTx.delistResource((XAResource) anyObject(), anyInt())).thenReturn(false);
+      when(threadTx.delistResource((XAResource) any(), anyInt())).thenReturn(false);
 
       when(tm.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
-      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
+      when(ti.getIdentifier((Transaction) any())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -234,7 +234,7 @@ public class TxConnectionListenerTestCase
       when(tm.getStatus()).thenReturn(Status.STATUS_NO_TRANSACTION);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
-      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
+      when(ti.getIdentifier((Transaction) any())).thenReturn(id);
       TxConnectionListener listener = 
          new TxConnectionListener(cm, null, null, null,
                                   FlushStrategy.FAILING_CONNECTION_ONLY, null, Boolean.TRUE, null, 0);
@@ -265,7 +265,7 @@ public class TxConnectionListenerTestCase
       when(tm.getStatus()).thenReturn(Status.STATUS_NO_TRANSACTION);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
-      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
+      when(ti.getIdentifier((Transaction) any())).thenReturn(id);
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
                                   FlushStrategy.FAILING_CONNECTION_ONLY, null, Boolean.TRUE, null, 0);
@@ -276,7 +276,7 @@ public class TxConnectionListenerTestCase
       //when
       listener.enlist();
       //then
-      verifyZeroInteractions(transactionSynch);
+      verifyNoInteractions(transactionSynch);
    }
 
    /**
@@ -296,7 +296,7 @@ public class TxConnectionListenerTestCase
       when(tm.getStatus()).thenReturn(Status.STATUS_COMMITTING);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
-      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
+      when(ti.getIdentifier((Transaction) any())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -332,7 +332,7 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
-      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
+      when(ti.getIdentifier((Transaction) any())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -368,7 +368,7 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
-      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
+      when(ti.getIdentifier((Transaction) any())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -400,12 +400,12 @@ public class TxConnectionListenerTestCase
       when(threadTx.isAlive()).thenReturn(true);
       when(threadTx.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       doThrow(new SystemException("ThreadTx Exception")).when(threadTx).registerSynchronization(
-         (Synchronization) anyObject());
+         (Synchronization) any());
       when(tm.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
-      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
+      when(ti.getIdentifier((Transaction) any())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -440,7 +440,7 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
-      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
+      when(ti.getIdentifier((Transaction) any())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -472,13 +472,13 @@ public class TxConnectionListenerTestCase
       when(threadTx.isAlive()).thenReturn(true);
       when(threadTx.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       /******* THIS IS THE IMPORTANT GIVEN ****/
-      when(threadTx.enlistResource((XAResource) anyObject())).thenReturn(false);
+      when(threadTx.enlistResource((XAResource) any())).thenReturn(false);
 
       when(tm.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
-      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
+      when(ti.getIdentifier((Transaction) any())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -509,13 +509,13 @@ public class TxConnectionListenerTestCase
       com.arjuna.ats.jta.transaction.Transaction threadTx = mock(com.arjuna.ats.jta.transaction.Transaction.class);
       when(threadTx.isAlive()).thenReturn(true);
       when(threadTx.getStatus()).thenReturn(Status.STATUS_ACTIVE);
-      when(threadTx.enlistResource((XAResource) anyObject())).thenReturn(true);
+      when(threadTx.enlistResource((XAResource) any())).thenReturn(true);
 
       when(tm.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
-      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
+      when(ti.getIdentifier((Transaction) any())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -575,8 +575,8 @@ public class TxConnectionListenerTestCase
       //when
       listener.connectionClosed(ce);
       //then
-      verify(ccm, times(1)).unregisterConnection((ConnectionCacheListener) anyObject(),
-                                                 (ConnectionListener)anyObject(), anyObject());
+      verify(ccm, times(1)).unregisterConnection((ConnectionCacheListener) any(),
+                                                 (ConnectionListener)any(), any());
       verify(cm, never()).returnManagedConnection(eq(listener), anyBoolean());
    }
 
@@ -602,8 +602,8 @@ public class TxConnectionListenerTestCase
       //when
       listener.connectionClosed(ce);
       //then
-      verify(ccm, times(1)).unregisterConnection((ConnectionCacheListener) anyObject(),
-                                                 (ConnectionListener)anyObject(), anyObject());
+      verify(ccm, times(1)).unregisterConnection((ConnectionCacheListener) any(),
+                                                 (ConnectionListener)any(), any());
       verify(cm, times(1)).returnManagedConnection(eq(listener), eq(false));
    }
 
@@ -632,8 +632,8 @@ public class TxConnectionListenerTestCase
       //when
       listener.connectionClosed(ce);
       //then
-      verify(ccm, never()).unregisterConnection((ConnectionCacheListener) anyObject(),
-                                                (ConnectionListener)anyObject(), anyObject());
+      verify(ccm, never()).unregisterConnection((ConnectionCacheListener) any(),
+                                                (ConnectionListener)any(), any());
       verify(cm, times(1)).returnManagedConnection(eq(listener), eq(true));
    }
 
