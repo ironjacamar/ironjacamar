@@ -51,7 +51,7 @@
                     <execution>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <taskdef name="metadata-parser"
                                          classname="org.jboss.shrinkwrap.descriptor.extension.ant.task.MetadataParserTask"
                                          classpathref="maven.compile.classpath"/>
@@ -352,7 +352,7 @@
                                     </descriptors>
                                 </metadata-parser>
 
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
