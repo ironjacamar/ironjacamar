@@ -73,7 +73,7 @@
         <version.com.github.fungal>0.11.0.Final</version.com.github.fungal>
         <version.com.h2database>2.2.224</version.com.h2database>
         <version.jakarta.validation>2.0.2</version.jakarta.validation>
-        <version.jakarta.xml.bind>3.0.0</version.jakarta.xml.bind>
+        <version.jakarta.xml.bind>4.0.2</version.jakarta.xml.bind>
         <version.jakarta.annotation.jakarta-annotation-api>3.0.0</version.jakarta.annotation.jakarta-annotation-api>
         <version.jakarta.authentication.jakarta-authentication-api>2.0.0</version.jakarta.authentication.jakarta-authentication-api>
         <version.jakarta.authorization.jakarta-authorization-api>2.0.0</version.jakarta.authorization.jakarta-authorization-api>
