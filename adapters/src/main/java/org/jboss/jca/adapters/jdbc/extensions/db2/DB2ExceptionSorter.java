@@ -124,7 +124,7 @@ public class DB2ExceptionSorter implements ExceptionSorter, Serializable
          }
       }
       
-      logger.tracef("Evaluated SQL error code %d isException returned %b", code,  isFatal);
+      logger.tracev("Evaluated SQL error code %d isException returned %b", code,  isFatal);
       
       return isFatal;
    }
