@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.adapters.jdbc.util;
 
+import java.util.function.Predicate;
+
 /**
  * Interface that specifies a policy for caches. <p>
  * Implementation classes can implement a LRU policy, a random one, 
@@ -88,6 +90,8 @@ public interface Cache<K, V>
     */
    public void flush();
 
+
+   public void flush(Predicate<V> predicate);
    /**
     * The cache size
     * @return the size of the cache

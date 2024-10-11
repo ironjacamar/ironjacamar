@@ -42,6 +42,7 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 
 import jakarta.resource.ResourceException;
 import jakarta.resource.spi.ConnectionEvent;
@@ -1306,7 +1307,17 @@ public abstract class BaseWrapperManagedConnection implements NotifyingManagedCo
    {
       if(psCache != null)
       {
-         psCache.flush();
+         psCache.flush(cachedPreparedStatement -> {
+               try
+               {
+                  return cachedPreparedStatement.isClosed();
+               }
+               catch(Exception e)
+               {
+                  mcf.log.errorDuringPreparedStatementCacheFlushing(e);
+                  return false;
+               }
+            });
       }
    }
 

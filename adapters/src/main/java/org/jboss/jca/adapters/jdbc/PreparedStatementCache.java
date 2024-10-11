@@ -29,6 +29,7 @@ import org.jboss.jca.adapters.jdbc.util.LRUCache;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.function.Predicate;
 
 import org.jboss.logging.Logger;
 
@@ -234,9 +235,9 @@ public class PreparedStatementCache implements CacheListener<CachedPreparedState
       }
    }
 
-   void flush()
+   void flush(Predicate<CachedPreparedStatement> predicate)
    {
-      cache.flush();
+      cache.flush(predicate);
    }
 
    /**

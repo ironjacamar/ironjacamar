@@ -333,4 +333,8 @@ public interface AdaptersLogger extends BasicLogger
    @LogMessage(level = WARN)
    @Message(id = 30061, value = "Error resetting auto-commit for: %s")
    public void errorResettingAutoCommit(String msg, @Cause Throwable t);
+
+   @LogMessage(level = WARN)
+   @Message(id = 30062, value = "Error during prepared statement cache flushing")
+   public void errorDuringPreparedStatementCacheFlushing(@Cause Throwable t);
 }
