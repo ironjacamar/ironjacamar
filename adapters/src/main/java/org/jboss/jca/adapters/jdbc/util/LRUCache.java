@@ -23,6 +23,7 @@ package org.jboss.jca.adapters.jdbc.util;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Predicate;
 
 /**
  * Implementation of a Least Recently Used cache policy.
@@ -159,6 +160,20 @@ public class LRUCache<K, V> implements Cache<K, V>
       while ((entry = mList.mTail) != null)
       {
          ageOut(entry);
+      }
+   }
+
+   public void flush(Predicate<V> predicate)
+   {
+      LRUCacheEntry<K, V> entry = mList.mTail;
+      while (entry != null)
+      {
+         LRUCacheEntry<K, V> previous = entry.mPrev;
+         if(predicate.test(entry.mValue))
+         {
+            ageOut(entry);
+         }
+         entry = previous;
       }
    }
 
