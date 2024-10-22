@@ -425,6 +425,11 @@ org.jboss.jca.common.metadata.ds
                 <entry>X</entry>
                 <entry></entry>
               </row>
+              <row>
+                <entry><code>validation-query-timeout</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
             </tbody>
           </tgroup>
         </table>
