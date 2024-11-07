@@ -284,7 +284,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
     */   
    public boolean isTimedOut(long timeout)
    {      
-      return (lastCheckedOut < lastReturned) && (lastReturned < timeout);
+      return (lastCheckedOut <= lastReturned) && (lastReturned < timeout);
    }
 
    /**
