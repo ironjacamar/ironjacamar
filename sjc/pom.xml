@@ -43,7 +43,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.fungal</groupId>
+            <groupId>${ironjacamar.groupId}</groupId>
             <artifactId>fungal</artifactId>
         </dependency>
         <dependency>

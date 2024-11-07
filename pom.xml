@@ -70,7 +70,7 @@
 	    <ironjacamar.version>${project.version}</ironjacamar.version>
 
         <version.com.fasterxml.classmate>1.7.0</version.com.fasterxml.classmate>
-        <version.com.github.fungal>0.11.0.Final</version.com.github.fungal>
+        <version.org.ironjacamar.fungal>0.12.0.Final</version.org.ironjacamar.fungal>
         <version.com.h2database>2.3.232</version.com.h2database>
         <version.jakarta.validation>2.0.2</version.jakarta.validation>
         <version.jakarta.xml.bind>4.0.2</version.jakarta.xml.bind>
@@ -192,9 +192,9 @@
                 <version>${version.com.fasterxml.classmate}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.fungal</groupId>
+                <groupId>${ironjacamar.groupId}</groupId>
                 <artifactId>fungal</artifactId>
-                <version>${version.com.github.fungal}</version>
+                <version>${version.org.ironjacamar.fungal}</version>
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
