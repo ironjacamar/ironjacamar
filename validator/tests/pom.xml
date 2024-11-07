@@ -44,7 +44,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.fungal</groupId>
+            <groupId>${ironjacamar.groupId}</groupId>
             <artifactId>fungal</artifactId>
             <scope>test</scope>
         </dependency>
