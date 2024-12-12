@@ -1157,7 +1157,13 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                      // we need to add clw before checking for pool size; if we exceeded pool size, removing without
                      // adding will cause pool size to not be decremented at removeConnectionListenerFromPool
                      cls.put(cl, clw);
-                     clq.addLast(cls.get(cl));
+                     ConnectionListenerWrapper retrievedClw = cls.get(cl);
+                     if (retrievedClw != null) {
+                        // Add the connection listener to the deque
+                        clq.addLast(retrievedClw);
+                     } else {
+                        log.debug("Failed to retrieve ConnectionListenerWrapper for: " + cl);
+                     }
 
                      // We have to add 1, since poolSize is already incremented
                      if (isSize(size + 1))
@@ -1237,7 +1243,13 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                         // we need to add clw before checking for pool size; if we exceeded pool size, removing without
                         // adding will cause pool size to not be decremented at removeConnectionListenerFromPool
                         cls.put(cl, clw);
-                        clq.addLast(cls.get(cl));
+                        ConnectionListenerWrapper retrievedClw = cls.get(cl);
+                        if (retrievedClw != null) {
+                           // Add the connection listener to the deque
+                           clq.addLast(retrievedClw);
+                        } else {
+                           log.debug("Failed to retrieve ConnectionListenerWrapper for: " + cl);
+                        }
 
                         // We have to add 1, since poolSize is already incremented
                         if (isSize(poolConfiguration.getMaxSize() + 1))
@@ -1285,7 +1297,13 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
    public void addConnectionListener(ConnectionListener cl) 
    {
       cls.put(cl, new ConnectionListenerWrapper(cl, false, false));
-      clq.addLast(cls.get(cl));
+      ConnectionListenerWrapper retrievedClw = cls.get(cl);
+      if (retrievedClw != null) {
+         // Add the connection listener to the deque
+         clq.addLast(retrievedClw);
+      } else {
+         log.debug("Failed to retrieve ConnectionListenerWrapper for: " + cl);
+      }
       poolSize.incrementAndGet();
 
       if (pool.getInternalStatistics().isEnabled())
@@ -1592,7 +1610,13 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
       log.debug("Returning for connection within frequency");
 
       cl.setLastValidatedTime(System.currentTimeMillis());
-      clq.addLast(cls.get(cl));
+      ConnectionListenerWrapper retrievedClw = cls.get(cl);
+      if (retrievedClw != null) {
+         // Add the connection listener to the deque
+         clq.addLast(retrievedClw);
+      } else {
+         log.debug("Failed to retrieve ConnectionListenerWrapper for: " + cl);
+      }
    }
 
    /**
