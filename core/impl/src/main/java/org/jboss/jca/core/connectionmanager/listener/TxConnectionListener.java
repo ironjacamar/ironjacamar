@@ -987,23 +987,17 @@ public class TxConnectionListener extends AbstractConnectionListener
          try
          {
             XAResource resource = getXAResource();
-            if (!(enlistResult = currentTx.enlistResource(resource)))
-            {
-               if (Tracer.isEnabled())
-                  Tracer.enlistConnectionListener(getPool() != null ? getPool().getName() : null, 
-                                                  getManagedConnectionPool(),
-                                                  TxConnectionListener.this, currentTx.toString(), false,
-                                                  !TxConnectionListener.this.isTrackByTx());
+            enlistResult = currentTx.enlistResource(resource);
+            if (Tracer.isEnabled())
+               Tracer.enlistConnectionListener(getPool() != null ? getPool().getName() : null,
+                                               getManagedConnectionPool(),
+                                               TxConnectionListener.this, currentTx.toString(), enlistResult,
+                                               !TxConnectionListener.this.isTrackByTx());
+
+            if (!enlistResult && recordEnlist){
                enlistError = failedToEnlist;
             }
-            else
-            {
-               if (Tracer.isEnabled())
-                  Tracer.enlistConnectionListener(getPool() != null ? getPool().getName() : null,
-                                                  getManagedConnectionPool(),
-                                                  TxConnectionListener.this, currentTx.toString(), true,
-                                                  !TxConnectionListener.this.isTrackByTx());
-            }
+
          }
          catch (Throwable t)
          {
