@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 
 import jakarta.resource.ResourceException;
 import jakarta.resource.spi.ConnectionEvent;
@@ -104,7 +105,14 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
 
    /** The reported exception */
    private Exception reportedException;
-   
+
+   private ReentrantLock lock = new ReentrantLock();
+
+   @Override
+   public ReentrantLock getLock() {
+      return lock;
+   }
+
    /**
     * Creates a new instance of the listener that is responsible for
     * tracking the owned connection instance.
@@ -283,7 +291,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
     * {@inheritDoc}
     */   
    public boolean isTimedOut(long timeout)
-   {      
+   {
       return (lastCheckedOut <= lastReturned) && (lastReturned < timeout);
    }
 
