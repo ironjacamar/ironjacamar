@@ -30,6 +30,8 @@ import javax.transaction.SystemException;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Connection listener.
  * 
