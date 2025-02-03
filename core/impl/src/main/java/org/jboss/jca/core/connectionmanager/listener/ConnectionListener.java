@@ -28,6 +28,8 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 import javax.transaction.SystemException;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Connection listener.
  * 
@@ -50,6 +52,8 @@ public interface ConnectionListener extends org.jboss.jca.core.api.connectionman
     * @return the pool
     */
    public Pool getPool();
+
+   public ReentrantLock getLock();
 
    /**
     * Tidyup
