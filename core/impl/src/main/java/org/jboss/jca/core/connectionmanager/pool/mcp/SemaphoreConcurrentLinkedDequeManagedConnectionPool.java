@@ -133,6 +133,23 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
 
    private boolean poolValidationLoggingEnabled = true;
 
+   private static boolean disableLazyAssociation;
+   static
+   {
+      String value = SecurityActions.getSystemProperty("ironjacamar.disable_lazy_association");
+      if (value != null && !value.trim().equals(""))
+      {
+         try
+         {
+            disableLazyAssociation = Boolean.valueOf(value);
+         }
+         catch (Throwable t)
+         {
+            disableLazyAssociation = false;
+         }
+      }
+   }
+
    /**
     * Constructor
     */
@@ -304,7 +321,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
          if (pool.getInternalStatistics().isEnabled())
             pool.getInternalStatistics().deltaWaitCount();
 
-         if (pool.isSharable() && (supportsLazyAssociation == null || supportsLazyAssociation.booleanValue())) 
+         if (pool.isSharable() && !disableLazyAssociation && (supportsLazyAssociation == null || supportsLazyAssociation.booleanValue()))
          {
             if (supportsLazyAssociation == null)
                checkLazyAssociation();
