@@ -127,6 +127,23 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /** Last used */
    private long lastUsed;
 
+   private static boolean disableLazyAssociation;
+   static
+   {
+      String value = SecurityActions.getSystemProperty("ironjacamar.disable_lazy_association");
+      if (value != null && !value.trim().equals(""))
+      {
+         try
+         {
+            disableLazyAssociation = Boolean.valueOf(value);
+         }
+         catch (Throwable t)
+         {
+            disableLazyAssociation = false;
+         }
+      }
+   }
+
    /**
     * Constructor
     */
@@ -297,7 +314,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          if (pool.getInternalStatistics().isEnabled())
             pool.getInternalStatistics().deltaWaitCount();
 
-         if (pool.isSharable() && (supportsLazyAssociation == null || supportsLazyAssociation.booleanValue()))
+         if (pool.isSharable() && !disableLazyAssociation && (supportsLazyAssociation == null || supportsLazyAssociation.booleanValue()))
          {
             if (supportsLazyAssociation == null)
                checkLazyAssociation();
