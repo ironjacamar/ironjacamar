@@ -28,6 +28,7 @@ import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
+import static org.jboss.logging.Logger.Level.DEBUG;
 import static org.jboss.logging.Logger.Level.ERROR;
 import static org.jboss.logging.Logger.Level.INFO;
 import static org.jboss.logging.Logger.Level.WARN;
@@ -277,7 +278,7 @@ public interface CoreLogger extends BasicLogger
     * No lazy enlistment available
     * @param pool The pool name
     */
-   @LogMessage(level = WARN)
+   @LogMessage(level = DEBUG)
    @Message(id = 407, value = "No lazy enlistment available for %s")
    public void noLazyEnlistmentAvailable(String pool);
 
