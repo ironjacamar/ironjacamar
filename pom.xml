@@ -122,7 +122,7 @@
         <version.org.jboss.threads>3.8.0.Final</version.org.jboss.threads>
         <version.org.jgroups>3.2.16.Final</version.org.jgroups>
         <version.org.glassfish.jakarta.el>4.0.0</version.org.glassfish.jakarta.el>
-        <version.org.mockito>5.15.2</version.org.mockito>
+        <version.org.mockito>5.16.0</version.org.mockito>
         <version.org.picketbox>5.1.0.Final</version.org.picketbox>
         <version.org.wildfly.common>2.0.1</version.org.wildfly.common>
         <version.org.wildfly.transaction.client>3.0.5.Final</version.org.wildfly.transaction.client>
