@@ -104,7 +104,7 @@
         <version.org.apache.maven.plugin.tools>3.15.1</version.org.apache.maven.plugin.tools>
         <version.org.jboss.arquillian.core>1.7.0.Alpha10</version.org.jboss.arquillian.core>
         <version.org.jboss.arquillian.extension.byteman>1.1.0</version.org.jboss.arquillian.extension.byteman>
-        <version.org.eclipse.jetty>11.0.24</version.org.eclipse.jetty>
+        <version.org.eclipse.jetty>11.0.25</version.org.eclipse.jetty>
         <version.org.hibernate.validator>7.0.1.Final</version.org.hibernate.validator>
         <version.org.jboss.byteman>4.0.22</version.org.jboss.byteman>
         <version.org.jboss.common>2.5.0.Final</version.org.jboss.common>
