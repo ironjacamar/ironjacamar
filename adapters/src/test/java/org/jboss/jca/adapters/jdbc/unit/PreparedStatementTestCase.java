@@ -22,6 +22,7 @@
 
 package org.jboss.jca.adapters.jdbc.unit;
 
+import org.h2.api.ErrorCode;
 import org.jboss.jca.adapters.ArquillianJCATestUtils;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
@@ -39,7 +40,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
-import org.h2.constant.ErrorCode;
 import org.h2.util.Task;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -326,7 +326,7 @@ public class PreparedStatementTestCase
          assertNotNull(st);
 
          // Create
-         st.execute("CREATE ALIAS SLEEP FOR \"java.lang.Thread.sleep\"");
+         st.execute("CREATE ALIAS SLEEP FOR \"java.lang.Thread.sleep(long)\"");
 
          // Prepared statement, sleep for 10 seconds
          pstmt = c.prepareStatement("SELECT SLEEP(?) FROM SYSTEM_RANGE(1, 10000) LIMIT ?");
