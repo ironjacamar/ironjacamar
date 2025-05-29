@@ -23,6 +23,7 @@
 package org.jboss.jca.adapters.jdbc.extensions.oracle;
 
 import org.jboss.jca.adapters.jdbc.extensions.novendor.JDBC4ValidConnectionChecker;
+import org.jboss.jca.adapters.jdbc.CheckValidConnectionSQL;
 
 /**
  * Implements a valid connection checker for Oracle
@@ -30,16 +31,19 @@ import org.jboss.jca.adapters.jdbc.extensions.novendor.JDBC4ValidConnectionCheck
  * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class OracleValidConnectionChecker extends JDBC4ValidConnectionChecker
+public class OracleValidConnectionChecker extends CheckValidConnectionSQL
 {
    private static final long serialVersionUID = 1937054230333286884L;
+
+   /** The VALID_QUERY */
+   private static final String VALID_QUERY = "SELECT 1 FROM DUAL";
 
    /**
     * Constructor
     */
    public OracleValidConnectionChecker()
    {
-      super();
+      super(VALID_QUERY);
    }
 
 }
