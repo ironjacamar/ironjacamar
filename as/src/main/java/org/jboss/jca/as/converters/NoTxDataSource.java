@@ -197,7 +197,11 @@ public interface NoTxDataSource extends DataSource
       /**
       * useTryLock tag
       */
-      USE_TRY_LOCK("use-try-lock");
+      USE_TRY_LOCK("use-try-lock"),
+      /**
+       * validationQueryTimeout tag
+       */
+      VALIDATION_QUERY_TIMEOUT("validation-query-timeout");
 
       private final String name;
 
