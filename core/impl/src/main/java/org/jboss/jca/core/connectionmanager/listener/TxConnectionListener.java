@@ -1131,8 +1131,9 @@ public class TxConnectionListener extends AbstractConnectionListener
             // This is where we close when doing track by transaction
             if (wasTrackByTx)
             {
-               log.tracef("afterCompletion(%d) isTrackByTx=%b for %s",
-                          status, isTrackByTx(), TxConnectionListener.this);
+                String isTrackByTx = String.valueOf(isTrackByTx());
+                log.tracef("afterCompletion(%d) isTrackByTx=%s for %s",
+                       status, isTrackByTx, TxConnectionListener.this);
 
                if (wasFreed(null))
                {
