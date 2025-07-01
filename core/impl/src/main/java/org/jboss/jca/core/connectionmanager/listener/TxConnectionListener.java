@@ -1179,6 +1179,8 @@ public class TxConnectionListener extends AbstractConnectionListener
                      if (log.isTraceEnabled())
                         log.tracef(new Exception("Connection across boundary"), "ConnectionListener=%s",
                                    TxConnectionListener.this);
+                     getConnectionManager().returnManagedConnection(TxConnectionListener.this, true);
+
                   }
                }
             }
