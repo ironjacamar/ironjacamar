@@ -1,6 +1,6 @@
 #.project
 .settings
-#.classpath
+.classpath
 standalone/**
 build.debug.xml
 .idea
