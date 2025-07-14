@@ -45,3 +45,4 @@ ${test.dir}/
 target
 
 .vscode
+.project
