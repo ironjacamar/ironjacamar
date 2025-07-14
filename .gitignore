@@ -43,3 +43,5 @@ ${test.dir}/
 .checkstyle
 
 target
+
+.vscode
