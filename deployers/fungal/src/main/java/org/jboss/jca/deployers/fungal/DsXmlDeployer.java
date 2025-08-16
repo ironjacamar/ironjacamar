@@ -539,7 +539,7 @@ public class DsXmlDeployer extends AbstractDsDeployer implements Deployer
 
                if (mgtDs.getPoolConfiguration() != null)
                {
-                  String dsPCName = baseName + ",type=PoolConfigutation";
+                  String dsPCName = baseName + ",type=PoolConfiguration";
 
                   DynamicMBean dsPCDMB = JMX.createMBean(mgtDs.getPoolConfiguration(), "Pool configuration");
                   ObjectName dsPCON = new ObjectName(dsPCName);
