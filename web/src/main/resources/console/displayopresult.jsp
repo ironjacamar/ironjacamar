@@ -38,13 +38,13 @@
       <input type="button" value="Back to Agent" onClick="javascript:location='HtmlAdaptor?action=displayMBeans'"/>
     </p>
     <p>
-      <input type="button" value="Back to MBean" onClick="javascript:location='HtmlAdaptor?action=inspectMBean&amp;name=<%= request.getParameter("name") %>'"/>
+      <!--<input type="button" value="Back to MBean" onClick="javascript:location='HtmlAdaptor?action=inspectMBean&amp;name=<%= request.getParameter("name") %>'"/>-->
     </p>
     <p>
     <%
       out.print("<input type='button' onClick=\"location='HtmlAdaptor?action=invokeOpByName");
       out.print("&amp;name=" + request.getParameter("name"));
-      out.print("&amp;methodName=" + opResultInfo.getName());
+      //out.print("&amp;methodName=" + opResultInfo.getName());
     
       for (int i = 0; i < opResultInfo.getArguments().length; i++)
       {
