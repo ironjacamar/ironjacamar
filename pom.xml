@@ -69,7 +69,7 @@
 	    <ironjacamar.groupId>${project.groupId}</ironjacamar.groupId>
 	    <ironjacamar.version>${project.version}</ironjacamar.version>
 
-        <version.com.fasterxml.classmate>1.7.0</version.com.fasterxml.classmate>
+        <version.com.fasterxml.classmate>1.7.1</version.com.fasterxml.classmate>
         <version.org.ironjacamar.fungal>0.12.0.Final</version.org.ironjacamar.fungal>
         <version.com.h2database>2.3.232</version.com.h2database>
         <version.jakarta.validation>2.0.2</version.jakarta.validation>
