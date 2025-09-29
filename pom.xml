@@ -71,7 +71,7 @@
 
         <version.com.fasterxml.classmate>1.7.0</version.com.fasterxml.classmate>
         <version.org.ironjacamar.fungal>0.12.0.Final</version.org.ironjacamar.fungal>
-        <version.com.h2database>2.3.232</version.com.h2database>
+        <version.com.h2database>2.4.240</version.com.h2database>
         <version.jakarta.validation>2.0.2</version.jakarta.validation>
         <version.jakarta.xml.bind>4.0.4</version.jakarta.xml.bind>
         <version.jakarta.annotation.jakarta-annotation-api>3.0.0</version.jakarta.annotation.jakarta-annotation-api>
