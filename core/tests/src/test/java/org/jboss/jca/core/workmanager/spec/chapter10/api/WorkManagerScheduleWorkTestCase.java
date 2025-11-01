@@ -28,6 +28,7 @@ import org.jboss.jca.core.workmanager.spec.chapter10.common.SimpleWork;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import jakarta.resource.spi.work.ExecutionContext;
 import jakarta.resource.spi.work.Work;
@@ -188,7 +189,8 @@ public class WorkManagerScheduleWorkTestCase
 
       workManager.scheduleWork(work, WorkManager.IMMEDIATE, null, null);
 
-      assertFalse(work.hasPostRun());
+      assertTrue(done.await(1, TimeUnit.SECONDS));
+      assertTrue(work.hasPostRun());
    }
 
    /**
