@@ -70,6 +70,8 @@
         <ironjacamar.groupId>${project.groupId}</ironjacamar.groupId>
         <ironjacamar.version>${project.version}</ironjacamar.version>
 
+        <maven.compiler.release>8</maven.compiler.release>
+
         <nexus.repository.staging>wildfly-staging</nexus.repository.staging>
         <nexus.staging.tag>ironjacamar-${project.version}</nexus.staging.tag>
 
