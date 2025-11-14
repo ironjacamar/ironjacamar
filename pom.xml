@@ -69,6 +69,9 @@
         <ironjacamar.groupId>${project.groupId}</ironjacamar.groupId>
         <ironjacamar.version>${project.version}</ironjacamar.version>
 
+        <nexus.repository.staging>wildfly-staging</nexus.repository.staging>
+        <nexus.staging.tag>openjdk-orb-${project.version}</nexus.staging.tag>
+
         <version.com.fasterxml.classmate>1.7.1</version.com.fasterxml.classmate>
         <version.org.ironjacamar.fungal>0.12.0.Final</version.org.ironjacamar.fungal>
         <version.com.h2database>2.4.240</version.com.h2database>
