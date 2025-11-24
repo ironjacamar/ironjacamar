@@ -379,7 +379,9 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                   try
                   {
                      connectionLock.lock();
-                     if(clw.getConnectionListener().getState().equals(ConnectionState.DESTROY) || clw.getConnectionListener().getState().equals(ConnectionState.DESTROYED))
+                     if(clw.getConnectionListener().getState().equals(ConnectionState.DESTROY) ||
+                           clw.getConnectionListener().getState().equals(ConnectionState.DESTROYED) ||
+                           clw.getConnectionListener().getState().equals(ConnectionState.TO_BE_DESTROYED))
                      {
                         continue;
                      }
@@ -1000,9 +1002,20 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
 
          ConnectionListenerWrapper clw = clwIter.next();
 
-         destroy = decrementer.shouldDestroy(clw.getConnectionListener(),
-                                             timeout, poolSize.get(),
-                                             poolConfiguration.getMinSize(), destroyed);
+         clw.getConnectionListener().getLock().lock();
+         try
+         {
+             destroy = decrementer.shouldDestroy(clw.getConnectionListener(), timeout, poolSize.get(),
+                   poolConfiguration.getMinSize(), destroyed);
+             if(destroy)
+             {
+                clw.getConnectionListener().setState(ConnectionState.TO_BE_DESTROYED);
+             }
+         }
+         finally
+         {
+             clw.getConnectionListener().getLock().unlock();
+         }
 
          if (destroy) 
          {
