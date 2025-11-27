@@ -1038,6 +1038,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
             } 
             else 
             {
+               clw.getConnectionListener().setState(ConnectionState.NORMAL);
                destroy = false;
             }
          }
