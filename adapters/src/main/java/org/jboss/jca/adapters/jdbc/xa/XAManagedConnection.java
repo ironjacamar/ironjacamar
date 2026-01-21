@@ -279,7 +279,7 @@ public class XAManagedConnection extends BaseWrapperManagedConnection implements
             	// currentXid is not equal to xid yet
             	// we need to call the super method otherwise the broadcastConnectionError of this class the first time throws the exception adding the currentXid = null to the HashSet
             	// second time the null value is already present in the HashSet and the broadcast is skipped
-            	broadcastConnectionError(e);
+            	super.broadcastConnectionError(e);
 
              }
             
