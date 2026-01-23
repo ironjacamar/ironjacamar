@@ -472,6 +472,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Long allocationRetryWaitMillis = null;
       Long useTryLock = null;
       Integer xaResourceTimeout = null;
+      Long validationQueryTimeout = null;
 
       while (reader.hasNext())
       {
@@ -484,7 +485,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
                   return new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
                                          allocationRetryWaitMillis, xaResourceTimeout, setTxQuertTimeout,
-                                         queryTimeout, useTryLock);
+                                         queryTimeout, useTryLock, validationQueryTimeout);
                }
                else
                {
@@ -528,6 +529,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case XA_RESOURCE_TIMEOUT : {
                      xaResourceTimeout = elementAsInteger(reader);
+                     break;
+                  }
+                  case VALIDATION_QUERY_TIMEOUT: {
+                     validationQueryTimeout = elementAsLong(reader);
                      break;
                   }
                   default :
