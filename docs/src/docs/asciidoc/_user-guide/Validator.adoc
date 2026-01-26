@@ -1,0 +1,187 @@
+== Validator
+
+[[validator_introduction]]
+=== Introduction
+
+The IronJacamar container features a validator which checks resource
+adapter archives against the Java Connector Architecture (JCA)
+specification.
+
+The validator is doing a static analysis of the resource adapter classes
+and checks them against the rules defined in the validator.
+
+The validator is used in the deployer chain of the JCA container, and is
+available as a standalone tool, as an Apache Ant task and as a Apache
+Maven plugin too.
+
+[[validator_reports]]
+=== Reports
+
+The validator works by scanning the resource adapter in question and
+output a report which lists which rules have been violated.
+
+An example could be
+
+....
+Severity: ERROR
+Section: 19.4.2
+Description: A ResourceAdapter must implement a "public int hashCode()" method.
+Code: com.mycompany.myproject.ResourceAdapterImpl
+
+Severity: ERROR
+Section: 19.4.2
+Description: A ResourceAdapter must implement a "public boolean equals(Object)" method.
+Code: com.mycompany.myproject.ResourceAdapterImpl
+      
+....
+
+which means that `com.mycompany.myproject.ResourceAdapterImpl` is
+missing an `equals` and `hashCode` implementation.
+
+.Validator report
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Key |Desciption
+|`Severity` a|
+Specifies the severity of the rule.
+
+* ERROR: Critical error which must be fixed in order for the resource
+adapter to operate correctly.
+* WARN: Error which should be fixed in order for the resource adapter to
+operate correctly.
+
+|`Section` |A reference to a section in the Java Connector Architecture
+specification where the requirement is defined.
+
+|`Descrption` |A short description of the rule.
+
+|`Code` |The class which triggered the rule.
+|===
+
+[[validator_standalone]]
+=== Running the standalone validator
+
+The validator can be run on the command line by
+
+....
+cd doc/validator
+./validator.sh <file>
+      
+....
+
+The reports will be generated into the current directory under the name
+of `++<++file++>++.log`.
+
+[[validator_ant]]
+=== Apache Ant integration
+
+The validator integrates with Apache Ant such that you can generate the
+reports directly from your build environment before deploying the
+resoruce adapter into the IronJacamar container.
+
+First you have to define the `taskdef` for the task
+
+....
+<taskdef name="validator"
+         classname="org.jboss.jca.validator.ant.ValidatorTask"
+         classpathref="ironjacamar.lib.path.id"/>
+      
+....
+
+See the Apache Ant documentation for additional instructions on
+installation.
+
+[[validator_ant_usage]]
+==== Usage
+
+....
+<validator rarFile="${myArchive.rar}" outputDir="${report.dir}"/>
+        
+....
+
+.Apache Ant: validator
+[cols=",",options="header",]
+|===
+|Key |Value
+|`rarFile` |The resource adapter file
+|`outputDir` |The directory where the reports should be generated
+|`classpath` |A classpath to resolve additional dependencies against
+|===
+
+[[validator_maven]]
+=== Apache Maven integration
+
+The validator integrates with Apache Maven such that you can generate
+the reports directly from your build environment before deploying the
+resoruce adapter into the IronJacamar container.
+
+To be able to use the validator plugin in your Maven project, you will
+have to add the following plugin declaration in the pom.xml of your
+project:
+
+[source,xml]
+----
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.jboss.ironjacamar</groupId>
+      <artifactId>ironjacamar-validator-maven</artifactId>
+      <!-- The version of the plugin you want to use -->
+      <version>1.2.0.Final</version>
+      <executions>
+        <execution>
+          <goals>
+            <goal>validate</goal>
+          </goals>
+        </execution>
+      </executions>
+      <configuration>
+        <!-- output directory-->
+        <outputDir>.</outputDir>
+        
+        <!-- rar filename -->
+        <rarFile>/path/to/myresourceadapter.rar</rarFile>
+        
+        <!--  optional classpath 
+        <classpath>
+          <param>classpath1</param>
+          <param>classpath2</param>
+        </classpath>
+        -->
+      </configuration>
+    </plugin>
+  </plugins>
+</build>        
+
+        
+----
+
+[NOTE]
+====
+By default, the validator-maven plugin is attached to the "package"
+phase of Maven.
+====
+
+See the Apache Maven documentation for additional instructions on
+installation.
+
+[[validator_maven_usage]]
+==== Usage
+
+Once you have configured your project's pom.xml to include the
+validator-maven plugin, as explained earlier, you can generate the
+report by running the package goal on your project.
+
+....
+mvn clean package
+        
+....
+
+.Apache Maven: validator
+[cols=",",options="header",]
+|===
+|Key |Value
+|`rarFile` |The resource adapter file
+|`outputDir` |The directory where the reports should be generated
+|`classpath` |A classpath to resolve additional dependencies against
+|===

@@ -1,0 +1,700 @@
+== Configuration
+
+The configuration for the IronJacamar container is mainly located under
+the `config/` directory.
+
+[[configuration_ironjacamar]]
+=== IronJacamar server
+
+The IronJacamar server can be configured by including an
+`ironjacamar.properties` file next to the `ironjacamar-sjc.jar` in the
+`bin/` directory.
+
+This file will allow to override the core options given to the kernel
+environment, if multiple instances of the IronJacamar container are
+going to run on the same machine, and network interface.
+
+The options available
+
+.IronJacamar options
+[width="100%",cols="38%,25%,37%",options="header",]
+|===
+|Property |Type |Description
+|`name` |`String` |The name of the IronJacamar configuration
+
+|`management` |`boolean` |Should management be enabled
+
+|`parallel.deploy` |`boolean` |Should parallel deployment be enabled
+
+|`remote.access` |`boolean` |Should remote access be enabled
+
+|`remote.port` |`int` |The port for remote access
+
+|`remote.jmx.access` |`boolean` |Should remote access via JMX be enabled
+
+|`use.platform.mbeanserver` |`boolean` |Should the platform MBeanServer
+be used for management
+
+|`bean.management` |`boolean` |Should management for all beans be
+enabled
+|===
+
+An example of an `ironjacamar.properties` file:
+
+....
+remote.access=true
+remote.port=1302
+        
+....
+
+[[configuration_ironjacamar_leakpool]]
+==== Using the leak detector pool
+
+IronJacamar features a connection pool implementation, which keeps track
+of connection allocations, and their release in order to provide
+feedback if a connection is obtained, but never released by the
+application. This will cause leaks, and lead to applications not being
+able to obtain any connections.
+
+The leak detector pool provides a stack trace of the leaked connection
+allocation either during shutdown of the pool, or once the pool is flush
+using a flush strategy which kills all active connections.
+
+The leak detector pool is configured using the `ironjacamar.mcp` system
+property with a value of
+
+....
+org.jboss.jca.core.connectionmanager.pool.mcp.LeakDumperManagedConnectionPool
+        
+....
+
+This configuration applies to all connection pools used by IronJacamar.
+
+The system property `ironjacamar.leaklog` can be used to have the leaks
+dumped out into a special file separate from the logging setup.
+
+An example
+
+....
+-Dironjacamar.mcp=org.jboss.jca.core.connectionmanager.pool.mcp.LeakDumperManagedConnectionPool
+-Dironjacamar.leaklog=leaks.txt
+        
+....
+
+[[configuration_ironjacamar_rollback]]
+==== Allow obtaining connections during MARKED++_++FOR++_++ROLLBACK
+
+IronJacamar doesn't allow to obtain a new connection once a transaction
+is in `MARKED++_++FOR++_++ROLLBACK` mode. This allows the container to
+fail eagerly, since any work after that point is wasted anyway.
+
+However, certain applications depends on getting a connection to perform
+work.
+
+IronJacamar has a system property called
+`ironjacamar.allow++_++marked++_++for++_++rollback` which can be set to
+`true` to enable this scenario.
+
+Note, that an existing enlisted connection is allowed to be obtained.
+This can be disallowed by setting the system property
+`ironjacamar.allow++_++marked++_++for++_++rollback++_++fast++_++fail` to
+`true`.
+
+[WARNING]
+====
+This should not be considered best practice, and the application in
+question should be fixed by checking the transaction status.
+====
+
+[[configuration_ironjacamar_enlistment]]
+==== Disable enlistment trace
+
+IronJacamar records transaction enlistment traces in order to help to
+locate error situations that happens during enlistment of `XAResource`
+instances.
+
+This has a performance overhead of course, so in certain situations you
+may want to disable these traces.
+
+IronJacamar has a system property called
+`ironjacamar.disable++_++enlistment++_++trace` which can be set to
+`true` which does this.
+
+[WARNING]
+====
+By disabling the enlistment trace tracking down errors during
+transaction enlistment will become much more difficult. So, only add
+this system property if you know what you are doing.
+====
+
+[[configuration_ironjacamar_delistresource]]
+==== Disable `delistResource` calls
+
+IronJacamar calls `transaction.enlistResource(xaResource)` for the
+`ManagedConnection` when it is enlisting in the transaction.
+
+IronJacamar will also call
+`transaction.delistResource(xaResource, flag)` once the
+`ManagedConnection` should be disassociated with the transaction. This
+typically happens on the transaction boundary (`beforeCompletion`)
+before the connection is returned to the pool (`afterCompletion`). This
+is done as part of the transaction specification contract.
+
+However, in certain scenarios you may want to disable this call, as
+other `Synchronization` objects may still want the connection enlisted
+in the transaction, and hence it depends on the ordering of these
+objects.
+
+IronJacamar has a system property called
+`ironjacamar.no++_++delist++_++resource` which is a `','` separated list
+of pool names where `delistResource` shouldn't be called. Disabling the
+`delistResource` call for all pools can be done by defining
+`ironjacamar.no++_++delist++_++resource++_++all`.
+
+[WARNING]
+====
+By disabling the
+
+delistResource
+
+call it is up to the resource manager and transaction manager to make
+sure that the connection is delisted from the transaction in all cases.
+====
+
+[[configuration_ironjacamar_rollback_on_fatal_error]]
+==== Disable `setRollbackOnly` calls
+
+IronJacamar calls `transaction.setRollbackOnly()` when the
+`ManagedConnection` has a fatal error occur on it after calling the
+`transaction.delistResource(xaResource, XAResource.TMFAIL)` method.
+
+IronJacamar has a system property called
+`ironjacamar.rollback++_++on++_++fatal++_++error` which is either a
+value of `true`, `false` or a `','` separated list of pool names where
+`setRollbackOnly` shouldn't be called.
+
+[WARNING]
+====
+By disabling the
+
+setRollbackOnly
+
+call it is up to the transaction manager to make sure that the outcome
+of transaction is correctly handled, since the associated
+
+XAResource
+
+instance no longer can access the Enterprise Information System, and
+hence implementation specific behavior.
+====
+
+[[logging]]
+=== Logging service
+
+The IronJacamar container uses JBoss Logging framework as the
+implementation.
+
+The configuration is done in the
+
+....
+config/logging.properties
+      
+....
+
+file.
+
+Consult the http://www.jboss.org/community/wiki/JBossBootLogging[JBoss
+Logging documentation] on how the service can be configured.
+
+[[transaction]]
+=== Transaction service
+
+The IronJacamar container uses Narayana its transaction implementation.
+
+The configuration is done in the
+
+....
+config/transaction.xml
+      
+....
+
+file.
+
+Consult the Narayana documentation on how the service can be configured.
+
+=== JCA
+
+[[jca_deployer]]
+==== Deployer
+
+The IronJacamar deployer is configured in the
+
+....
+config/bootstrap/jca.xml
+        
+....
+
+file.
+
+[[jca_deployer_configuration]]
+===== Configuration
+
+The configuration of the resource adapter deployer chain is handled by a
+`org.jboss.jca.deployers.fungal.RAConfiguration` bean.
+
+[source,xml]
+----
+<bean name="RAConfiguration"
+      class="org.jboss.jca.deployers.fungal.RAConfiguration">
+  <property name="ArchiveValidation">true</property>
+  <property name="ArchiveValidationFailOnWarn">false</property>
+  <property name="ArchiveValidationFailOnError">true</property>
+  <property name="BeanValidation">true</property>
+  <property name="PrintStream">
+    <inject bean="JBossStdioContext" property="Out"/>
+  </property>
+  <property name="DefaultBootstrapContext">
+    <inject bean="DefaultBootstrapContext"/>
+  </property>
+  <property name="JndiStrategy"><inject bean="JndiStrategy"/></property>
+  <property name="TransactionManager">
+    <inject bean="RealTransactionManager"/>
+  </property>
+  <property name="MetadataRepository"><inject bean="MDR"/></property>
+</bean>
+ 
+          
+----
+
+.Resource adapter deployer configuration
+[width="100%",cols="30%,28%,42%",options="header",]
+|===
+|Property |Type |Description
+|`ArchiveValidation` |`boolean` a|
+Toggle archive validation for the deployment units.
+
+Default: `true`
+
+|`ArchiveValidation​FailOnWarn` |`boolean` a|
+Should an archive validation warning report fail the deployment.
+
+Default: `false`
+
+|`ArchiveValidation​FailOnError` |`boolean` a|
+Should an archive validation error report fail the deployment.
+
+Default: `true`
+
+|`BeanValidation` |`boolean` a|
+Toggle bean validation (JSR-303) for the deployment units.
+
+Default: `true`
+
+|`DefaultBootstrap​Context`
+|`org.jboss.jca.​core.api.bootstrap.​CloneableBootstrap​Context` |Specifies
+the default bootstrap context for resource adapters
+
+|`BootstrapContexts`
+|`Map++<++String, ​org.jboss.jca.​core.api.bootstrap.​CloneableBootstrap​Context++>++`
+|Bootstrap context map (unique name to a cloneable bootstrap context)
+which allows developers to bind (through `ironjacamar.xml`) their
+resource adapter to a specific bootstrap context instance.
+
+|`PrintStream` |`java.io.PrintStream` |Specifies which print stream that
+should be used to handle the `LogWriter`s
+
+|`MetadataRepository` |`org.jboss.jca.​core.spi.mdr.​MetadataRepository`
+|The metadata repository
+
+|`ResourceAdapterRepository`
+|`org.jboss.jca.​core.spi.rar.​ResourceAdapterRepository` |The resource
+adapter repository
+
+|`ScopeDeployment` |`boolean` a|
+Should each deployment be scoped (isolated) from the container. This
+feature allows deployment of libraries of a different version than used
+in the container environment.
+
+Default: `false`
+
+|`JndiStrategy` |`org.jboss.jca.​core.spi.naming.​JndiStrategy` a|
+Specifies the JNDI strategy policy for binding the connection factories
+into the naming environment
+
+The JNDI strategies are located in the `org.jboss.jca.core.naming`
+package
+
+* NoopJndiStrategy
++
+: A no operation JNDI strategy which doesn't bind/unbind any objects
+* SimpleJndiStrategy
++
+: A simple JNDI strategy which can bind/unbind a single connection
+factory
+* ExplicitJndiStrategy
++
+: A JNDI strategy which can requires explicit JNDI names to bind/unbind
+a connection factory
+
+|===
+
+[[jca_deployer_radeployer]]
+===== Resource adapter deployer
+
+The initial deployer for resource adapter archives is handled by a
+`org.jboss.jca.deployers.fungal.RADeployer` bean.
+
+[source,xml]
+----
+<bean name="RADeployer"
+      interface="com.github.fungal.spi.deployers.Deployer" 
+      class="org.jboss.jca.deployers.fungal.RADeployer">
+  <property name="Configuration"><inject bean="RAConfiguration"/></property>
+  <depends>BeanValidation</depends>
+  <depends>JBossStdioContextSelector</depends>
+</bean>
+ 
+          
+----
+
+This deployer will register the resource adapters with the metadata
+repository in the system.
+
+.Resource adapter deployer
+[width="100%",cols="30%,28%,42%",options="header",]
+|===
+|Property |Type |Description
+|`Configuration` |`org.jboss.jca.​deployers.fungal.​RAConfiguration` |The
+configuration for the deployer
+|===
+
+[[jca_deployer_raxmldeployer]]
+===== Resource adapter metadata deployer
+
+The deployer for deploying our `-ra.xml` deployment descriptor is
+handled by a `org.jboss.jca.deployers.fungal.RaXmlDeployer` bean.
+
+The deployment descriptor is defined by the
+`resource-adapters-1++_++0.xsd` and `resource-adapters-1++_++1.xsd`
+schemas.
+
+[source,xml]
+----
+<bean name="RaXmlDeployer"
+      interface="com.github.fungal.spi.deployers.Deployer" 
+      class="org.jboss.jca.deployers.fungal.RaXmlDeployer">
+  <property name="Configuration"><inject bean="DeployerConfiguration"/></property>
+  <property name="Kernel"><inject bean="Kernel"/></property>
+  <depends>BeanValidation</depends>
+  <depends>JBossStdioContextSelector</depends>
+</bean>
+ 
+          
+----
+
+This deployer will activate resource adapters based on the deployment
+information.
+
+.Resource adapter metadata deployer
+[width="100%",cols="30%,28%,42%",options="header",]
+|===
+|Property |Type |Description
+|`Configuration` |`org.jboss.jca.​deployers.fungal.​RAConfiguration` |The
+configuration for the deployer
+|===
+
+[[jca_deployer_raactivator]]
+===== Resource adapter activator
+
+The deployer chain features an activator for resource adapter archives
+is handled by the `org.jboss.jca.deployers.fungal.RAActivator` bean.
+
+[source,xml]
+----
+<bean name="RAActivator" 
+      class="org.jboss.jca.deployers.fungal.RAActivator">
+  <property name="Configuration"><inject bean="RAConfiguration"/></property>
+  <property name="Kernel"><inject bean="Kernel"/></property>
+  <property name="ExcludeArchives">
+    <set elementClass="java.lang.String">
+      <value>jdbc-local.rar</value>
+      <value>jdbc-xa.rar</value>
+    </set>
+  </property>
+  <depends>BeanValidation</depends>
+  <depends>JBossStdioContextSelector</depends>
+</bean>
+ 
+          
+----
+
+This activator will activate any resource adapters which hasn't been
+activated yet unless they are in the excluded list.
+
+.Resource adapter activator
+[width="100%",cols="30%,28%,42%",options="header",]
+|===
+|Property |Type |Description
+|`Configuration` |`org.jboss.jca.​deployers.fungal.​RAConfiguration` |The
+configuration for the deployer
+
+|`Enabled` |`boolean` |Should the activator be enabled. Default is
+`true`
+
+|`Kernel` |`com.github.fungal.​api.Kernel` |The kernel instance
+
+|`ExcludeArchives` |`java.util.Set` |A set of resource adapter archives
+which should be excluded from activation
+|===
+
+[[jca_workmanager]]
+==== Work manager
+
+IronJacamar features a standard work manager on its default setup using
+one thread pool for short running jobs, and one thread pool for long
+running jobs identified by the `HintsContext.LONGRUNNING++_++HINT` with
+a value of `true`.
+
+The configuration of the work manager and the necessary components can
+be viewed in the `jca.xml` file.
+
+[[jca_distributed_workmanager]]
+===== Distributed work manager
+
+A distributed work manager is a work manager instance, which is able to
+reschedule work execution on another work manager instance on the
+network.
+
+The distributed work manager has three additional components
+
+* Policy -- When to distribute the work instance
+* Selector -- To which work manager instance
+* Transport -- How the work instance is transferred
+
+to control the distribution process.
+
+Supported policies
+
+* Never --
++
+org.jboss.jca.core.workmanager.policy.Never
++
+Never the distribute the `Work` instance to another node.
+* Always --
++
+org.jboss.jca.core.workmanager.policy.Always
++
+Always the distribute the `Work` instance to another node.
+* WaterMark --
++
+org.jboss.jca.core.workmanager.policy.WaterMark
++
+Distribute the `Work` instance to another node based on how many free
+worker threads the current node has available.
+
+Supported selectors
+
+* FirstAvailable --
++
+org.jboss.jca.core.workmanager.selector.FirstAvailable
++
+Select the first available node in the list
+* PingTime --
++
+org.jboss.jca.core.workmanager.selector.PingTime
++
+Select the node with the lowest ping time
+* MaxFreeThreads --
++
+org.jboss.jca.core.workmanager.selector.MaxFreeThreads
++
+Select the node with highest number of free worker threads
+
+Supported transports
+
+* Socket --
++
+org.jboss.jca.core.workmanager.transport.remote.socket.SocketTransport
++
+Communication based on `java.net.Socket`, and hence TCP/IP
+* JGroups --
++
+org.jboss.jca.core.workmanager.transport.remote.jgroups.JGroupsTransport
++
+Communication based on the JGroups framework, and hence UDP (by default)
+
+Below is an example of a socket based configuration where two instances
+`localhost:1299` and `localhost:1300` communicates, taken from the
+IronJacamar test suite.
+
+[source,xml]
+----
+          
+----
+
+[[jca_security]]
+==== Security
+
+The Java EE Connector Architecture 1.6 specification allows units of
+`javax.resource.spi.Work` to be executed in a specific security context.
+
+This is done through the use of Java Authentication Service Provider
+Interface for Containers (JSR-196) call backs using the
+`javax.security.auth.callback.Callback` interface.
+
+The support is activated by letting the work instance implement the
+
+....
+javax.resource.spi.work.WorkContextProvider
+        
+....
+
+interface and returning an instance of
+`javax.resource.spi.work.SecurityContext`.
+
+The security callback is configured through the `++>++workmanager++<++`
+element for the deployment, either in `ironjacamar.xml` or in the
+`-ra.xml` file. See the schema definitions for further details.
+
+There is support for creating a basic security domain which can provide
+a `javax.security.auth.Subject` instance to deployments that are using
+`++<++security-domain++>++` or
+`++<++security-domain-and-application++>++` in their setup.
+
+A security domain can be configured through
+
+[source,xml]
+----
+          
+<!-- SubjectFactory -->
+<bean name="DefaultSecurityDomain"
+      interface="org.jboss.jca.core.spi.security.SubjectFactory"
+      class="org.jboss.jca.core.security.DefaultSubjectFactory">
+  <property name="SecurityDomain">DefaultSecurityDomain</property>
+  <property name="UserName">user</property>
+  <property name="Password">password</property>
+</bean>
+           
+        
+----
+
+beans.
+
+=== Datasources
+
+The IronJacamar project can deploy datasources using the
+`datasources-1++_++0.xsd`, `datasources-1++_++1.xsd` or
+`datasources-1++_++2.xsd` schemas.
+
+The configuration is done in the
+
+....
+config/bootstrap/ds.xml
+      
+....
+
+file.
+
+.DsXmlDeployer
+[width="100%",cols="30%,28%,42%",options="header",]
+|===
+|Property |Type |Description
+|`JDBCLocal` |`String` |The name of the `jdbc-local.rar` deployment
+
+|`JDBCXA` |`String` |The name of the `jdbc-xa.rar` deployment
+
+|`TransactionManager` |`javax.transaction.​TransactionManager` |The
+transaction manager
+
+|`MetadataRepository` |`org.jboss.jca.​core.spi.mdr.​MetadataRepository`
+|The metadata repository
+
+|`Kernel` |`com.github.fungal.​api.Kernel` |The kernel
+|===
+
+The datasource deployer can be removed from the environment by removing
+the `ds.xml` file in
+
+....
+config/bootstrap/
+      
+....
+
+as well as the reference in `config/bootstrap/bootstrap.xml` to the
+file.
+
+Furthermore all `jdbc-++*++.rar` files in the `system/` directory should
+be removed too.
+
+[[webserver]]
+=== Web server
+
+The IronJacamar project features a web server which is used to serve web
+archive deployments. More information about Jetty can be found at the
+http://www.eclipse.org/jetty/[homepage].
+
+The configuration is done in the
+
+....
+system/web.xml
+      
+....
+
+file.
+
+[source,xml]
+----
+<bean name="WebServer" class="org.jboss.jca.web.WebServer">
+  <property name="Host">${iron.jacamar.bindaddress:localhost}</property>
+  <property name="Port">8080</property>
+  <property name="ExecutorService"><inject bean="Kernel" property="ExecutorService"/></property>
+</bean>
+
+      
+----
+
+.Web server
+[width="100%",cols="30%,28%,42%",options="header",]
+|===
+|Property |Type |Description
+|`Host` |`String` a|
+Set the bind address for the web server
+
+Default: `localhost`
+
+|`Port` |`int` a|
+Set the port for the web server
+
+Default: `8080`
+
+|`AcceptQueueSize` |`int` a|
+Set the accept queue size for the Jetty connector
+
+Default: `64`
+
+|`ExecutorService` |`java.util.concurrent.​ExecutorService` a|
+The thread pool for the web server
+
+Default: The kernel thread pool
+
+|===
+
+The web server can be removed from the environment by removing the
+`web.xml` file in
+
+....
+system/
+      
+....
+
+Furthermore all `.war` files in the same directory should be removed
+too.
+
+All the Jetty libraries can be removed by deleting the
+
+....
+lib/jetty
+      
+....
+
+directory.

@@ -1,0 +1,202 @@
+== Running
+
+[[startingthecontainer]]
+=== Starting the container
+
+The IronJacamar container is started by entering the bin/ directory
+
+....
+cd ironjacamar-1.2.0.Final/bin
+     
+....
+
+and executing
+
+....
+./run.sh
+     
+....
+
+on a Un++*++x based system or
+
+....
+run.bat
+     
+....
+
+on Windows.
+
+The command takes an optional -b argument to define the binding address
+of the naming server
+
+....
+./run.sh -b 192.168.0.199
+     
+....
+
+Once the container has started you should see a log entry like
+
+....
+13:33:10,999 INFO  [Main] Server started in 941ms
+     
+....
+
+in the console where the command was executed.
+
+After the container has started you can browse to
+
+....
+http://localhost:8080
+     
+....
+
+to view the project documentation and use the administration console.
+
+[[stoppingthecontainer]]
+=== Stopping the container
+
+The IronJacamar container is stopped by pressing the `Ctrl-C` keys.
+
+Once the container has stopped you should see a log entry like
+
+....
+13:35:06,752 INFO  [Main] Server stopped in 29ms
+      
+....
+
+in the console where the container was running.
+
+Alternative the container can be stopped through the command line
+interface.
+
+[[cli]]
+=== Command line interface
+
+The IronJacamar container can be controlled by a command line interface.
+
+If you are accessing a remote container you can use the `-h` option to
+specify the host name.
+
+[[cli_deploy]]
+==== Deploy
+
+You can deploy a resource adapter archive (.rar) using
+
+....
+java -jar fungal-cli.jar deploy <file>
+        
+....
+
+where `file` specifies the resource adapter archive.
+
+[[cli_undeploy]]
+==== Undeploy
+
+You can undeploy a resource adapter archive (.rar) using
+
+....
+java -jar fungal-cli.jar undeploy <file>
+        
+....
+
+where `file` specifies the resource adapter archive.
+
+[[cli_shutdown]]
+==== Shutdown
+
+You can shutdown the IronJacamar environment by
+
+....
+java -jar fungal-cli.jar shutdown
+        
+....
+
+[[running_ant]]
+=== Apache Ant
+
+The IronJacamar container can be controlled by Apache Ant tasks.
+
+[[running_ant_start]]
+==== Start
+
+The IronJacamar container can be started by the Apache Ant task
+`org.jboss.jca.sjc.ant.Start` which takes a `home` attribute to specify
+the home directory of the installation.
+
+[[running_ant_stop]]
+==== Stop
+
+The IronJacamar container can be stopped by the Apache Ant task
+`org.jboss.jca.sjc.ant.Stop` which takes a `home` attribute to specify
+the home directory of the installation.
+
+[[running_ant_deploy]]
+==== Deploy
+
+Deployments to the IronJacamar container can be done by the Apache Ant
+task `org.jboss.jca.sjc.ant.Deploy` which takes a `file` attribute to
+specify the file that should be deployed. The task takes optional `host`
+and `port` attributes in order to specify the host and port where the
+IronJacamar container is located.
+
+[[running_ant_undeploy]]
+==== Undeploy
+
+Undeploying from the IronJacamar container can be done by the Apache Ant
+task `org.jboss.jca.sjc.ant.Undeploy` which takes a `file` attribute to
+specify the file that should be undeployed. The task takes optional
+`host` and `port` attributes in order to specify the host and port where
+the IronJacamar container is located.
+
+[[running_ant_ping]]
+==== Ping
+
+The IronJacamar container can be pinged for availability using the
+Apache Ant task `org.jboss.jca.sjc.ant.Ping`. The task takes optional
+`host` and `port` attributes in order to specify the host and port where
+the IronJacamar container is located.
+
+[[running_maven]]
+=== Apache Maven
+
+The IronJacamar container can be controlled by Apache Maven mojos.
+
+[[running_maven_start]]
+==== Start
+
+The IronJacamar container can be started by the Apache Maven mojo
+`org.jboss.jca.sjc.maven.Start` which takes a `home` element to specify
+the home directory of the installation.
+
+[[running_maven_stop]]
+==== Stop
+
+The IronJacamar container can be stopped by the Apache Maven mojo
+`org.jboss.jca.sjc.maven.Stop` which takes a `home` element to specify
+the home directory of the installation.
+
+[[running_maven_deploy]]
+==== Deploy
+
+Deployments to the IronJacamar container can be done by the Apache Maven
+mojo `org.jboss.jca.sjc.maven.Deploy` which takes a `file` element to
+specify the file that should be deployed. The mojo takes optional `host`
+and `port` elements in order to specify the host and port where the
+IronJacamar container is located.
+
+[[running_maven_undeploy]]
+==== Undeploy
+
+Undeploying from the IronJacamar container can be done by the Apache
+Maven mojo `org.jboss.jca.sjc.maven.Undeploy` which takes a `file`
+element to specify the file that should be undeployed. The mojo takes
+optional `host` and `port` elements in order to specify the host and
+port where the IronJacamar container is located.
+
+[[running_maven_ping]]
+==== Ping
+
+The IronJacamar container can be pinged for availability using the
+Apache Maven mojo `org.jboss.jca.sjc.maven.Ping`. The mojo takes
+optional `host` and `port` elements in order to specify the host and
+port where the IronJacamar container is located.

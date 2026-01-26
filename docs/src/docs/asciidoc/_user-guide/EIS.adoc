@@ -1,0 +1,148 @@
+[[eis]]
+== EIS test server
+
+Testing an Enterprise Information System can be a complex task, as their
+installation can quite complex and specific to a certain platform
+architecture.
+
+As Java developers, and resource adapter developers in particularly, we
+are interested in a setup that will allow us to test the resource
+adapter against the EIS with as little difficulty as possible.
+
+Having access to a component that easy integrates into our testing
+environment, and acts as the EIS in question is of benefit.
+
+[[eis_overview]]
+=== Overview
+
+The IronJacamar EIS test server provides a framework for emulating an
+Enterprise Information System such that no installation is needed.
+
+The EIS test server contains the following interface
+
+[source,java]
+----
+      
+----
+
+which represents a session between the resource adapter and the EIS.
+
+The `java.io.InputStream` is the incoming communication coming from the
+resource adapter, and the `java.io.OutputStream` is the EIS' response to
+the request.
+
+Once the method returns the socket between the resource adapter and the
+EIS is closed.
+
+This means that the implementation of the `Handler` interface will
+represent the binary protocol between the resource adapter and the EIS.
+To the resource adapter it will look as it is communicating with the
+real Enterprise Information System installation.
+
+[[eis_ant]]
+=== Apache Ant
+
+The Apache Ant tasks for starting and stopping the EIS test server are
+defined as the following
+
+....
+<taskdef name="start"
+         classname="org.jboss.jca.test.eis.ant.Start"
+         classpathref="main.lib.path.id"/>
+
+<taskdef name="stop"
+         classname="org.jboss.jca.test.eis.ant.Stop"
+         classpathref="main.lib.path.id"/>
+
+      
+....
+
+where `main.lib.path.id` contains the `ironjacamar-test-eis.jar` file.
+
+The `start` task is used, like
+
+....
+<start host="localhost" port="1400"
+       handler="org.jboss.jca.test.eis.EchoHandler">
+  <classpath>
+    <pathelement location="${build.eis.dir}/test"/>
+  </classpath>
+</start>
+
+      
+....
+
+which starts the EIS test server on `localhost` using port `1400` with
+an implementation of the `Handler` interface of
+`org.jboss.jca.test.eis.EchoHandler` and a classpath of
+`$++{++build.eis.dir}/test`.
+
+The `stop` task is used, like
+
+....
+<stop host="localhost" port="1400"/>
+
+      
+....
+
+which stops the EIS test server on `localhost` using port `1400`.
+
+Between the `start` and `stop` tasks the resource adapters unit tests
+can be executed.
+
+[[eis_maven]]
+=== Apache Maven
+
+The Apache Maven mojos for starting and stopping the EIS test server are
+defined as the following
+
+....
+       
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.jboss.ironjacamar</groupId>
+      <artifactId>ironjacamar-test-eis</artifactId>
+      <!-- The version of the plugin you want to use -->
+      <version>1.2.0.Final</version>
+      <executions>
+        <execution>
+          <goals>
+            <goal>start</goal>
+          </goals>
+        </execution>
+      </executions>
+      <configuration>
+        <host>localhost</host>
+        <port>1400</port>
+        <handler>org.jboss.jca.test.eis.EchoHandler</handler>
+        <classpath>
+          <param>target/test-classes</param>
+        </classpath>
+      </configuration>
+    </plugin>
+    <plugin>
+      <groupId>org.jboss.ironjacamar</groupId>
+      <artifactId>ironjacamar-test-eis</artifactId>
+      <!-- The version of the plugin you want to use -->
+      <version>1.2.0.Final</version>
+      <executions>
+        <execution>
+          <goals>
+            <goal>stop</goal>
+          </goals>
+        </execution>
+      </executions>
+      <configuration>
+        <host>localhost</host>
+        <port>1400</port>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>        
+        
+      
+....
+
+The `start` mojo will run in the `process-test-classes` phase, and the
+`stop` mojo will run in the `test` phase.

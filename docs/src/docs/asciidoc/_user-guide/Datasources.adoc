@@ -1,0 +1,131 @@
+[[ex_datasources]]
+== Datasources
+
+The datasource schema can found at
+http://www.ironjacamar.org/schema/datasources_1_0.xsd[].
+
+[[ex_datasources_postgresql]]
+== PosgreSQL
+
+[source,xml]
+----
+      
+    
+----
+
+[[ex_datasources_postgresql_xa]]
+== PosgreSQL XA
+
+[source,xml]
+----
+      
+    
+----
+
+[[ex_datasources_mysql]]
+== MySQL
+
+[source,xml]
+----
+      
+    
+----
+
+[[ex_datasources_mysql_xa]]
+== MySQL XA
+
+[source,xml]
+----
+      
+    
+----
+
+[[ex_datasources_h2]]
+== H2
+
+[source,xml]
+----
+      
+    
+----
+
+[[ex_datasources_h2_xa]]
+== H2 XA
+
+[source,xml]
+----
+      
+    
+----
+
+[[ex_datasources_derby]]
+== Derby
+
+[source,xml]
+----
+      
+    
+----
+
+[[ex_datasources_derby_xa]]
+== Derby XA
+
+[source,xml]
+----
+      
+    
+----
+
+[[ex_datasources_oracle]]
+== Oracle
+
+[source,xml]
+----
+      
+    
+----
+
+[[ex_datasources_oracle_xa]]
+== Oracle XA
+
+[source,xml]
+----
+      
+    
+----
+
+[[ex_datasources_mssql]]
+== Microsoft SQLServer
+
+[source,xml]
+----
+      
+    
+----
+
+[[ex_datasources_mssql_xa]]
+== Microsoft SQLServer XA
+
+[source,xml]
+----
+      
+    
+----
+
+[[ex_datasources_db2]]
+== IBM DB2
+
+[source,xml]
+----
+      
+    
+----
+
+[[ex_datasources_db2_xa]]
+== IBM DB2 XA
+
+[source,xml]
+----
+      
+    
+----

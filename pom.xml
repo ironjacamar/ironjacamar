@@ -57,6 +57,7 @@
         <module>common</module>
         <module>core</module>
         <module>deployers</module>
+        <module>docs</module>
          <!--<module>eclipse</module>-->
         <module>eis</module>
         <module>embedded</module>

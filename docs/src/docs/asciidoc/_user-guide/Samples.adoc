@@ -1,0 +1,431 @@
+== Samples
+
+[[sample_helloworld]]
+== HelloWorld example
+
+[[sample_helloworld_introduction]]
+=== Introduction
+
+The HelloWorld resource adapter example shows a simple example of how to
+use and implement the interfaces in the Java EE Connector Architecture
+specification.
+
+The HelloWorld examples exposes the HelloWorldConnection interface where
+developers can invoke the exposed methods.
+
+The example shows how to build and test a resource adapter.
+
+[[sample_helloworld_introduction_setup]]
+==== Setup
+
+The build environment needs various libraries in order to being able to
+build and test the resource adapter. The setup is done by
+
+....
+cd doc/samples/helloworld
+cp -R ../../../lib .
+cp ../../../bin/ironjacamar-sjc.jar lib/
+        
+....
+
+[[sample_helloworld_introduction_building]]
+==== Building
+
+Building the resource adapter is done by
+
+....
+ant
+        
+....
+
+[[sample_helloworld_introduction_testing]]
+==== Testing
+
+Testing the resource adapter is done by
+
+....
+ant test
+        
+....
+
+[[sample_helloworld_resourceadpater]]
+=== HelloWorld Resource Adapter
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_mcf]]
+=== HelloWorld Managed Connection Factory
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_mc]]
+=== HelloWorld Managed Connection
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_cf]]
+=== HelloWorld Connection Factory
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_cfimpl]]
+=== HelloWorld Connection Factory Implementation
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_connection]]
+=== HelloWorld Connection
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_connectionimpl]]
+=== HelloWorld Connection Implementation
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_metadata]]
+=== HelloWorld Managed Connection MetaData
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_ironjacamarxml]]
+=== HelloWorld ironjacamar.xml
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_testcase]]
+=== HelloWorld Connection Test Case
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_buildxml]]
+=== HelloWorld Ant build.xml
+
+[source,xml]
+----
+      
+----
+
+[[sample_helloworld_native]]
+== HelloWorld/Native example
+
+[[sample_helloworld_native_introduction]]
+=== Introduction
+
+The HelloWorld/Native resource adapter sample shows a simple example of
+how to use and implement the interfaces in the Java EE Connector
+Architecture specification which calls a native library.
+
+The HelloWorld/Native sample exposes the HelloWorldConnection interface
+where developers can invoke the exposed methods.
+
+The sample shows how to build and test a resource adapter.
+
+[[sample_helloworld_native_introduction_setup]]
+==== Setup
+
+The build environment needs various libraries in order to being able to
+build and test the resource adapter. The setup is done by
+
+....
+cd doc/samples/helloworld-native
+cp -R ../../../lib .
+cp ../../../bin/ironjacamar-sjc.jar lib/
+        
+....
+
+[[sample_helloworld_native_introduction_building]]
+==== Building
+
+Building the resource adapter is done by
+
+....
+ant native
+cmake .
+make
+ant rar
+        
+....
+
+[[sample_helloworld_native_introduction_testing]]
+==== Testing
+
+Testing the resource adapter is done by
+
+....
+ant test
+        
+....
+
+[[sample_helloworld_native_resourceadpater]]
+=== HelloWorld/Native Resource Adapter
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_native_mcf]]
+=== HelloWorld/Native Managed Connection Factory
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_native_mc]]
+=== HelloWorld/Native Managed Connection
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_native_cf]]
+=== HelloWorld/Native Connection Factory
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_native_cfimpl]]
+=== HelloWorld/Native Connection Factory Implementation
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_native_connection]]
+=== HelloWorld/Native Connection
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_native_connectionimpl]]
+=== HelloWorld/Native Connection Implementation
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_native_metadata]]
+=== HelloWorld/Native Managed Connection MetaData
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_native_ironjacamarxml]]
+=== HelloWorld/Native ironjacamar.xml
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_native_c]]
+=== HelloWorld/Native C
+
+[source,c]
+----
+      
+----
+
+[[sample_helloworld_native_testcase]]
+=== HelloWorld/Native Connection Test Case
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_native_buildxml]]
+=== HelloWorld/Native Ant build.xml
+
+[source,xml]
+----
+      
+----
+
+[[sample_helloworld_native_cmake]]
+=== HelloWorld/Native cmake
+
+[source,text]
+----
+      
+----
+
+[[sample_helloworld_lazy]]
+== HelloWorld/Lazy example
+
+[[sample_helloworld_lazy_introduction]]
+=== Introduction
+
+The HelloWorld/Lazy resource adapter example shows a simple example of
+how to use and implement the interfaces in the Java EE Connector
+Architecture specification which takes advantage of the lazy association
+mechanism to reestablish the relationship between the logical
+(`HelloWorldConnectionImpl`) and the physical connection
+(`HelloWorldManagedConnection`).
+
+The HelloWorld/Lazy sample exposes the HelloWorldConnection interface
+where developers can invoke the exposed methods.
+
+The sample shows how to build and test a resource adapter.
+
+[[sample_helloworld_lazy_introduction_setup]]
+==== Setup
+
+The build environment needs various libraries in order to being able to
+build and test the resource adapter. The setup is done by
+
+....
+cd doc/samples/helloworld-lazy
+cp -R ../../../lib .
+cp ../../../bin/ironjacamar-sjc.jar lib/
+        
+....
+
+[[sample_helloworld_lazy_introduction_building]]
+==== Building
+
+Building the resource adapter is done by
+
+....
+ant rar
+        
+....
+
+[[sample_helloworld_lazy_introduction_testing]]
+==== Testing
+
+Testing the resource adapter is done by
+
+....
+ant test
+        
+....
+
+[[sample_helloworld_lazy_resourceadpater]]
+=== HelloWorld/Lazy Resource Adapter
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_lazy_mcf]]
+=== HelloWorld/Lazy Managed Connection Factory
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_lazy_mc]]
+=== HelloWorld/Lazy Managed Connection
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_lazy_cf]]
+=== HelloWorld/Lazy Connection Factory
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_lazy_cfimpl]]
+=== HelloWorld/Lazy Connection Factory Implementation
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_lazy_connection]]
+=== HelloWorld/Lazy Connection
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_lazy_connectionimpl]]
+=== HelloWorld/Lazy Connection Implementation
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_lazy_metadata]]
+=== HelloWorld/Lazy Managed Connection MetaData
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_lazy_ironjacamarxml]]
+=== HelloWorld/Lazy ironjacamar.xml
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_lazy_testcase]]
+=== HelloWorld/Lazy Connection Test Case
+
+[source,java]
+----
+      
+----
+
+[[sample_helloworld_lazy_buildxml]]
+=== HelloWorld/Lazy Ant build.xml
+
+[source,xml]
+----
+      
+----

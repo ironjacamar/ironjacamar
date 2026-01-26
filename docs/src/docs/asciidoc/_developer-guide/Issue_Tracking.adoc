@@ -1,0 +1,111 @@
+[[issuetracking]]
+== Issue tracking
+
+=== Location
+
+The JIRA issue tracking for the project is located at
+http://issues.jboss.org/browse/JBJCA
+
+.
+
+=== Components
+
+The project is divided into the following components:
+
+.Project components
+[cols=",",options="header",]
+|===
+|Component |Description
+|Arquillian |The Arquillian integration for the project.
+
+|AS |The tools that focuses on integration with WildFly.
+
+|Build |The build environment for the project.
+
+|Code Generator |The resource adapter code generator.
+
+|Common |Common interfaces and classes that are shared between multiple
+components.
+
+|Core |The core implementation of the project.
+
+|Documentation |The documentation (Users Guide / Developers Guide) for
+the project.
+
+|Deployer |The deployers for the project.
+
+|Eclipse |The Eclipse plugin for IronJacamar.
+
+|EIS |The EIS test server.
+
+|Embedded |The embedded IronJacamar container.
+
+|JDBC |A JDBC resource adapter.
+
+|Performance |Performance related work.
+
+|Standalone |The standalone IronJacamar distribution.
+
+|Test Suite |The IronJacamar test suite.
+
+|Validator |The resource adapter validator.
+|===
+
+=== Categories
+
+The system contains the following categoies:
+
+.JIRA categories
+[cols=",",options="header",]
+|===
+|Category |Description
+|Feature Request |Request for a feature made by the community.
+|Bug |Software defect in the project.
+|Task |Development task created by a member of the team.
+|Release |Issue which holds informations about a release.
+|Component Update |Identifies a thirdparty library dependency.
+|===
+
+The other categories in the JIRA installation are not used by this
+project.
+
+[[lifecycle]]
+=== Life cycle
+
+All issues folows the following life cycle:
+
+.JIRA Lifecycle
+[cols=",",options="header",]
+|===
+|Lifecycle |Description
+|Open |An issue currently not implemented.
+|Coding in Progress |An issue currently being worked on.
+|Resolved |An issue which has been implemented.
+|Closed |An issue that has been resolved and is included in a release.
+|===
+
+Note: 'Component Update' issues can't be resolved nor closed during a
+development cycle. These are resolved and closed as part of the release
+procedure of the project. The reason for this is that the library in
+question can receive further updates during the active development
+cycle.
+
+=== Priorities
+
+All issues are assigned one of the following priorities:
+
+.JIRA Priorities
+[cols=",",options="header",]
+|===
+|Priority |Description
+|Blocker |An issue that needs to be fixed before the release.
+
+|Critical |An issue that is critical for the release.
+
+|Major |The default priority for an issue.
+
+|Minor |An issue that is optional for a release.
+
+|Trivial |An issue that is optional for a release and have a lower
+priority than Minor.
+|===

@@ -1,0 +1,243 @@
+[[eclipse]]
+== Eclipse plugin
+
+The IronJacamar Eclipse plugin features development tools used for
+developing resource adapter applications for the IronJacamar standalone
+distribution, WildFly or JBoss Enterprise Application Platform 6{plus}.
+
+The plugin allows you to
+
+* Generate a resource adapter skeleton
+* Generate a deployment descriptor for a resource adapter
+* Validate a resource adapter
+* Deploy a resource adapter to an IronJacamar server instance
+* Deploy a deployment descriptor to an IronJacamar server instance
+
+[[eclipse_installation]]
+=== Installation of the plugin
+
+The plugin is installed by
+
+....
+cp ironjacamar-eclipse.jar $ECLIPSE_HOME/plugins
+    
+....
+
+on Un++*++x systems, or by
+
+....
+copy ironjacamar-eclipse.jar %ECLIPSE_HOME%\plugins
+    
+....
+
+on Windows.
+
+[[eclipse_configure]]
+=== Configuration of the plugin
+
+Open "Window-++>++Preferences" and select the IronJacamar category.
+
+image:images/eclipse-configuration.png[images/eclipse-configuration]
+
+The IronJacamar home setting must point to the root directory of the
+IronJacamar installation, like
+
+....
+/opt/ironjacamar-1.2.0.Final
+    
+....
+
+in order to configure the plugin.
+
+The IronJacamar Eclipse plugin can deploy to a remote IronJacamar
+instance, by specifying the host and port settings.
+
+[[eclipse_toolbar]]
+=== The toolbar
+
+The IronJacamar Eclipse plugin provides a toolbar with deployment
+functionality.
+
+image:images/eclipse-toolbar.png[images/eclipse-toolbar]
+
+[[eclipse_menu]]
+=== The menu
+
+The IronJacamar Eclipse plugin provides a menu with validation and
+deployment functionality.
+
+image:images/eclipse-menu.png[images/eclipse-menu]
+
+[[eclipse_project]]
+=== Creating a new IronJacamar project
+
+A new IronJacamar project can be created by selecting
+File-++>++New-++>++Project... and go to the IronJacamar category.
+
+Choose "IronJacamar 1.1 project" and follow the instructions to generate
+your resource adapter.
+
+image:images/eclipse-new-project.png[images/eclipse-new-project]
+
+[[eclipse_project_name]]
+==== Project and package name
+
+image:images/eclipse-new-project-name.png[images/eclipse-new-project-name]
+
+Sepcify the project name and package name for the project. You can also
+select the JCA specification version, the type of the resource adapter
+(Outbound/Inbound/Bidirectional), the transaction support level, if the
+resource adapter will support reauthentication and if annotations used
+be used for a JCA 1.6{plus} based resource adapter.
+
+[[eclipse_project_ra]]
+==== Creating a ResourceAdapter
+
+image:images/eclipse-new-project-ra.png[images/eclipse-new-project-ra]
+
+You can choose to include a `ResourceAdapter` class if the JCA profile
+version is 1.5, 1.6 or 1.7
+
+[[eclipse_project_outbound]]
+==== Creating a ManagedConnectionFactory
+
+image:images/eclipse-new-project-outbound.png[images/eclipse-new-project-outbound]
+
+If the project is Outbound or Bidirectional then you can fill in the
+information for the outbound components.
+
+[[eclipse_project_inbound]]
+==== Creating a MessageListener
+
+image:images/eclipse-new-project-inbound.png[images/eclipse-new-project-inbound]
+
+If the project is Inbound or Bidirectional then you can fill in the
+information for the message listener and activation specification
+components.
+
+[[eclipse_project_ao]]
+==== Creating an AdminObject
+
+image:images/eclipse-new-project-ao.png[images/eclipse-new-project-ao]
+
+This wizard creates an AdminObject for the project.
+
+[[eclipse_project_build]]
+==== Selecting the build environment
+
+image:images/eclipse-new-project-build.png[images/eclipse-new-project-build]
+
+This wizard will let you choose the build environment to use for your
+project. Currently IronJacamar supports the Apache Ant, Apache Ant
+{plus} Apache Ivy or Maven build environments. If Apache Ant is
+selected, all library files will be copied from your IronJacamar
+installation.
+
+[NOTE]
+====
+Please make sure you have installed the Eclipse M2E plugin if you select
+Apache Maven as your build environment.
+====
+
+[[eclipse_validate]]
+=== Validate IronJacamar project
+
+The IronJacamar project can be validated by selecting it, and the
+Validate command in the toolbar will now be enabled. Click on the
+command to validate your project.
+
+Another way to validate the IronJacamar project is to right click on the
+project, and select IronJacamar-++>++Validate.
+
+[[eclipse_deploy]]
+=== Deploying an IronJacamar project
+
+The IronJacamar Eclipse plugin provides a way to deploy files to an
+IronJacamar server.
+
+[NOTE]
+====
+Before any deploy operation, the IronJacamar server needs to be started,
+otherwise it will lead to an error dialog. Please refer to
+link:#startingthecontainer[this] for detail on how to start the
+IronJacamar server
+====
+
+[[eclipse_deploy_rar]]
+==== Deploying a RAR file to an IronJacamar server
+
+Select the IronJacamar project you just created. The Deploy drop down
+command in the toolbar will be enabled. Click on the command and select
+'Deploy rar'.
+
+Another way to deploy the RAR file is to right click on the project, and
+select IronJacamar-++>++Deploy-++>++Deploy rar from context menu
+
+The command will build the RAR file first if it doesn't exist, then try
+to connect the IronJacamar server to deploy it.
+
+[[eclipse_deploy_raxml]]
+==== Generate the -ra.xml and deploy it to IronJacamar server
+
+Select the IronJacamar project you just created. The Deploy drop down
+command in the toolbar will be enabled. Click on the command and select
+'Deploy -ra.xml'.
+
+Another way to generate the -ra.xml file is to right click on the
+project, and select IronJacamar-++>++Deploy-++>++Deploy -ra.xml from
+context menu.
+
+The command will build the RAR file first if it does not exist, then pop
+up a wizard to generate the -ra.xml according to the RAR file.
+
+image:images/eclipse-ra-version.png[images/eclipse-ra-version]
+
+In the first wizard page, selects version of the resource adapter. Some
+configurations may not be available when version is changed.
+
+image:images/eclipse-ra-general.png[images/eclipse-ra-general]
+
+In the general information page, set up the transaction support,
+bootstrap context, bean validation groups and id if the version is
+1.1{plus}.
+
+image:images/eclipse-ra-workmanager.png[images/eclipse-ra-workmanager]
+
+From IronJacamar 1.1, a workmanager tab is added to configure
+workmanager security mappings.
+
+image:images/eclipse-ra-mcf.png[images/eclipse-ra-mcf]
+
+There is a wizard page for each ManagedConnectionFactory if the resource
+adapter is outbound or bidirectional.
+
+The ManagedConnectionFactory can be activated by selecting the
+'Activate' checkbox.
+
+image:images/eclipse-ra-mcf-pool.png[images/eclipse-ra-mcf-pool]
+
+Configure connection pool in the 'pool configuration' tab.
+
+image:images/eclipse-ra-mcf-pool-xa.png[images/eclipse-ra-mcf-pool-xa]
+
+Configure XA connection pool in the 'XA pool' sub tab.
+
+image:images/eclipse-ra-mcf-pool-capacity.png[images/eclipse-ra-mcf-pool-capacity]
+
+From IronJacamar 1.1 on, a capacity sub tab is added in 'pool
+configuration' tab to configure policy of connection pool
+
+image:images/eclipse-ra-ao.png[images/eclipse-ra-ao]
+
+There is a wizard page for each AdminObject if the resource adapter
+includes one or more instances.
+
+The AdminObject can be activated by selecting the 'Activate' checkbox.
+
+There is a miscellaneous page also.
+
+image:images/eclipse-ra-mess.png[images/eclipse-ra-mess]
+
+If the Deploy RAR first option is selected, the plugin will try to
+deploy the RAR file to the IronJacamar server first, then deploy the
+generated -ra.xml file.

@@ -1,0 +1,219 @@
+== Building
+
+=== Prerequisites
+
+[[jdk]]
+==== Java Development Kit (JDK)
+
+You must have the following JDK installed in order to build the project:
+
+* Sun JDK 1.7.x
+* OpenJDK 1.7.x
+* Sun JDK 1.8.x
+* OpenJDK 1.8.x
+
+Remember to ensure that "javac" and "java" are in your path (or
+symlinked).
+
+....
+JAVA_HOME=/location/to/javahome
+export JAVA_HOME
+
+PATH=$JAVA_HOME/bin:$PATH
+export PATH
+      
+....
+
+[[ant]]
+==== Apache Ant
+
+You must have Apache Ant 1.9.4{plus} installed on your system.
+
+Remember to ensure that "ant" are in your path (or symlinked).
+
+....
+ANT_HOME=/location/to/anthome
+export ANT_HOME
+
+PATH=$ANT_HOME/bin:$PATH
+export PATH
+      
+....
+
+You may need to set the memory settings for the Apache Ant process like
+
+....
+ANT_OPTS="$ANT_OPTS -Xms128m -Xmx512m"
+export ANT_OPTS
+      
+....
+
+[[ivy]]
+==== Apache Ivy
+
+The IronJacamar project uses Apache Ivy for dependency management.
+
+Apache Ivy is automatically downloaded and included in the development
+environment, so no additional setup is required.
+
+==== Git
+
+You must have Git installed on your system.
+
+Remember to ensure that "git" are in your path (or symlinked).
+
+[[obtainingthesource]]
+=== Obtaining the source code
+
+[[forking]]
+==== Forking the repository
+
+The IronJacamar repository is located at:
+
+....
+https://github.com/ironjacamar/ironjacamar
+      
+....
+
+Press the "Fork" button in order to fork the repository to your own
+GitHub account.
+
+Clone your repository to your machine using
+
+....
+git clone git@github.com:<your_account>/ironjacamar.git
+      
+....
+
+Next add the upstream repository as a remote location:
+
+....
+cd ironjacamar
+git remote add upstream git@github.com:ironjacamar/ironjacamar.git
+      
+....
+
+[[gitbranches]]
+==== Git branches
+
+We have the following branches for the project:
+
+* master
++
+The head of development targeting the next upcoming release.
+* 1.0
++
+The development targeting the IronJacamar 1.0 releases.
+* 1.1
++
+The development targeting the IronJacamar 1.1 releases.
+* 1.2
++
+The development targeting the IronJacamar 1.2 releases.
+
+[[compiling]]
+=== Compiling the source code
+
+In order to build the IronJacamar project you execute:
+
+....
+ant <target>
+    
+....
+
+where target is one of
+
+* jars
++
+Builds the JAR archives in the distribution.
+* test
++
+Builds the JAR archives in the distribution and runs all the test cases.
+* module-test
++
+Builds the JAR archives in the distribution and runs all the test cases
+for the specified module (`-Dmodule=++<++modulename++>++`).
+* one-test
++
+Builds the JAR archives in the distribution and runs the specified test
+case (`-Dmodule=++<++modulename++>++ -Dtest=++<++classname++>++`).
+* docs
++
+Builds the API documentation for the project.
+* aggregated-javadocs
++
+Builds the Aggregated API documentation for the project.
+* aggregated-javadocs-api-spi
++
+Builds the Aggregated API documentation for API/SPI of the project.
+* sjc
++
+Builds the standalone environment using IronJacamar/SJC.
+* release
++
+Builds a release of the project.
+* clean
++
+Cleans the project of temporary files.
+* clean-cache
++
+Cleans the Apache Ivy repository.
+
+See the full list of targets in the main build.xml file.
+
+An example to get the IronJacamar/SJC built and running:
+
+....
+ant clean sjc
+cd target/sjc/bin
+./run.sh
+    
+....
+
+[[creating_a_patch]]
+=== Creating a patch
+
+Our user guide explains in the "I would like to implement a feature"
+section how to get started on a writing a new feature or submitting a
+patch to the project.
+
+You should develop your feature on a Git branch using
+
+....
+git checkout -b <feature_name>
+    
+....
+
+Once you are done you will need to rebase your work with the latest
+master
+
+....
+git fetch upstream
+git rebase -i upstream/master
+    
+....
+
+You will need to resolve any conflicts of course. Note, that all pull
+requests must be rebased against upstream master in order to get merged.
+
+Then push the feature to your repository
+
+....
+git push origin <feature_name>
+    
+....
+
+Go to your account on GitHub.com and submit a pull request via the "Pull
+request" button
+
+....
+https://www.github.com/<your_account>/ironjacamar
+    
+....
+
+Remember to select the correct branch, fill in the subject with a short
+description of the feature, and fill in the description with the full
+description of the feature.
+
+If your feature / bug-fix applies to multiple branches you will need to
+submit multiple pull requests - one pull request per branch.

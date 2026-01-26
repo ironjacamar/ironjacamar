@@ -1,0 +1,87 @@
+== Installation
+
+Once you have downloaded the distribution you need to install it in a
+location of your choice.
+
+[[installtargz]]
+=== Compressed Tape Archive (.tar.gz)
+
+Extract the distribution using
+
+....
+tar xzf ironjacamar-1.2.0.Final.tar.gz
+     
+....
+
+The distribution will be located in a directory named
+
+....
+ironjacamar-1.2.0.Final
+     
+....
+
+[[installzip]]
+=== Zip Archive (.zip)
+
+Extract the distribution using
+
+....
+unzip ironjacamar-1.2.0.Final.zip
+     
+....
+
+or any program capable of handling Zip archives such as WinZip and
+WinRar.
+
+The distribution will be located in a directory named
+
+....
+ironjacamar-1.2.0.Final
+     
+....
+
+[[directorystructure]]
+=== Directory structure
+
+The IronJacamar container has the following directory structure:
+
+* bin: Contains the scripts that starts the container.
+* config: Contains the configuration of the container.
+* deploy: Contains user deployments.
+* doc: Contains the documentation.
+* lib: Contains all the libraries needed by the container.
+* log: Contains the log files for the container.
+* system: Contains system deployments.
+* tmp: Contains temporary files.
+
+[[installas]]
+=== WildFly
+
+The IronJacamar provides the Java EE Connector Architecture (JCA)
+container for WildFly 8 and future versions.
+
+The container can be updated in WildFly by using the `as-upgrader.sh`
+script in the `doc/as` directory. This will allow an easy installation
+of IronJacamar patch releases to fix bugs in the application server
+environment.
+
+The script can be used, like:
+
+....
+./as-upgrader.sh 1.2.0.Final /path/to/wildfly/installation
+     
+....
+
+where `1.2.0.Final` is the version identifier of the IronJacamar
+container and the path points to the top-level directory of the WildFly
+installation. You can also use `1.1.1-SNAPSHOT` in order to upgrade to a
+patch snapshot build.
+
+You can get an overview of all IronJacamar releases by searching our
+https://repository.jboss.org/nexus/[Nexus] repository.
+
+[WARNING]
+====
+Make sure that you understand the version policies specified in the
+developer guide before upgrading
+====

@@ -1,0 +1,1396 @@
+== Deployment
+
+The IronJacamar distribution contains a deploy/ directory where all
+deployments should be deployed to.
+
+[[packagingrequirements]]
+=== Packaging requirements
+
+A resource adapter archive is a structured Java Archive (JAR) file,
+which bundles all Java classes in JAR files, and optionally contains
+metadata, resources and native libraries.
+
+A resource adapter archive name ends in the `.rar` extension.
+
+An example of a resource adapter archive could look like
+
+....
+[jpederse@localhost]$ jar tf ra.rar
+META-INF/ra.xml
+readme.html
+ra.jar
+images/icon.jpg
+win.dll
+linux.so
+ 
+      
+....
+
+See the Java EE Connector Architecture 1.7 specification chapter 20 for
+further requirements.
+
+[[deployingrar]]
+=== Deploying resource adapters
+
+Resource adapters (.rar) are deployed by copying the resource adapter
+into the `deploy/` directory
+
+....
+cp example.rar ironjacamar-1.2.0.Final/deploy
+     
+....
+
+on a Un++*++x based system or
+
+....
+copy example.rar ironjacamar-1.2.0.Final\deploy
+     
+....
+
+on Windows.
+
+The resource adapter can be configured and activated through a
+`META-INF/ironjacamar.xml` file in the archive. The format of the XML
+document is defined by the `ironjacamar++_++1++_++0.xsd`,
+`ironjacamar++_++1++_++1.xsd` or `ironjacamar++_++1++_++2.xsd` schemas.
+
+A resource adapter can also be configured and activated through
+deployment of a `-ra.xml` file in the `deploy/` directory - f.ex.
+`deploy/example-ra.xml`. The format of the XML document is defined by
+the `resource-adapters++_++1++_++0.xsd`,
+`resource-adapters++_++1++_++1.xsd` or
+`resource-adapters++_++1++_++2.xsd` schemas - f.ex
+
+[source,xml]
+----
+<resource-adapters>
+  <resource-adapter>
+    <archive>example.rar</archive>
+    <connection-definitions>
+      <connection-definition jndi-name="java:/eis/example" class-name="com.example.ra.MCF"/>
+    </connection-definitions>
+  </resource-adapter>
+</resource-adapters>
+
+     
+----
+
+to bind the connection factory from `com.example.ra.MCF` under
+`java:/eis/example`.
+
+See the schema appendix for additional details about the format.
+
+Alternative the resource adapter deployments will be picked up by the
+`RAActivator` bean which bind a single connection factory under
+
+....
+java:/eis/<deploymentName>
+     
+....
+
+- f.ex. `java:/eis/example` and a single admin object under
+
+....
+java:/eis/ao/<deploymentName>
+     
+....
+
+- f.ex. `java:/eis/ao/example`.
+
+[[deployingra_descriptor]]
+==== Resource adapter descriptor
+
+A resource adapter can be configured using two different ways
+
+* META-INF/ironjacamar.xml
++
+for internal configuration
+* -ra.xml
++
+for external configuration
+
+to the resource adapter archive. Both formats share the same layout to
+ease configuration - only the top-level elements differ.
+
+.Main elements
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`bean-validation-groups` |Specifies bean validation group that should
+be used
+
+|`bootstrap-context` |Specifies the unique name of the bootstrap context
+that should be used
+
+|`config-property` |The config-property specifies resource adapter
+configuration properties.
+
+|`transaction-support` |Define the type of transaction supported by this
+resource adapter. Valid values are: NoTransaction, LocalTransaction,
+XATransaction
+
+|`connection-definitions` |Specifies the connection definitions
+
+|`admin-objects` |Specifies the administration objects
+|===
+
+.Bean validation groups elements
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`bean-validation-group` |Specifies the fully qualified class name for a
+bean validation group that should be used for validation
+|===
+
+.Connection definition / admin object attributes
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Attribute |Desciption
+|`class-name` |Specifies the the fully qualified class name of a managed
+connection factory or admin object
+
+|`jndi-name` |Specifies the JNDI name
+
+|`enabled` |Should the object in question be activated
+
+|`use-java-context` |Specifies if a java:/ JNDI context should be used
+
+|`pool-name` |Specifies the pool name for the object
+
+|`use-ccm` |Enable the cache connection manager
+
+|`sharable` |Defines the connection as sharable (lazy association) (1.1)
+
+|`enlistment` |Defines if the connection should use lazy enlistment if
+supported (1.1)
+
+|`connectable` |Allow components to obtain a connection through the
+`XAResource` instance (1.2)
+
+|`tracking` |Track connection handles across transaction boundaries
+(1.2)
+|===
+
+.Connection definition elements
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`config-property` |The config-property specifies managed connection
+factory configuration properties.
+
+|`pool` |Specifies pooling settings
+
+|`xa-pool` |Specifies XA pooling settings
+
+|`security` |Specifies security settings
+
+|`timeout` |Specifies time out settings
+
+|`validation` |Specifies validation settings
+
+|`recovery` |Specifies the XA recovery settings
+|===
+
+.Pool elements
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`min-pool-size` |The min-pool-size element indicates the minimum number
+of connections a pool should hold. These are not created until a Subject
+is known from a request for a connection. This default to 0
+
+|`initial-pool-size` |The initial-pool-size element indicates the
+initial number of connections a pool should hold. These are not created
+until a Subject is known from a request for a connection. This default
+to 0 (1.1)
+
+|`max-pool-size` |The max-pool-size element indicates the maximum number
+of connections for a pool. No more than max-pool-size connections will
+be created in each sub-pool. This defaults to 20.
+
+|`prefill` |Whether to attempt to prefill the connection pool. Default
+is false
+
+|`use-strict-min` |Specifies if the min-pool-size should be considered
+strictly. Default false
+
+|`flush-strategy` |Specifies how the pool should be flush in case of an
+error. Valid values are: `FailingConnectionOnly` (default),
+`InvalidIdleConnections` (1.1), `IdleConnections`, `Gracefully` (1.1),
+`EntirePool`, `AllInvalidIdleConnections` (1.1), `AllIdleConnections`
+(1.1), `AllGracefully` (1.1), `AllConnections` (1.1)
+
+|`capacity` |Specifies the capacity policies (1.1)
+|===
+
+.XA pool elements
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`min-pool-size` |The min-pool-size element indicates the minimum number
+of connections a pool should hold. These are not created until a Subject
+is known from a request for a connection. This default to 0
+
+|`initial-pool-size` |The initial-pool-size element indicates the
+initial number of connections a pool should hold. These are not created
+until a Subject is known from a request for a connection. This default
+to 0 (1.1)
+
+|`max-pool-size` |The max-pool-size element indicates the maximum number
+of connections for a pool. No more than max-pool-size connections will
+be created in each sub-pool. This defaults to 20.
+
+|`prefill` |Whether to attempt to prefill the connection pool. Default
+is false
+
+|`use-strict-min` |Specifies if the min-pool-size should be considered
+strictly. Default false
+
+|`flush-strategy` |Specifies how the pool should be flush in case of an
+error. Valid values are: `FailingConnectionOnly` (default),
+`InvalidIdleConnections` (1.1), `IdleConnections`, `Gracefully` (1.1),
+`EntirePool`, `AllInvalidIdleConnections` (1.1), `AllIdleConnections`
+(1.1), `AllGracefully` (1.1), `AllConnections` (1.1)
+
+|`capacity` |Specifies the capacity policies (1.1)
+
+|`is-same-rm-override` |The is-same-rm-override element allows one to
+unconditionally set whether the
+javax.transaction.xa.XAResource.isSameRM(XAResource) returns true or
+false
+
+|`interleaving` |An element to enable interleaving for XA connection
+factories
+
+|`no-tx-separate-pools` |Oracle does not like XA connections getting
+used both inside and outside a JTA transaction. To workaround the
+problem you can create separate sub-pools for the different contexts
+
+|`pad-xid` |Should the Xid be padded
+
+|`wrap-xa-resource` |Should the XAResource instances be wrapped in an
+org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper instance
+|===
+
+.Security elements
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`application` |Indicates that application supplied parameters (such as
+from getConnection(user, pw)) are used to distinguish connections in the
+pool.
+
+|`security-domain` |Indicates Subject (from security domain) are used to
+distinguish connections in the pool. The content of the security-domain
+is the name of the JAAS security manager that will handle
+authentication. This name correlates to the JAAS login-config.xml
+descriptor application-policy/name attribute.
+
+|`security-domain-and-application` |Indicates that either application
+supplied parameters (such as from getConnection(user, pw)) or Subject
+(from security domain) are used to distinguish connections in the pool.
+The content of the security-domain is the name of the JAAS security
+manager that will handle authentication. This name correlates to the
+JAAS login-config.xml descriptor application-policy/name attribute.
+|===
+
+.Time out elements
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`blocking-timeout-millis` |The blocking-timeout-millis element
+indicates the maximum time in milliseconds to block while waiting for a
+connection before throwing an exception. Note that this blocks only
+while waiting for a permit for a connection, and will never throw an
+exception if creating a new connection takes an inordinately long time.
+The default is 30000 (30 seconds).
+
+|`idle-timeout-minutes` |The idle-timeout-minutes elements indicates the
+maximum time in minutes a connection may be idle before being closed.
+The actual maximum time depends also on the IdleRemover scan time, which
+is 1/2 the smallest idle-timeout-minutes of any pool.
+
+|`allocation-retry` |The allocation retry element indicates the number
+of times that allocating a connection should be tried before throwing an
+exception. The default is 0.
+
+|`allocation-retry-wait-millis` |The allocation retry wait millis
+element indicates the time in milliseconds to wait between retrying to
+allocate a connection. The default is 5000 (5 seconds).
+
+|`xa-resource-timeout` |Passed to XAResource.setTransactionTimeout().
+Default is zero which does not invoke the setter. Specified in seconds
+|===
+
+.Validation elements
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`validate-on-match` |The validate-on-match element indicates whether or
+not connection level validation should be done when a connection factory
+attempts to match a managed connection for a given set. This is
+typically exclusive to the use of background validation (1.2)
+
+|`background-validation` |An element to specify that connections should
+be validated on a background thread versus being validated prior to use
+
+|`background-validation-millis` |The background-validation-millis
+element specifies the amount of time, in milliseconds, that background
+validation will run.
+
+|`use-fast-fail` |Whether fail a connection allocation on the first
+connection if it is invalid (true) or keep trying until the pool is
+exhausted of all potential connections (false). Default is false
+|===
+
+.Admin object elements
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`config-property` |Specifies an administration object configuration
+property.
+|===
+
+.Recovery elements
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`recover-credential` |Specifies the user name / password pair or
+security domain that should be used for recovery.
+
+|`recover-plugin` |Specifies an implementation of the
+org.jboss.jca.core.spi.recovery.RecoveryPlugin class.
+|===
+
+The deployment schemas are defined in `doc/ironjacamar++_++1++_++0.xsd`,
+`doc/ironjacamar++_++1++_++1.xsd`,
+`doc/resource-adapters++_++1++_++0.xsd` and
+`doc/resource-adapters++_++1++_++1.xsd`.
+
+[[deployingra_extensions]]
+==== Resource adapter extensions
+
+A resource adapter can make use of a couple of Java EE Connector
+Architecture extensions in the IronJacamar container in order to improve
+the integration.
+
+The extensions include
+
+* org.jboss.jca.core.spi.recovery.RecoveryPlugin
++
+: Plugin to provide feedback to the recovery module inside IronJacamar.
+* org.jboss.jca.core.spi.statistics.Statistics
++
+: Plugin to identify a resource adapter component (
++
+ResourceAdapter
++
+,
++
+ManagedConnectionFactory
++
+and admin object) that provides statistics.
+
+The following sections will describe these extensions points.
+
+[[deployingra_extensions_recovery]]
+===== Recovery extension
+
+The IronJacamar recovery extension allows the resource adapter
+deployment to give feedback to the container if a `ManagedConnection`
+can be used for recovery. This extension is used as part of XA recovery
+in the environment, and should therefore be implemented by all resource
+adapters capable of working in an `XATransaction` semantics.
+
+The interface `org.jboss.core.spi.recovery.RecoveryPlugin` located in
+the `ironjacamar-core-api` artifact makes up the SPI for the extension.
+
+The interface contains two methods that should be implemented in a
+resource adapter specific manner.
+
+The method
+
+....
+public boolean isValid(Object c) throws ResourceException;
+            
+....
+
+will return `true` if the connection can be used for recovery.
+
+The method
+
+....
+public void close(Object c) throws ResourceException;
+            
+....
+
+will close a connection that was used for recovery.
+
+The recovery extension is activated by adding a recovery element to the
+deployment
+
+....
+<recovery>
+   <recovery-plugin>com.mycompany.myproject.RecoveryPluginImpl</recovery-plugin>
+</recovery>
+            
+....
+
+The following recovery plugins are provided by IronJacamar
+
+* org.jboss.jca.core.recovery.DefaultRecoveryPlugin
++
+: Default recovery plugin that tries to call a
++
+close()
++
+method on the underlying object
+* org.jboss.jca.core.recovery.ConfigurableRecoveryPlugin
++
+: A recovery plugin where the results of the
++
+isValid
++
+and
++
+close
++
+can be specified
+* org.jboss.jca.core.recovery.ValidatingManagedConnectionFactoryRecoveryPlugin
++
+: A recovery plugin that uses the
++
+javax.resource.spi.ValidatingManagedConnectionFactory
++
+interface to verify the connection
+
+[NOTE]
+====
+The IronJacamar container will use a default implementation of the
+recovery SPI if an implementation isn't specified by the deployment.
+====
+
+[[deployingra_extensions_statistics]]
+===== Statistics extension
+
+The IronJacamar statistics extension allows a resource adapter to expose
+statistics to the container and hence to the environment where
+IronJacamar is running. Statistics can be enabled for `ResourceAdapter`,
+`ManagedConnectionFactory` and admin object instances.
+
+The extension include two interfaces
+`org.jboss.core.spi.statistics.Statistics` and
+`org.jboss.core.spi.statistics.StatisticsPlugin`. Both these interfaces
+are located in the `ironjacamar-core-api` artifact.
+
+The `Statistics` interface will mark a resource adapter component as
+statistics capable and return the statistics plugin implementation
+instance.
+
+The `StatisticsPlugin` interface contains methods to expose and describe
+each statistic that the plugin makes available. This information will
+then be made available to the environment where the IronJacamar
+container is running using the environment's prefered mechanism.
+
+[NOTE]
+====
+The IronJacamar container will only expose core statistics for a
+deployment if no implementation of this extension is available.
+====
+
+[[deployingra_statistics]]
+==== Resource adapter statistics
+
+Resource adapter deployments has the following core statistics values
+
+.Core statistics
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Name |Desciption
+|`ActiveCount` |The number of active connections. Each of the
+connections is either in use by an application or available in the pool
+
+|`AvailableCount` |The number of available connections in the pool
+
+|`AverageBlockingTime` |The average time spent blocking on obtaining an
+exclusive lock on the pool. The value is in milliseconds
+
+|`AverageCreationTime` |The average time spent creating a connection.
+The value is in milliseconds
+
+|`AverageGetTime` |The average time spent obtaining a connection. The
+value is in milliseconds
+
+|`BlockingFailureCount` |The number of times where there was a time out
+getting an exclusive lock on the pool
+
+|`CreatedCount` |The number of connections created
+
+|`DestroyedCount` |The number of connections destroyed
+
+|`IdleCount` |The number of connections currently idle
+
+|`InUseCount` |The number of connections currently in use
+
+|`MaxCreationTime` |The maximum time it took to create a connection. The
+value is in milliseconds
+
+|`MaxGetTime` |The maximum time it took to obtain a connection. The
+value is in milliseconds
+
+|`MaxUsedCount` |The maximum number of connections used
+
+|`MaxWaitCount` |The maximum number of requests waiting for a connection
+at the same time
+
+|`MaxWaitTime` |The maximum time spent waiting for an exclusive lock on
+the pool
+
+|`TimedOut` |The number of timed out connections
+
+|`TotalBlockingTime` |The total time spent waiting for an exclusive lock
+on the pool. The value is in milliseconds
+
+|`TotalCreationTime` |The total time spent creating connections. The
+value is in milliseconds
+
+|`TotalGetTime` |The total time spent obtaining connections. The value
+is in milliseconds
+
+|`WaitCount` |The number of requests that had to wait for a connection
+|===
+
+[[deployingds]]
+=== Deploying datasources
+
+Datasources (-ds.xml) are deployed by copying the definition into the
+`deploy/` directory
+
+....
+cp postgres-xa-ds.xml ironjacamar-1.2.0.Final/deploy
+      
+....
+
+on a Un++*++x based system or
+
+....
+copy postgres-xa-ds.xml ironjacamar-1.2.0.Final\deploy
+      
+....
+
+on Windows.
+
+You will need to install the database JDBC driver into the `lib/`
+directory.
+
+You can find examples of datasource definitions in the `doc/datasources`
+directory and the schemas: `doc/datasources++_++1++_++0.xsd`,
+`doc/datasources++_++1++_++1.xsd`, `doc/datasources++_++1++_++2.xsd` and
+`doc/datasources++_++1++_++3.xsd`.
+
+[[deployingds_descriptor]]
+==== Datasource descriptor
+
+Datasource descriptors are divided into
+
+* ++<++datasource++>++
++
+for a standard datasource
+* ++<++xa-datasource++>++
++
+for an XA capable datasource
+
+definitions.
+
+A datasource descriptor supports the following parameters.
+
+.Common datasource attributes
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Attribute |Desciption
+|`jndi-name` |Specifies the JNDI name for the datasource
+
+|`pool-name` |Specifies the pool name for the datasource used for
+management
+
+|`enabled` |Specifies if the datasource should be enabled
+
+|`use-java-context` |Setting this to false will bind the DataSource into
+global JNDI
+
+|`spy` |Enable spy functionality on the JDBC layer - e.g. log all JDBC
+traffic to the datasource. The logging category `jboss.jdbc.spy` must be
+enabled too.
+
+|`use-ccm` |Enable the cached connection manager
+
+|`jta` |Enable JTA integration (only `++<++datasource++>++`)
+
+|`connectable` |Allow components to obtain a connection through the
+`XAResource` instance (1.3)
+
+|`tracking` |Track connection handles across transaction boundaries
+(1.3)
+|===
+
+.`datasource` elements
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`connection-url` |The JDBC driver connection URL
+
+|`driver-class` |The fully qualifed name of the JDBC driver class
+
+|`datasource-class` |The fully qualifed name of the JDBC datasource
+class
+
+|`driver` a|
+An unique name for the JDBC driver specified in the drivers section. Or
+the name of the .jar file if deployed as standalone deployment
+
+This element is mandatory when deploying in WildFly
+
+|`connection-property` |The connection-property element allows you to
+pass in arbitrary connection properties to the Driver.connect(url,
+props) method. Each connection-property specifies a string name/value
+pair with the property name coming from the name attribute and the value
+coming from the element content
+
+|`new-connection-sql` |Specify an SQL statement to execute whenever a
+connection is added to the connection pool
+
+|`transaction-isolation` |Set java.sql.Connection transaction isolation
+level to use. The constants defined by transaction-isolation-values are
+the possible transaction isolation levels and include:
+TRANSACTION++_++READ++_++UNCOMMITTED TRANSACTION++_++READ++_++COMMITTED
+TRANSACTION++_++REPEATABLE++_++READ TRANSACTION++_++SERIALIZABLE
+TRANSACTION++_++NONE
+
+|`url-delimiter` |Specifies the delimeter for URLs in connection-url for
+HA datasources
+
+|`url-selector-strategy-class-name` |A class that implements
+org.jboss.jca.adapters.jdbc.spi.URLSelectorStrategy
+
+|`pool` |Specifies the pooling settings
+
+|`security` |Specifies the security settings
+
+|`validation` |Specifies the validation settings
+
+|`timeout` |Specifies the time out settings
+
+|`statement` |Specifies the statement settings
+|===
+
+.`xa-datasource` elements
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`xa-datasource-property` |Specifies a property to assign to the
+XADataSource implementation class. Each property is identified by the
+name attribute and the property value is given by the
+xa-datasource-property element content. The property is mapped onto the
+XADataSource implementation by looking for a JavaBeans style getter
+method for the property name. If found, the value of the property is set
+using the JavaBeans setter with the element text translated to the true
+property type using the java.beans.PropertyEditor for the type
+
+|`xa-datasource-class` |The fully qualifed name of the
+javax.sql.XADataSource implementation class
+
+|`driver` a|
+An unique name for the JDBC driver specified in the drivers section. Or
+the name of the .jar file if deployed as standalone deployment.
+
+This element is mandatory when deploying in WildFly
+
+|`url-delimiter` |Specifies the delimeter for URLs in the connection url
+for HA datasources
+
+|`url-property` |Specifies the property for the URL property in the
+xa-datasource-property values (1.2)
+
+|`url-selector-strategy-class-name` |A class that implements
+org.jboss.jca.adapters.jdbc.spi.URLXASelectorStrategy
+
+|`new-connection-sql` |Specifies an SQL statement to execute whenever a
+connection is added to the connection pool
+
+|`transaction-isolation` |Set java.sql.Connection transaction isolation
+level to use. The constants defined by transaction-isolation-values are
+the possible transaction isolation levels and include:
+TRANSACTION++_++READ++_++UNCOMMITTED TRANSACTION++_++READ++_++COMMITTED
+TRANSACTION++_++REPEATABLE++_++READ TRANSACTION++_++SERIALIZABLE
+TRANSACTION++_++NONE
+
+|`xa-pool` |Specifies the pooling settings
+
+|`security` |Specifies the security settings
+
+|`validation` |Specifies the validation settings
+
+|`timeout` |Specifies the time out settings
+
+|`statement` |Specifies the statement settings
+
+|`recovery` |Specifies the recovery settings
+|===
+
+.Pool settings
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`min-pool-size` |The min-pool-size element indicates the minimum number
+of connections a pool should hold. These are not created until a Subject
+is known from a request for a connection. This default to 0
+
+|`initial-pool-size` |The initial-pool-size element indicates the
+initial number of connections a pool should hold. These are not created
+until a Subject is known from a request for a connection. This default
+to 0 (1.2)
+
+|`max-pool-size` |The max-pool-size element indicates the maximum number
+of connections for a pool. No more connections will be created in each
+sub-pool. This defaults to 20
+
+|`prefill` |Whether to attempt to prefill the connection pool. Empty
+element denotes a true value. Default is false
+
+|`use-strict-min` |Define if the min-pool-size should be considered a
+strictly. Default false
+
+|`flush-strategy` |Specifies how the pool should be flush in case of an
+error. Valid values are: `FailingConnectionOnly` (default),
+`InvalidIdleConnections` (1.2), `IdleConnections`, `Gracefully` (1.2),
+`EntirePool`, `AllInvalidIdleConnections` (1.2), `AllIdleConnections`
+(1.2), `AllGracefully` (1.2), `AllConnections` (1.2)
+
+|`allow-multiple-users` |Specifies if multiple users will access the
+datasource through the getConnection(user, password) method and hence if
+the internal pool type should account for that (1.1)
+
+|`capacity` |Specifies the capacity policies (1.2)
+
+|`connection-listener` |An
+org.jboss.jca.adapters.jdbc.spi.listener.ConnectionListener that
+provides a possible to listen for connection activation and passivation
+in order to perform actions before the connection is returned to the
+application or returned to the pool (1.2)
+|===
+
+.XA pool settings
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`min-pool-size` |The min-pool-size element indicates the minimum number
+of connections a pool should hold. These are not created until a Subject
+is known from a request for a connection. This default to 0
+
+|`initial-pool-size` |The initial-pool-size element indicates the
+initial number of connections a pool should hold. These are not created
+until a Subject is known from a request for a connection. This default
+to 0 (1.2)
+
+|`max-pool-size` |The max-pool-size element indicates the maximum number
+of connections for a pool. No more connections will be created in each
+sub-pool. This defaults to 20
+
+|`prefill` |Whether to attempt to prefill the connection pool. Empty
+element denotes a true value. Default is false
+
+|`use-strict-min` |Define if the min-pool-size should be considered a
+strictly. Default false
+
+|`flush-strategy` |Specifies how the pool should be flush in case of an
+error. Valid values are: `FailingConnectionOnly` (default),
+`InvalidIdleConnections` (1.2), `IdleConnections`, `Gracefully` (1.2),
+`EntirePool`, `AllInvalidIdleConnections` (1.2), `AllIdleConnections`
+(1.2), `AllGracefully` (1.2), `AllConnections` (1.2)
+
+|`allow-multiple-users` |Specifies if multiple users will access the
+datasource through the getConnection(user, password) method and hence if
+the internal pool type should account for that (1.1)
+
+|`capacity` |Specifies the capacity policies (1.2)
+
+|`connection-listener` |An
+org.jboss.jca.adapters.jdbc.spi.listener.ConnectionListener that
+provides a possible to listen for connection activation and passivation
+in order to perform actions before the connection is returned to the
+application or returned to the pool (1.2)
+
+|`is-same-rm-override` |The is-same-rm-override element allows one to
+unconditionally set whether the
+javax.transaction.xa.XAResource.isSameRM(XAResource) returns true or
+false
+
+|`interleaving` |An element to enable interleaving for XA connection
+factories
+
+|`no-tx-separate-pools` |Oracle does not like XA connections getting
+used both inside and outside a JTA transaction. To workaround the
+problem you can create separate sub-pools for the different contexts
+
+|`pad-xid` |Should the Xid be padded
+
+|`wrap-xa-resource` |Should the XAResource instances be wrapped in an
+org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper instance
+|===
+
+.Security settings
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`user-name` |Specify the username used when creating a new connection.
+
+|`password` |Specify the password used when creating a new connection.
+
+|`security-domain` |Indicates Subject (from security domain) are used to
+distinguish connections in the pool. The content of the security-domain
+is the name of the JAAS security manager that will handle
+authentication. This name correlates to the JAAS login-config.xml
+descriptor application-policy/name attribute.
+
+|`reauth-plugin` |Defines a reauthentication plugin that can be used for
+reauthentication of physical connections.
+|===
+
+.Validation settings
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`valid-connection-checker` |An
+org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker that provides a
+SQLException isValidConnection(Connection e) method to validate is a
+connection is valid. An exception means the connection is destroyed.
+This overrides the check-valid-connection-sql when present
+
+|`check-valid-connection-sql` |Specify an SQL statement to check
+validity of a pool connection. This may be called when managed
+connection is taken from pool for use.
+
+|`validate-on-match` |The validate-on-match element indicates whether or
+not connection level validation should be done when a connection factory
+attempts to match a managed connection for a given set. This is
+typically exclusive to the use of background validation
+
+|`background-validation` |An element to specify that connections should
+be validated on a background thread versus being validated prior to use
+
+|`background-validation-millis` |The background-validation-millis
+element specifies the amount of time, in milliseconds, that background
+validation will run
+
+|`use-fast-fail` |Whether fail a connection allocation on the first
+connection if it is invalid (true) or keep trying until the pool is
+exhausted of all potential connections (false) default false
+
+|`stale-connection-checker` |An
+org.jboss.jca.adapters.jdbc.spi.StaleConnectionChecker that provides a
+boolean isStaleConnection(SQLException e) method which if it it returns
+true will wrap the exception in an
+org.jboss.jca.adapters.jdbc.StaleConnectionException which is a subclass
+of SQLException
+
+|`exception-sorter` |An org.jboss.jca.adapters.jdbc.spi.ExceptionSorter
+that provides a boolean isExceptionFatal(SQLException e) method to
+validate is an exception should be broadcast to all
+javax.resource.spi.ConnectionEventListener as a connectionErrorOccurred
+message
+|===
+
+.Time out settings
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`blocking-timeout-millis` |The blocking-timeout-millis element
+indicates the maximum time in milliseconds to block while waiting for a
+connection before throwing an exception. Note that this blocks only
+while waiting for a permit for a connection, and will never throw an
+exception if creating a new connection takes an inordinately long time.
+The default is 30000 (30 seconds).
+
+|`idle-timeout-minutes` |The idle-timeout-minutes elements indicates the
+maximum time in minutes a connection may be idle before being closed.
+The actual maximum time depends also on the IdleRemover scan time, which
+is 1/2 the smallest idle-timeout-minutes of any pool.
+
+|`set-tx-query-timeout` |Whether to set the query timeout based on the
+time remaining until transaction timeout, any configured query timeout
+will be used if there is no transaction. The default is false
+
+|`query-timeout` |Any configured query timeout in seconds The default is
+no timeout
+
+|`use-try-lock` |Any configured timeout for internal locks on the
+resource adapter objects in seconds The default is a 60 second timeout
+
+|`allocation-retry` |The allocation retry element indicates the number
+of times that allocating a connection should be tried before throwing an
+exception. The default is 0.
+
+|`allocation-retry-wait-millis` |The allocation retry wait millis
+element indicates the time in milliseconds to wait between retrying to
+allocate a connection. The default is 5000 (5 seconds).
+
+|`xa-resource-timeout` |Passed to XAResource.setTransactionTimeout()
+Default is zero which does not invoke the setter. In seconds
+|===
+
+.Statement settings
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`track-statements` |Whether to check for unclosed statements when a
+connection is returned to the pool and result sets are closed when a
+statement is closed/return to the prepared statement cache. valid values
+are: `false` - do not track statements and results; `true` - track
+statements and result sets and warn when they are not closed; `nowarn` -
+track statements but do no warn about them being unclosed (the default)
+
+|`prepared-statement-cache-size` |The number of prepared statements per
+connection in an LRU cache
+
+|`share-prepared-statements` |Whether to share prepare statements, i.e.
+whether asking for same statement twice without closing uses the same
+underlying prepared statement. The default is false
+|===
+
+.Recovery elements
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`recover-credential` |Specifies the user name / password pair or
+security domain that should be used for recovery.
+
+|`recover-plugin` |Specifies an implementation of the
+org.jboss.jca.core.spi.recovery.RecoveryPlugin class.
+|===
+
+.Driver attributes
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Attribute |Desciption
+|`name` |An unique name for the JDBC driver
+
+|`module` a|
+The module definition for the JDBC driver. The format of a module inside
+WildFly 8{plus} is `com.h2database.h2` which will map to the H2
+installation under `modules/com/h2database/h2/main`. A ':' can be used
+to identify the slot - f.ex `com.h2database.h2:1.3.159`.
+
+The format for IronJacamar Standalone/Embedded is the name of the .jar
+file
+
+|`major-version` |The major version of the driver
+
+|`minor-version` |The minor version of the driver
+|===
+
+.Driver elements
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Element |Desciption
+|`driver-class` |The fully qualified class name of the driver class
+
+|`datasource-class` |The fully qualified class name of the datasource
+class
+
+|`xa-datasource-class` |The fully qualified class name of the XA
+datasource class
+|===
+
+[[deployingds_extensions]]
+==== Datasource extensions
+
+The datasource deployments can make use of a couple of extensions in the
+JDBC resource adapter to improve the connection validation and checking
+if an exception should reestablish the connection in question.
+
+The extensions include
+
+* org.jboss.jca.adapters.jdbc.spi.ExceptionSorter
++
+: Plugin to check if a
++
+SQLException
++
+is fatal for the connection on which it was thrown.
+* org.jboss.jca.adapters.jdbc.spi.StaleConnection
++
+: Plugin to wrap stale
++
+SQLException
++
+'s in a
++
+org.jboss.jca.adapters.jdbc.StaleConnectionException
++
+.
+* org.jboss.jca.adapters.jdbc.spi.ValidConnection
++
+: Plugin to Check if a connection is valid for use by the application.
+
+Configuration of the extensions are done by using
+
+* The
++
+++<++exception-sorter++>++
++
+tag for an
++
+ExceptionSorter
+* The
++
+++<++stale-connection-checker++>++
++
+tag for a
++
+StaleConnection
+* The
++
+++<++valid-connection-checker++>++
++
+tag for a
++
+ValidConnection
+
+IronJacamar features implementations of these extensions for a couple of
+popular databases. Contributions in this area are most welcome either
+generic solutions or for a specific database.
+
+Informix:
+
+* org.jboss.jca.adapters.jdbc.extensions.informix.InformixExceptionSorter
+
+Microsoft SQLServer:
+
+* org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLExceptionSorter
+* org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker
+
+PostgreSQL:
+
+* org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter
+* org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker
+
+MySQL:
+
+* org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter
+* org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLReplicationValidConnectionChecker
+* org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker
+
+IBM DB2:
+
+* org.jboss.jca.adapters.jdbc.extensions.db2.DB2ExceptionSorter
+* org.jboss.jca.adapters.jdbc.extensions.db2.DB2StaleConnectionChecker
+* org.jboss.jca.adapters.jdbc.extensions.db2.DB2ValidConnectionChecker
+
+Generic:
+
+* org.jboss.jca.adapters.jdbc.extensions.novendor.AlwaysExceptionSorter
+* org.jboss.jca.adapters.jdbc.extensions.novendor.AlwaysStaleConnectionChecker
+* org.jboss.jca.adapters.jdbc.extensions.novendor.GoodForSecondsValidConnectionChecker
+* org.jboss.jca.adapters.jdbc.extensions.novendor.JDBC4ValidConnectionChecker
+* org.jboss.jca.adapters.jdbc.extensions.novendor.ListExceptionSorter
+* org.jboss.jca.adapters.jdbc.extensions.novendor.ListStaleConnectionChecker
+* org.jboss.jca.adapters.jdbc.extensions.novendor.NullExceptionSorter
+* org.jboss.jca.adapters.jdbc.extensions.novendor.NullStaleConnectionChecker
+* org.jboss.jca.adapters.jdbc.extensions.novendor.NullValidConnectionChecker
+* org.jboss.jca.adapters.jdbc.extensions.novendor.SQLExceptionValidConnectionChecker
+
+Sybase:
+
+* org.jboss.jca.adapters.jdbc.extensions.sybase.SybaseExceptionSorter
+* org.jboss.jca.adapters.jdbc.extensions.sybase.SybaseValidConnectionChecker
+
+Oracle:
+
+* org.jboss.jca.adapters.jdbc.extensions.oracle.OracleExceptionSorter
+* org.jboss.jca.adapters.jdbc.extensions.oracle.OracleStaleConnectionChecker
+* org.jboss.jca.adapters.jdbc.extensions.oracle.OracleValidConnectionChecker
+
+[[deployingds_statistics]]
+==== Datasource statistics
+
+Datasources has the following core statistics values
+
+.Core statistics
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Name |Desciption
+|`ActiveCount` |The number of active connections. Each of the
+connections is either in use by an application or available in the pool
+
+|`AvailableCount` |The number of available connections in the pool
+
+|`AverageBlockingTime` |The average time spent blocking on obtaining an
+exclusive lock on the pool. The value is in milliseconds
+
+|`AverageCreationTime` |The average time spent creating a connection.
+The value is in milliseconds
+
+|`AverageGetTime` |The average time spent obtaining a connection. The
+value is in milliseconds
+
+|`BlockingFailureCount` |The number of times where there was a time out
+getting an exclusive lock on the pool
+
+|`CreatedCount` |The number of connections created
+
+|`DestroyedCount` |The number of connections destroyed
+
+|`IdleCount` |The number of connections currently idle
+
+|`InUseCount` |The number of connections currently in use
+
+|`MaxCreationTime` |The maximum time it took to create a connection. The
+value is in milliseconds
+
+|`MaxGetTime` |The maximum time it took to obtain a connection. The
+value is in milliseconds
+
+|`MaxUsedCount` |The maximum number of connections used
+
+|`MaxWaitCount` |The maximum number of requests waiting for a connection
+at the same time
+
+|`MaxWaitTime` |The maximum time spent waiting for an exclusive lock on
+the pool
+
+|`TimedOut` |The number of timed out connections
+
+|`TotalBlockingTime` |The total time spent waiting for an exclusive lock
+on the pool. The value is in milliseconds
+
+|`TotalCreationTime` |The total time spent creating connections. The
+value is in milliseconds
+
+|`TotalGetTime` |The total time spent obtaining connections. The value
+is in milliseconds
+
+|`WaitCount` |The number of requests that had to wait for a connection
+|===
+
+Datasources has the following JDBC statistics values
+
+.JDBC statistics
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Name |Desciption
+|`PreparedStatementCacheAccessCount` |The number of times that the
+statement cache was accessed
+
+|`PreparedStatementCacheAddCount` |The number of statements added to the
+statement cache
+
+|`PreparedStatementCacheCurrentSize` |The number of prepared and
+callable statements currently cached in the statement cache
+
+|`PreparedStatementCacheDeleteCount` |The number of statements discarded
+from the cache
+
+|`PreparedStatementCacheHitCount` |The number of times that statements
+from the cache were used
+
+|`PreparedStatementCacheMissCount` |The number of times that a statement
+request could not be satisfied with a statement from the cache
+|===
+
+[[deploying_general]]
+=== General deployment settings
+
+This section will provide an overview of general deployment settings
+that are shared between resource adapter activations, and datasource
+deployments.
+
+[[deploying_flush_strategies]]
+==== Flush strategies
+
+The flush strategy option for the connection pool defines how the pool
+should be flushed in case there is an error on a connection belonging to
+the pool.
+
+In all cases the connection with the error is destroyed, and the pool is
+scheduled for prefill if supported.
+
+.Flush strategies
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Name |Desciption
+|`FailingConnectionOnly` |Only the connection with the error is
+destroyed. This is the default strategy.
+
+|`InvalidIdleConnections` |All idle connections are checked if they are
+invalid, based on the
+`javax.resource.spi.ValidatingManagedConnectionFactory` return value.
+
+|`IdleConnections` |All idle connections are destroyed.
+
+|`Gracefully` |All idle connections are destroyed, and all active
+connections will be destroyed upon return to the pool.
+
+|`EntirePool` |All connections are destroyed, including current active
+connections.
+
+|`AllInvalidIdleConnections` |Like `InvalidIdleConnections`, but across
+all credentials for the pool if supported.
+
+|`AllIdleConnections` |Like `IdleConnections`, but across all
+credentials for the pool if supported.
+
+|`AllGracefully` |Like `Gracefully`, but across all credentials for the
+pool if supported.
+
+|`AllConnections` |Like `EntirePool`, but across all credentials for the
+pool if supported.
+|===
+
+[[deploying_capacity_policies]]
+==== Capacity policies
+
+The policy for creating and destroying physical connections for a pool
+can be controlled by specifying which policy that should be used.
+
+The default policies are only to create one connection per request, and
+to destroy all connections timed out when the idle timeout is scheduled.
+
+[NOTE]
+====
+IronJacamar will by default make use of First In First Out (FIFO) and
+First In Last Out (FILO) pooling policies based on the decrementer
+policy selected. Note, that not all pool implementations will support
+these pooling policies.
+====
+
+[[deploying_capacity_increment]]
+===== Increment policies
+
+The following increment policies are supported.
+
+[[deploying_capacity_increment_maxpool]]
+====== MaxPoolSize policy
+
+The
+`org.jboss.jca.core.connectionmanager.pool.capacity.MaxPoolSizeIncrementer`
+policy will fill the pool to its max size for each request.
+
+This policy is useful when you want to keep the maximum number of
+connections available all the time.
+
+[[deploying_capacity_increment_size]]
+====== Size policy
+
+The `org.jboss.jca.core.connectionmanager.pool.capacity.SizeIncrementer`
+policy will fill the pool by the specified number of connections for
+each request.
+
+.Size policy properties
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Name |Desciption
+|`Size` |The number of connections that should be created
+|===
+
+This policy is useful when you want to increment with an additional
+number of connections per request in anticipation that the next request
+will also need a connection.
+
+This is the default increment policy with a value of 1.
+
+[[deploying_capacity_increment_watermark]]
+====== Watermark policy
+
+The
+`org.jboss.jca.core.connectionmanager.pool.capacity.WatermarkIncrementer`
+policy will fill the pool to the specified number of connections for
+each request.
+
+.Watermark policy properties
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Name |Desciption
+|`Watermark` |The watermark level for the number of connections
+|===
+
+This policy is useful when you want to keep a specified number of
+connections in the pool at all time.
+
+[[deploying_capacity_decrement]]
+===== Decrement policies
+
+The following decrement policies are supported.
+
+[[deploying_capacity_decrement_minpool]]
+====== MinPoolSize policy
+
+The
+`org.jboss.jca.core.connectionmanager.pool.capacity.MinPoolSizeDecrementer`
+policy will decrement the pool to its min size for each request.
+
+This policy is useful when you want to limit the number of connections
+after each idle timeout request.
+
+The pool will operate in a First In First Out (FIFO) manner.
+
+[[deploying_capacity_decrement_size]]
+====== Size policy
+
+The `org.jboss.jca.core.connectionmanager.pool.capacity.SizeDecrementer`
+policy will decrement the pool by the specified number of connections
+for each idle timeout request.
+
+.Size policy properties
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Name |Desciption
+|`Size` |The number of connections that should be destroyed
+|===
+
+This policy is useful when you want to decrement an additional number of
+connections per idle timeout request in anticipation that the pool usage
+will lower over time.
+
+The pool will operate in a First In First Out (FIFO) manner.
+
+[[deploying_capacity_decrement_timedout]]
+====== TimedOut policy
+
+The
+`org.jboss.jca.core.connectionmanager.pool.capacity.TimedOutDecrementer`
+policy will removed all connections that have timed out from the pool
+for each idle timeout request.
+
+This policy is the default decrement policy.
+
+The pool will operate in a First In Last Out (FILO) manner.
+
+[[deploying_capacity_decrement_timedout_fifo]]
+====== TimedOut/FIFO policy
+
+The
+`org.jboss.jca.core.connectionmanager.pool.capacity.TimedOutFIFODecrementer`
+policy will removed all connections that have timed out from the pool
+for each idle timeout request.
+
+The pool will operate in a First In First Out (FIFO) manner.
+
+[[deploying_capacity_decrement_watermark]]
+====== Watermark policy
+
+The
+`org.jboss.jca.core.connectionmanager.pool.capacity.WatermarkDecrementer`
+policy will decrement the pool to the specified number of connections
+for each idle timeout request.
+
+.Watermark policy properties
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Name |Desciption
+|`Watermark` |The watermark level for the number of connections
+|===
+
+This policy is useful when you want to keep a specified number of
+connections in the pool at all time.
+
+The pool will operate in a First In First Out (FIFO) manner.

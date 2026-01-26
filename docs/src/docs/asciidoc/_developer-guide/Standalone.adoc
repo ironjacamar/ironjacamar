@@ -1,0 +1,60 @@
+== Standalone
+
+[[standaloneoverview]]
+=== Overview
+
+The standalone IronJacamar container implements Chapter 3 Section 5 of
+the JCA 1.6 specification which defines a standalone JCA environment.
+
+The standalone container has the following layout:
+
+* $IRON++_++JACAMAR++_++HOME/bin/
++
+contains the run scripts and the SJC kernel.
+* $IRON++_++JACAMAR++_++HOME/config/
++
+contains the configuration of the container.
+* $IRON++_++JACAMAR++_++HOME/deploy/
++
+contains the user deployments.
+* $IRON++_++JACAMAR++_++HOME/doc/
++
+contains the documentation.
+* $IRON++_++JACAMAR++_++HOME/lib/
++
+contains all the libraries used by the container.
+* $IRON++_++JACAMAR++_++HOME/log/
++
+contains the log files.
+* $IRON++_++JACAMAR++_++HOME/system/
++
+contains system deployments files.
+* $IRON++_++JACAMAR++_++HOME/tmp/
++
+contains temporary files.
+
+To start the container execute the following
+
+....
+cd $IRON_JACAMAR_HOME/bin
+./run.sh
+      
+....
+
+.
+
+[[jcasjc]]
+=== IronJacamar/SJC
+
+[WARNING]
+====
+This standalone configuration is for development purposes only.
+====
+
+The IronJacamar/SJC uses the Fungal kernel for its run-time environment.
+
+The homepage for the Fungal is https://jesperpedersen.github.io/fungal
+
+.
+
+SJC is short for "Simple JCA Container".
