@@ -1,0 +1,2 @@
+To all Java EE Connector Architecture users, and especially the
+IronJacamar community

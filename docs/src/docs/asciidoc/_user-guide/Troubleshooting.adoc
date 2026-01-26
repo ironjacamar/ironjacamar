@@ -1,0 +1,60 @@
+== Troubleshooting
+
+[[ithinkihavefoundabug]]
+=== I think I have found a bug
+
+If you think you have found a bug you should verify this by posting to
+our forum first.
+
+Our forum is located at http://community.jboss.org/en/ironjacamar
+
+You can also search our issue tracking system located at
+http://issues.jboss.org/browse/JBJCA
+
+[[iwouldliketoimplementafeature]]
+=== I would like to implement a feature
+
+So you have found an area where you are missing a feature and would like
+to submit a patch for it, great !
+
+There are a couple of steps to get a feature included
+
+First, you should create a new thread in our development forum where you
+describe the feature, its design and implementation.
+
+Once there is an agreement on the feature and the design you should
+proceed with creating the patch.
+
+To maximize your chances of getting the feature in the official build as
+soon as possible make sure that you run through the following steps:
+
+....
+ant clean test
+ant clean checkstyle
+ant clean findbugs
+ant clean jacoco
+      
+....
+
+All these should show that,
+
+[arabic]
+. All your test cases for the feature is passing
+. Your code is correctly formatted according to project rules
+. There isn't any bug reports from the Findbugs environment
+. There is full code coverage based on the JaCoCo report
+
+when done, create a JIRA task (Feature Request) in our JIRA environment
+and attach the unified diff formatted patch. See the developer guide for
+additional details.
+
+Happy Coding !
+
+[[howdoi]]
+=== How do I ?
+
+We can't cover every single issue in this guide, so feel free to drop by
+our forums to see if a solution has already been provided. Otherwise
+feel free to ask your question there.
+
+Our forum is located at http://community.jboss.org/en/ironjacamar

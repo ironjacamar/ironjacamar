@@ -1,0 +1,236 @@
+[[codegenerator]]
+== Code generator
+
+[[codegenerator_introduction]]
+=== Introduction
+
+The IronJacamar project includes a resource adapter code generator which
+can generate a complete code skeleton that will help developers get
+started with their development tasks.
+
+[[codegenerator_functionality]]
+=== Functionality
+
+The code generator will generate a resource adapter code skeleton based
+on the user input. The code generator supports
+
+* Resource adapter using JCA 1.7 annotations
+* Resource adapter using JCA 1.7 metadata
+* Resource adapter using JCA 1.6 annotations
+* Resource adapter using JCA 1.6 metadata
+* Resource adapter using JCA 1.5
+* Resource adapter using JCA 1.0
+* Apache Ant build environment
+* Apache Ant {plus} Ivy build environment
+* Gradle build environment
+* Apache Maven build environment
+* Test suite environment
+
+[[codegenerator_running]]
+=== Running the tool
+
+The code generator can be run on the command line by
+
+....
+./codegenerator.sh
+      
+....
+
+from the `doc/codegenerator` directory.
+
+The code generator supports the following arguments
+
+.Code generator arguments
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Argument |Desciption
+|`-o` |Specifies the output directory for the code skeleton.
+|===
+
+The developer must then answer various questions regarding the
+properties of the resource adapter.
+
+[[codegenerator_input]]
+==== Developer Input
+
+This section describes the questions that are asked in order to generate
+the code.
+
+.Developer input
+[width="100%",cols="30%,14%,42%,14%",options="header",]
+|===
+|Question |Spec |Desciption |Type
+|Profile version (1.7/1.6/1.5/1.0) |All |Defines which Java EE Connector
+Architecture specification that the resource adapter should target |
+
+|Type (O/Outbound/I/Inbound/B/Bidirectional) |JCA 1.5{plus} |Defines if
+the resource adapter should contain outbound communication., inbound
+communication or both |
+
+|Package name |All |The package name of the resource adapter |
+
+|Transaction support
+(N/NoTransaction/L/LocalTransaction/X/XATransaction) |All |The
+transaction support level |
+
+|Reauthentication (Y/Yes/N/No) |All |If the resource adapter supports
+reauthentication |
+
+|Use annotations (Y/Yes/N/No) |JCA 1.6{plus} |Should annotations be used
+for specifying the structure. If 'No' is selected a `META-INF/ra.xml` is
+generated |
+
+|Include a ResourceAdapter (Y/Yes/N/No) |JCA 1.5{plus} |Should an
+instance of a resource adapter class be included in the archive
+|Outbound
+
+|Resource adapter class name |JCA 1.5{plus} |The class name of the
+resource adapter |Outbound or Bidirectional
+
+|Should the resource adapter class be Serializable (Y/Yes/N/No) |JCA
+1.5{plus} |Should the resource adapter class be serializable |Outbound
+
+|Managed connection factory class name |All |The class name of the
+managed connection factory |Outbound or Bidirectional
+
+|Managed connection class name |All |The class name of the managed
+connection |Outbound or Bidirectional
+
+|Connection interface class name |All |The class name of the connection
+interface |Outbound or Bidirectional
+
+|Connection implementation class name |All |The class name of the
+connection implementation |Outbound or Bidirectional
+
+|Connection factory interface class name |All |The class name of the
+connection factory interface |Outbound or Bidirectional
+
+|Connection factory implementation class name |All |The class name of
+the connection factory implementation |Outbound or Bidirectional
+
+|Resource adapter config properties |All |Include a configuration
+properties in the resource adapter instance |Outbound or Bidirectional
+
+|Managed connection factory config properties |All |Include a
+configuration properties in the managed connection factory instance
+|Outbound or Bidirectional
+
+|Use ResourceAdapterAssociation (Y/Yes/N/No) |All |Associate the managed
+connection factory instance with the resource adapter instance |Outbound
+or Bidirectional
+
+|Use CCI (Y/Yes/N/No) |All |Use the Common Client Interface for the
+connection / connection factory in the 'Outbound' part of the resource
+adapter |Outbound or Bidirectional
+
+|MessageListener interface name |JCA 1.5{plus} |The name of the message
+listener interface for the activation |Inbound or Bidirectional
+
+|ActivationSpec class name |JCA 1.5{plus} |The class name of the
+activation specification instance |Inbound or Bidirectional
+
+|ActivationSpec config properties |JCA 1.5{plus} |Include configuration
+properties in the activation specification instance |Inbound or
+Bidirectional
+
+|Activation class name |JCA 1.5{plus} |The class name of the activation
+instance |Inbound or Bidirectional
+
+|Add methods to connection interface (Y/Yes/N/No) ++[++N++]++: |All |Use
+for add methods to connection interface |Outbound or Bidirectional
+
+|Include an admin object (Y/Yes/N/No) |JCA 1.5{plus} |Should an admin
+object be added to the project |
+
+|Use ResourceAdapterAssociation on admin object(Y/Yes/N/No) |JCA 1.5
+|Associate the admin object instance with the resource adapter instance
+|
+
+|Admin object interface name |JCA 1.5{plus} |The interface name of the
+admin object |
+
+|Admin object class name |JCA 1.5{plus} |The class name of the admin
+object |
+
+|Admin object config properties |JCA 1.5 |Include a configuration
+properties in the admin object instance |
+
+|Generate a MBean class (Y/Yes/N/No) |All |Generate a MBean for the
+resource adapter |
+
+|Integrate EIS test server (Y/Yes/N/No) |All |Should the IronJacamar
+test EIS server be integrated |
+
+|Use JBoss Logging (Y/Yes/N/No) ++[++N++]++: |All |Use JBoss Logging
+instead of Java Util Logging |
+
+|Build environment ++[++A/Ant/I/Ant{plus}Ivy/M/Maven/G/Gradle++]++ |All
+|Type of build environment |
+|===
+
+[[codegenerator_code]]
+=== Generated code
+
+The generated code will consist of the classes making up the resource
+adapter and a test suite environment based on the embedded distribution.
+
+[[codegenerator_ant]]
+==== Apache Ant build environment
+
+The following targets are supported in the Apache Ant build environment
+
+.Apache Ant build environment
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Target |Desciption
+|`compile` |Compiles all the files
+|`rar` |Builds the resource adapter archive
+|`prepare-test` |Prepares the test environment
+|`test` |Executes the tests
+|`docs` |Generates the documentation
+|===
+
+[[codegenerator_ant_ivy]]
+==== Apache Ant {plus} Ivy build environment
+
+The following targets are supported in the Apache Ant {plus} Ivy build
+environment
+
+.Apache Ant {plus} Ivy build environment
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Target |Desciption
+|`compile` |Compiles all the files
+|`rar` |Builds the resource adapter archive
+|`prepare-test` |Prepares the test environment
+|`test` |Executes the tests
+|`docs` |Generates the documentation
+|===
+
+[[codegenerator_gradle]]
+==== Gradle build environment
+
+The Gradle build environment currently support the standard tasks such
+as
+
+.Gradle build environment
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Target |Desciption
+|`compile` |Compiles all the files
+|`test` |Executes the tests
+|===
+
+[[codegenerator_maven]]
+==== Apache Maven build environment
+
+The following targets are supported in the Apache Maven build
+environment
+
+.Apache Maven build environment
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Target |Desciption
+|`compile` |Compiles all the files
+|`test` |Executes the tests
+|===

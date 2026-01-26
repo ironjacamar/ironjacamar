@@ -1,0 +1,28 @@
+[[Developer_Guide]]
+= IronJacamar Developer Guide
+IronJacamar authors;
+:revnumber: {version}
+:revdate: {localdate}
+:toc: macro
+:toclevels: 2
+:toc-title: IronJacamar Developer guide
+:doctype: book
+:icons: font
+:source-highlighter: coderay
+:sectlinks:
+:idseparator: -
+:include-depth: 2
+
+include::_user-guide/Dedication.adoc[]
+include::_user-guide/Preface.adoc[]
+include::_user-guide/Introduction.adoc[]
+include::_developer-guide/Building.adoc[]
+include::_developer-guide/Releases.adoc[]
+include::_developer-guide/Issue_Tracking.adoc[]
+include::_developer-guide/Testing.adoc[]
+include::_developer-guide/Metadata.adoc[]
+include::_developer-guide/Deployers.adoc[]
+include::_developer-guide/Connection_Manager.adoc[]
+include::_developer-guide/Pool.adoc[]
+include::_developer-guide/Standalone.adoc[]
+include::_user-guide/Licenses.adoc[]

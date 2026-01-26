@@ -1,0 +1,122 @@
+[[gettingstarted]]
+== Download
+
+The official IronJacamar project page is http://www.ironjacamar.org/
+where you can download the software.
+
+[[download]]
+=== Download
+
+The download location is: http://www.ironjacamar.org/downloads/
+
+Each release is labelled with a version number and an identifier.
+
+....
+ironjacamar-<major>.<minor>.<patch>.<identifier>
+      
+....
+
+where
+
+* Major: The major version number. Signifies major changes in the
+implementation.
+* Minor: The minor version number. Signifies functional changes to a
+major version.
+* Patch: The patch version number. Signifies a binary compatible change
+to a minor version.
+* Identifier: The identifier. Identifies the level of the quality of the
+release.
+** Final: Stable release
+** CR: Candidate for Release quality. The implementation is functional
+complete.
+** Beta: Beta quality. The implementation is almost functional complete.
+** Alpha: Alpha quality. The implementation is a snapshot of the
+development.
+
+An example
+
+....
+ironjacamar-1.2.0.Final.tar.gz
+      
+....
+
+which is a stable release of the project.
+
+[[download_maven]]
+=== Maven repository
+
+The IronJacamar distribution is deployed to the JBoss Nexus repository.
+
+Repository: `http://repository.jboss.org/nexus/content/groups/public/`
+
+Group id: `org.jboss.ironjacamar`
+
+.Maven artifacts
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Artifact |Description
+|`ironjacamar-arquillian-embedded` |The Arquillian extension for the
+embedded module
+
+|`ironjacamar-arquillian-embedded-byteman` |The Arquillian/Byteman
+extension for the embedded module
+
+|`ironjacamar-as` |WildFly integration tools
+
+|`ironjacamar-codegenerator` |The code generator
+
+|`ironjacamar-common-api` |The API for the common module
+
+|`ironjacamar-common-impl` |The implementation for the common module
+
+|`ironjacamar-common-spi` |The SPI for the common module
+
+|`ironjacamar-core-api` |The API / SPI for the core module
+
+|`ironjacamar-core-impl` |The implementation for the core module
+
+|`ironjacamar-depchain` |The dependency chain for the IronJacamar
+container
+
+|`ironjacamar-deployers-common` |The common classes for the deployer
+chains
+
+|`ironjacamar-deployers-fungal` |The deployers for the Fungal kernel
+based setup
+
+|`ironjacamar-embedded` |The embedded module
+
+|`ironjacamar-jdbc` |The core library for the JDBC resource adapters
+
+|`ironjacamar-spec-api` |The Java EE Connector Architecture 1.7 API
+
+|`ironjacamar-test-eis` |The Enterprise Information System test server
+
+|`ironjacamar-validator` |The validator module
+
+|`ironjacamar-validator-ant` |The Apache Ant tasks for the validator
+module
+
+|`ironjacamar-validator-cli` |The command line interface for the
+validator module
+
+|`jdbc-local` |A JDBC resource adapter backing standard datasources
+
+|`jdbc-xa` |A JDBC resource adapter backing XA datasources
+|===
+
+[[GIT]]
+=== Git Access
+
+If you want to experiment with the latest developments you may checkout
+the latest code from Git. Be aware that the information provided in this
+manual might then not be accurate.
+
+The Git repository is located at:
+
+....
+http://github.com/ironjacamar/ironjacamar
+      
+....
+
+You can find additional information about this in the developer guide.

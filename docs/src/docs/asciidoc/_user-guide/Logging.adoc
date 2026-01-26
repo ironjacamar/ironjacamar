@@ -1,0 +1,641 @@
+[[logging_codes]]
+== Logging codes
+
+[[logging_codes_core]]
+== Core: 000000 - 009999
+
+.Logging codes for core
+[cols=",,",options="header",]
+|===
+|Code |Level |Description
+|100 |`INFO` |Closing a connection for you. Please close them yourself
+
+|102 |`INFO` |Throwable trying to close a connection for you, please
+close it yourself
+
+|103 |`INFO` |Could not find a close method on alleged connection
+object. Please close your own connections
+
+|151 |`EXCEPTION` |Some connections were not closed, see the log for the
+allocation stacktraces
+
+|152 |`EXCEPTION` |Trying to return an unknown connection
+
+|201 |`ERROR` |SecurityContext setup failed
+
+|202 |`ERROR` |SecurityContext setup failed since CallbackSecurity was
+null
+
+|251 |`EXCEPTION` |SecurityContext setup failed
+
+|252 |`EXCEPTION` |SecurityContext setup failed since CallbackSecurity
+was null
+
+|253 |`EXCEPTION` |Work is null
+
+|254 |`EXCEPTION` |StartTimeout is negative
+
+|255 |`EXCEPTION` |Interrupted while requesting permit
+
+|256 |`EXCEPTION` |Work execution context must be null because work
+instance implements WorkContextProviderStartTimeout is negative
+
+|257 |`EXCEPTION` |Run method is synchronized
+
+|258 |`EXCEPTION` |Release method is synchronized
+
+|259 |`EXCEPTION` |Unsupported WorkContext class
+
+|260 |`EXCEPTION` |Duplicate TransactionWorkContext class
+
+|261 |`EXCEPTION` |Duplicate SecurityWorkContext class
+
+|262 |`EXCEPTION` |Duplicate HintWorkContext class
+
+|263 |`EXCEPTION` |WorkManager is shutting down
+
+|264 |`EXCEPTION` |SecurityContext setup failed since
+CallbackSecurity::Domain was empty
+
+|265 |`EXCEPTION` |ResourceAdapterAssociation failed
+
+|266 |`EXCEPTION` |Invalid number of parameters
+
+|301 |`INFO` |Registered a null handle for managed connection
+
+|302 |`INFO` |Unregistered handle that was not registered
+
+|303 |`INFO` |Unregistered a null handle for managed connection
+
+|305 |`WARN` |Connection error occured
+
+|306 |`WARN` |Unknown connection error occured
+
+|307 |`WARN` |Notified of error on a different managed connection
+
+|311 |`INFO` |Throwable from unregister connection
+
+|312 |`ERROR` |Error while closing connection handle
+
+|313 |`ERROR` |There is something wrong with the pooling
+
+|314 |`WARN` |Error during beforeCompletion
+
+|315 |`ERROR` |Pool has active handles
+
+|316 |`ERROR` |Handle allocation
+
+|317 |`ERROR` |Transaction boundary
+
+|318 |`ERROR` |Delisting resource in pool failed
+
+|351 |`EXCEPTION` |Not correct type
+
+|352 |`EXCEPTION` |Failure to delist resource
+
+|353 |`EXCEPTION` |Error in delist
+
+|354 |`EXCEPTION` |Unfinished local transaction - error getting local
+transaction
+
+|355 |`EXCEPTION` |Unfinished local transaction but managed connection
+does not provide a local transaction
+
+|356 |`EXCEPTION` |Failed to enlist
+
+|357 |`EXCEPTION` |Error in dissociate
+
+|401 |`WARN` |Error during tidy up connection
+
+|402 |`WARN` |ResourceException in returning connection
+
+|403 |`WARN` |Reconnecting a connection handle that still has a managed
+connection
+
+|404 |`WARN` |Unchecked throwable in managedConnectionDisconnected()
+
+|405 |`WARN` |Multiple LocalTransaction connection listeners enlisted
+
+|406 |`ERROR` |Throwable in returning connection
+
+|407 |`WARN` |No lazy enlistment available
+
+|408 |`WARN` |Deprecated pool
+
+|451 |`EXCEPTION` |The connection manager is shutdown
+
+|452 |`EXCEPTION` |Method getManagedConnection retry wait was
+interrupted
+
+|453 |`EXCEPTION` |Unable to get managed connection
+
+|454 |`EXCEPTION` |You are trying to use a connection factory that has
+been shut down: ManagedConnectionFactory is null
+
+|455 |`EXCEPTION` |Wrong ManagedConnectionFactory sent to
+allocateConnection
+
+|456 |`EXCEPTION` |Unchecked throwable in
+ManagedConnection.getConnection()
+
+|457 |`EXCEPTION` |Unchecked throwable in managedConnectionReconnected()
+
+|458 |`EXCEPTION` |This method is not supported
+
+|459 |`EXCEPTION` |Transaction is not active
+
+|460 |`EXCEPTION` |Error checking for a transaction
+
+|461 |`EXCEPTION` |Could not enlist in transaction on entering
+meta-aware object
+
+|462 |`EXCEPTION` |Could not delist resource, probably a transaction
+rollback
+
+|463 |`EXCEPTION` |Unable to set XAResource transaction timeout
+
+|464 |`EXCEPTION` |Unable to find connection listener
+
+|465 |`EXCEPTION` |Connection is null
+
+|466 |`EXCEPTION` |Enlistment not enabled
+
+|467 |`EXCEPTION` |Managed connection not lazy enlistable
+
+|468 |`EXCEPTION` |Connection listener already enlisted
+
+|469 |`EXCEPTION` |Error during enlistment
+
+|470 |`EXCEPTION` |You are trying to use a connection factory that has
+been shut down
+
+|501 |`WARN` |Thread is not the enlisting thread
+
+|502 |`WARN` |Transaction error in beforeCompletion
+
+|503 |`WARN` |Transaction error in afterCompletion
+
+|504 |`WARN` |Transaction not found
+
+|601 |`INFO` |ConnectionValidator has been interrupted
+
+|602 |`WARN` |ConnectionValidator ignored unexpected runtime exception
+
+|603 |`WARN` |ConnectionValidator ignored unexpected error
+
+|604 |`WARN` |Throwable while attempting to get a new connection
+
+|605 |`WARN` |Destroying connection that could not be successfully
+matched
+
+|606 |`WARN` |Throwable while trying to match managed connection,
+destroying connection
+
+|607 |`WARN` |ResourceException cleaning up managed connection
+
+|608 |`WARN` |Destroying returned connection, maximum pool size exceeded
+
+|609 |`WARN` |Attempt to return connection twice
+
+|610 |`WARN` |Unable to fill pool
+
+|611 |`WARN` |Warning: Background validation was specified with a non
+compliant ManagedConnectionFactory interface
+
+|612 |`WARN` |Destroying connection that could not be successfully
+matched
+
+|613 |`WARN` |Throwable while trying to match managed connection,
+destroying connection
+
+|614 |`ERROR` |Exception during createSubject()
+
+|615 |`WARN` |Destroying active connection in pool
+
+|616 |`ERROR` |Leak detected in pool
+
+|617 |`WARN` |Invalid incrementer capacity policy
+
+|618 |`WARN` |Invalid decrementer capacity policy
+
+|619 |`WARN` |Invalid capacity property
+
+|620 |`WARN` |Warning: ValidateOnMatch validation was specified with a
+non compliant ManagedConnectionFactory interface
+
+|621 |`WARN` |Destroying connection that could not be validated
+
+|622 |`WARN` |Unsupported pool implementation
+
+|651 |`EXCEPTION` |Unable to get managed connection pool
+
+|652 |`EXCEPTION` |Unable to obtain lock
+
+|653 |`EXCEPTION` |The pool has been shutdown
+
+|654 |`EXCEPTION` |Interrupted while requesting connection
+
+|655 |`EXCEPTION` |No managed connections available within configured
+blocking timeout
+
+|656 |`EXCEPTION` |This should never happen
+
+|657 |`EXCEPTION` |Interrupted while requesting permit
+
+|658 |`EXCEPTION` |Unexpected throwable while trying to create a
+connection
+
+|659 |`EXCEPTION` |Unable to get connection listener
+
+|701 |`WARN` |Exception during unbind
+
+|751 |`EXCEPTION` |Deployment failed
+
+|851 |`EXCEPTION` |Resource adapter instance not active
+
+|852 |`EXCEPTION` |Validation exception
+
+|853 |`EXCEPTION` |The activation spec class is no longer available
+
+|854 |`EXCEPTION` |The resource adapter is no longer available
+
+|855 |`EXCEPTION` |Key isn't registered
+
+|856 |`EXCEPTION` |Unable to lookup resource adapter in MDR
+
+|901 |`WARN` |Error during connection close
+
+|902 |`ERROR` |Error during inflow crash recovery
+
+|903 |`ERROR` |Error creating Subject for crash recovery
+
+|904 |`WARN` |No security domain defined for crash recovery
+
+|905 |`WARN` |Subject for crash recovery was null
+
+|906 |`ERROR` |Error during crash recovery
+
+|951 |`EXCEPTION` |Error during connection close
+
+|952 |`EXCEPTION` |Error during recovery initialization
+
+|953 |`EXCEPTION` |Error during recovery shutdown
+
+|1001 |`WARN` |No users.properties were found
+
+|1002 |`ERROR` |Error while loading users.properties
+
+|1003 |`WARN` |No roles.properties were found
+
+|1004 |`ERROR` |Error while loading roles.properties
+
+|1005 |`WARN` |No callback.properties were found
+
+|1006 |`ERROR` |Error while loading callback.properties
+
+|1011 |`WARN` |Prepare called on a local tx. Use of local transactions
+on a JTA transaction with more than one branch may result in
+inconsistent data in some cases of failure
+
+|1151 |`EXCEPTION` |Trying to start a new transaction when old is not
+complete
+
+|1152 |`EXCEPTION` |Trying to start a new transaction with wrong flags
+
+|1153 |`EXCEPTION` |Error trying to start local transaction
+
+|1154 |`EXCEPTION` |Throwable trying to start local transaction
+
+|1155 |`EXCEPTION` |Wrong xid in commit
+
+|1156 |`EXCEPTION` |Could not commit local transaction
+
+|1157 |`EXCEPTION` |Forget not supported in local transaction
+
+|1158 |`EXCEPTION` |No recovery for LocalTransaction only resource
+manager
+
+|1159 |`EXCEPTION` |Wrong xid in rollback
+
+|1160 |`EXCEPTION` |Could not rollback local transaction
+|===
+
+[[logging_codes_common]]
+== Common: 010000 - 019999
+
+.Logging codes for common
+[cols=",,",options="header",]
+|===
+|Code |Level |Description
+|10001 |`ERROR` |Parsing error of ra.xml file
+
+|10002 |`ERROR` |Parsing error of ironjacamar.xml file
+
+|10003 |`ERROR` |No @Connector was found and no definition in the ra.xml
+metadata either
+
+|10004 |`ERROR` |More than one @Connector was found but the correct one
+wasn't defined in the ra.xml metadata
+
+|10051 |`EXCEPTION` |AnnotationRepository reference is null
+
+|10052 |`EXCEPTION` |No @Connector defined
+
+|10053 |`EXCEPTION` |More than @Connector defined
+
+|10054 |`EXCEPTION` |More than one @ConnectionDefinitions defined
+
+|10055 |`EXCEPTION` |Unknown annotation
+
+|10056 |`EXCEPTION` |Element isn't a valid boolean
+
+|10057 |`EXCEPTION` |Attribute isn't a valid boolean
+
+|10058 |`EXCEPTION` |Element isn't a valid number
+
+|10059 |`EXCEPTION` |Invalid flush strategy
+
+|10060 |`EXCEPTION` |Unexpected end tag
+
+|10061 |`EXCEPTION` |Unexpected element
+
+|10062 |`EXCEPTION` |Reached end of xml document unexpectedly
+
+|10063 |`EXCEPTION` |Mandatory class-name attribute missing
+
+|10064 |`EXCEPTION` |Unexpected attribute
+
+|10065 |`EXCEPTION` |Missing mandatory jndi-name attribute
+
+|10066 |`EXCEPTION` |You cannot define more than one pool or xa-pool in
+same connection-definition
+
+|10067 |`EXCEPTION` |Element cannot be set without an xa-pool
+
+|10068 |`EXCEPTION` |Missing required attribute
+
+|10069 |`EXCEPTION` |Missing required element
+
+|10070 |`EXCEPTION` |Invalid negative value
+
+|10071 |`EXCEPTION` |Tag is not valid
+
+|10072 |`EXCEPTION` |Tag cannot be undefined
+
+|10073 |`EXCEPTION` |Invalid ++<++security++>++ configuration
+
+|10074 |`EXCEPTION` |The resource adapter metadata must be defined
+
+|10075 |`EXCEPTION` |The resource adapter metadata must contain either
+an outbound or inbound configuration
+
+|10076 |`EXCEPTION` |Tag must be defined
+
+|10077 |`EXCEPTION` |Wrong annotation type
+
+|10078 |`EXCEPTION` |Invalid zero value
+|===
+
+[[logging_codes_deployers]]
+== Deployers: 020000 - 029999
+
+.Logging codes for deployers
+[cols=",,",options="header",]
+|===
+|Code |Level |Description
+|20001 |`INFO` |Required license terms
+
+|20002 |`INFO` |Deployed
+
+|20003 |`WARN` |Failure during validation report generation
+
+|20004 |`WARN` |Only one connection definition found with a mismatch in
+class-name
+
+|20005 |`WARN` |Only one admin object found with a mismatch in
+class-name
+
+|20006 |`ERROR` |ConnectionFactory is null
+
+|20007 |`ERROR` |Exception during createSubject()
+
+|20008 |`WARN` |Invalid config property
+
+|20009 |`WARN` |Invalid connection definition
+
+|20010 |`ERROR` |Connection definition with missing class-name
+
+|20011 |`ERROR` |Admin object with missing class-name
+
+|20012 |`WARN` |Admin object not bound
+
+|20013 |`WARN` |Connection factory not bound
+
+|20014 |`INFO` |Admin object not spec compliant
+
+|20015 |`INFO` |Connection factory not spec compliant
+
+|20016 |`WARN` |Missing ++<++recovery++>++ element. XA recovery disabled
+
+|20017 |`WARN` |Invalid archive
+
+|20018 |`INFO` |Enabling ++<++validate-on-match++>++
+
+|20019 |`INFO` |Changed TransactionSupport
+
+|20051 |`EXCEPTION` |Unable to start
+
+|20052 |`EXCEPTION` |Unable to associate
+
+|20053 |`EXCEPTION` |ManagedConnectionFactory must be defined in
+class-name
+
+|20054 |`EXCEPTION` |AdminObject must be defined in class-name
+
+|20055 |`EXCEPTION` |Failed to bind admin object
+
+|20056 |`EXCEPTION` |Deployment failed
+
+|20057 |`EXCEPTION` |Invalid ManagedConnectionFactory class
+
+|20058 |`EXCEPTION` |Invalid ActivationSpec class
+
+|20059 |`EXCEPTION` |Invalid ResourceAdapter class
+
+|20060 |`EXCEPTION` |Unable to inject
+
+|20061 |`EXCEPTION` |Invalid required work context
+
+|20062 |`EXCEPTION` |Invalid connection factory interface
+
+|20063 |`EXCEPTION` |Invalid connection factory implementation
+
+|20064 |`EXCEPTION` |Invalid connection interface
+
+|20065 |`EXCEPTION` |Invalid connection implementation
+
+|20066 |`EXCEPTION` |Connection factory implementation doesn't implement
+interface
+
+|20067 |`EXCEPTION` |Connection implementation doesn't implement
+interface
+|===
+
+[[logging_codes_adapters]]
+== Adapters: 030000 - 039999
+
+.Logging codes for adapters
+[cols=",,",options="header",]
+|===
+|Code |Level |Description
+|30000 |`WARN` |Unable to load connection listener
+
+|30001 |`WARN` |Disabling exception sorter
+
+|30002 |`WARN` |Disabling exception sorter
+
+|30003 |`WARN` |Error checking exception fatality
+
+|30004 |`WARN` |Disabling validation connection checker
+
+|30005 |`WARN` |Disabling validation connection checker
+
+|30006 |`WARN` |Disabling stale connection checker
+
+|30007 |`WARN` |Disabling stale connection checker
+
+|30008 |`WARN` |HA setup detected
+
+|30020 |`WARN` |Detected queued threads during cleanup
+
+|30021 |`WARN` |Queued thread
+
+|30022 |`WARN` |Lock owned during cleanup
+
+|30023 |`WARN` |Lock is locked during cleanup without an owner
+
+|30024 |`WARN` |Error resetting transaction isolation
+
+|30025 |`WARN` |Error during connection listener activation
+
+|30026 |`WARN` |Error during connection listener passivation
+
+|30027 |`WARN` |Destroying connection that is not valid, due to the
+following exception
+
+|30028 |`WARN` |Error notifying of connection error for listener
+
+|30040 |`WARN` |Closing a statement you left open, please do your own
+housekeeping
+
+|30041 |`WARN` |Error during closing a statement
+
+|30042 |`WARN` |Closing a result set you left open, please do your own
+housekeeping
+
+|30043 |`WARN` |Error during closing a result set
+
+|30050 |`WARN` |Error creating connection
+
+|30051 |`ERROR` |Unable to load undefined URLSelectStrategy
+
+|30052 |`ERROR` |Unable to load URLSelectStrategy
+
+|30053 |`ERROR` |Unable to load URLSelectStrategy
+
+|30054 |`WARN` |Error creating XA connection
+
+|30055 |`ERROR` |Unable to load undefined URLXASelectStrategy
+
+|30056 |`ERROR` |Unable to load URLXASelectStrategy
+
+|30057 |`ERROR` |Unable to load URLXASelectStrategy
+
+|30060 |`WARN` |Error checking state
+
+|31000 |`EXCEPTION` |Resource Adapter does not support running in a
+non-managed environment
+
+|31001 |`EXCEPTION` |Error during loading reauth plugin
+
+|31002 |`EXCEPTION` |Error during loading connection listener plugin
+
+|31003 |`EXCEPTION` |Wrong kind of ConnectionRequestInfo
+
+|31004 |`EXCEPTION` |No matching credentials in Subject
+
+|31010 |`EXCEPTION` |Wrong connection handle to associate
+
+|31011 |`EXCEPTION` |Still active locks
+
+|31012 |`EXCEPTION` |Unable to obtain lock
+
+|31013 |`EXCEPTION` |Interrupted attempting lock
+
+|31014 |`EXCEPTION` |Connection has been destroyed
+
+|31015 |`EXCEPTION` |Error during reauthentication
+
+|31016 |`EXCEPTION` |Wrong credentials passed to getConnection
+
+|31017 |`EXCEPTION` |You cannot set autocommit during a managed
+transaction
+
+|31018 |`EXCEPTION` |You cannot set read only during a managed
+transaction
+
+|31019 |`EXCEPTION` |You cannot commit during a managed transaction
+
+|31020 |`EXCEPTION` |You cannot commit with autocommit set
+
+|31021 |`EXCEPTION` |You cannot rollback during a managed transaction
+
+|31022 |`EXCEPTION` |You cannot rollback with autocommit set
+
+|31023 |`EXCEPTION` |Invalid connection
+
+|31030 |`EXCEPTION` |Not wrapper for
+
+|31040 |`EXCEPTION` |Connection is not associated with a managed
+connection
+
+|31041 |`EXCEPTION` |Connection handle has been closed and is unusable
+
+|31042 |`EXCEPTION` |Method is not implemented by JDBC driver
+
+|31050 |`EXCEPTION` |The result set is closed
+
+|31060 |`EXCEPTION` |The statement is closed
+
+|31070 |`EXCEPTION` |Transaction cannot proceed
+
+|31080 |`EXCEPTION` |DriverClass is undefined
+
+|31081 |`EXCEPTION` |ConnectionURL is undefined
+
+|31082 |`EXCEPTION` |Unable to create connection from datasource
+
+|31083 |`EXCEPTION` |Wrong driver class for this connection URL
+
+|31084 |`EXCEPTION` |Unable to create connection
+
+|31085 |`EXCEPTION` |Unable to create connection from URL
+
+|31086 |`EXCEPTION` |No DriverClass specified for URL
+
+|31087 |`EXCEPTION` |Failed to register DriverClass
+
+|31088 |`EXCEPTION` |DataSourceClass is undefined
+
+|31089 |`EXCEPTION` |Failed to load datasource
+
+|31090 |`EXCEPTION` |LocalTransaction only
+
+|31091 |`EXCEPTION` |Trying to begin a nested LocalTransaction
+
+|31100 |`EXCEPTION` |Could not load connection properties
+
+|31101 |`EXCEPTION` |XADataSourceClass is undefined
+
+|31102 |`EXCEPTION` |Failed to load XA datasource
+|===

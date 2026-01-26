@@ -1,0 +1,162 @@
+[[tools]]
+== Other tools
+
+[[tools_rarinfo]]
+=== Resource adapter information tool
+
+The IronJacamar distribution features a resource adapter information
+tool, that can provide the important information about the resource
+adapter and a sample deployment descriptor.
+
+The information about the resource adapter is generated using the
+following command:
+
+....
+./rar-info.sh myeis.rar
+    
+....
+
+where the report will be located in `myeis-report.txt`. The tool can
+take an optional `-classpath` parameter such that additional external
+dependencies can be resolved against the resource adapter.
+
+The report will contain information about
+
+* The name of the resource adapter
+* The Java EE Connector Architecture specification version
+* The type of the resource adapter
+* If the resource adapter supports reauthentication
+* If the resource adapter is compliant (see the validator tool)
+* If the resource adapter contains native libraries
+* The structure of the resource adapter archive
+* Overview of the resource adapter class
+* Overview of the managed connection factory classes
+* The connectory factory and connection API if common client interface
+isn't used
+* Overview of the admin object classes
+* Overview of the activation specification classes
+* Metadata included, including the
++
+MANIFEST.MF
++
+file
+* A sample deployment descriptor
+
+The tool (`rar-info.sh`) is located in the `doc/as/` directory of the
+distribution.
+
+[[tools_migration]]
+=== Migration tool
+
+The IronJacamar distribution features a migration tool, that can convert
+the deployment format used in JBoss Application Server prior to version
+7, and JBoss Enterprise Application Platform versions prior to version
+6.
+
+Since there are different formats (XSDs) to deploy datasources and a
+resource adapters the tool can convert to both these formats.
+
+The tool (`converter.sh`) is located in the `doc/as/` directory of the
+distribution.
+
+[[tools_migration_resource_adapters]]
+==== Resource adapters
+
+A resource adapter deployment is converted using the following command:
+
+....
+./converter.sh -ra old-ds.xml new-ra.xml
+      
+....
+
+which will convert the file `old-ds.xml` to `new-ra.xml`. The content of
+`new-ra.xml` can then be copied into the `resource-adapters` subsystem
+in WildFly or used directly in the IronJacamar/Standalone distribution.
+
+[NOTE]
+====
+Note that, the tool will do a best effort to convert all old attributes
+and elements to the new format. It will be necessary to make additional
+changes to the generated file. Please, consult this documentation for
+additional information.
+====
+
+[[tools_migration_resource_adapters_weblogic]]
+===== WebLogic converter
+
+The resource adapter converter tool can also convert the Oracle WebLogic
+`weblogic-ra.xml` files to the IronJacamar format.
+
+The following command line can be used:
+
+....
+./converter.sh -ra --weblogic weblogic-ra.xml new-ra.xml
+        
+....
+
+to get a best effort convertion of the Oracle WebLogic deployment file.
+
+[[tools_migration_datasources]]
+==== Data sources
+
+A data source deployment is converted using the following command:
+
+....
+./converter.sh -ds old-ds.xml new-ds.xml
+      
+....
+
+which will convert the file `old-ds.xml` to `new-ds.xml`. The content of
+`new-ds.xml` can then be copied into the `datasources` subsystem in
+WildFly or used directly in the IronJacamar/Standalone distribution.
+
+[NOTE]
+====
+Note that, the tool will do a best effort to convert all old attributes
+and elements to the new format. It will be necessary to make additional
+changes to the generated file. Please, consult this documentation for
+additional information.
+====
+
+[[tools_tracer]]
+=== Tracer tool
+
+Debugging Java EE Connector Architecture scenarios can be a complex
+task, as the interaction between the application and the resource
+adapter depends both on the implementation of the resource adapter but
+also on how it is configured.
+
+IronJacamar features a tracer tool that will help users to get an
+overview of the interactions performed between the application and
+resource adapter.
+
+The tracer produces machine readable codes at the `TRACE` logging
+category
+
+....
+org.jboss.jca.core.tracer
+    
+....
+
+which can then be processed with the `tracer-report` tool, located in
+`docs/as/`.
+
+The tool is executed with
+
+....
+./tracer-report.sh logfile
+    
+....
+
+where `logfile` contains the `TRACE` logging.
+
+The output are HTML reports that shows the interaction performed by all
+active resource adapters, and the applications using them.
+
+In addition, a UML sequence diagram is produced for valid interaction
+scenarios, which can be converted into an image using the `SDedit`
+application.
+
+For invalid interaction scenarios the tool will try and highlight the
+issue such that the collected log between the two timestamps identified
+can be investigated.

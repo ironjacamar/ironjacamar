@@ -1,0 +1,36 @@
+[[User_Guide]]
+= IronJacamar User Guide
+IronJacamar authors;
+:revnumber: {version}
+:revdate: {localdate}
+:toc: macro
+:toclevels: 2
+:toc-title: IronJacamar User guide
+:doctype: book
+:icons: font
+:source-highlighter: coderay
+:sectlinks:
+:idseparator: -
+:include-depth: 2
+
+include::_user-guide/Dedication.adoc[]
+include::_user-guide/Preface.adoc[]
+include::_user-guide/Introduction.adoc[]
+include::_user-guide/Download.adoc[]
+include::_user-guide/Installation.adoc[]
+include::_user-guide/Configuration.adoc[]
+include::_user-guide/Deployment.adoc[]
+include::_user-guide/Running.adoc[]
+include::_user-guide/Validator.adoc[]
+include::_user-guide/Code_Generator.adoc[]
+include::_user-guide/Eclipse.adoc[]
+include::_user-guide/Tools.adoc[]
+include::_user-guide/Embedded.adoc[]
+include::_user-guide/EIS.adoc[]
+include::_user-guide/Community.adoc[]
+include::_user-guide/Troubleshooting.adoc[]
+include::_user-guide/Schemas.adoc[]
+include::_user-guide/Samples.adoc[]
+include::_user-guide/Datasources.adoc[]
+include::_user-guide/Logging.adoc[]
+include::_user-guide/Licenses.adoc[]

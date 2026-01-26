@@ -1,0 +1,133 @@
+== Schemas
+
+All the IronJacamar schemas are deployed under
+http://www.ironjacamar.org/schema/.
+
+[[jca17]]
+== Java EE Connector Architecture 1.7
+
+[source,xml]
+----
+      
+    
+----
+
+[[jca16]]
+== Java EE Connector Architecture 1.6
+
+[source,xml]
+----
+      
+    
+----
+
+[[jca15]]
+== Java EE Connector Architecture 1.5
+
+[source,xml]
+----
+      
+    
+----
+
+[[jca10]]
+== Java EE Connector Architecture 1.0
+
+[source,xml]
+----
+      
+    
+----
+
+[[ironjacamar10]]
+== IronJacamar 1.0
+
+[source,xml]
+----
+      
+
+    
+----
+
+[[ironjacamar11]]
+== IronJacamar 1.1
+
+[source,xml]
+----
+      
+
+    
+----
+
+[[ironjacamar12]]
+== IronJacamar 1.2
+
+[source,xml]
+----
+      
+
+    
+----
+
+[[ra10]]
+== Resource adapters 1.0
+
+[source,xml]
+----
+      
+    
+----
+
+[[ra11]]
+== Resource adapters 1.1
+
+[source,xml]
+----
+      
+    
+----
+
+[[ra12]]
+== Resource adapters 1.2
+
+[source,xml]
+----
+      
+    
+----
+
+[[ds10]]
+== Datasources 1.0
+
+[source,xml]
+----
+      
+    
+----
+
+[[ds11]]
+== Datasources 1.1
+
+[source,xml]
+----
+      
+    
+----
+
+[[ds12]]
+== Datasources 1.2
+
+[source,xml]
+----
+      
+    
+----
+
+[[ds13]]
+== Datasources 1.3
+
+[source,xml]
+----
+      
+    
+----
