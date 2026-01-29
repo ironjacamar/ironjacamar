@@ -34,7 +34,7 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       - name: Build and Test on ${{ matrix.java }}
-        run: mvn clean install
+        run: mvn clean install --fail-at-end
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
