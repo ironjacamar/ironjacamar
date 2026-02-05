@@ -47,6 +47,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import static java.security.AccessController.doPrivileged;
+import static org.jboss.jca.adapters.jdbc.util.CredentialsPropertyOverrideUtil.overrideCredentials;
 
 import jakarta.resource.ResourceException;
 import jakarta.resource.spi.ConnectionRequestInfo;
@@ -543,7 +544,8 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
     */
    protected ManagedConnection newXAManagedConnection(Properties props, XAConnection xaConnection) throws SQLException
    {
-      return new XAManagedConnection(this, xaConnection, props, transactionIsolation, preparedStatementCacheSize);
+      
+      return new XAManagedConnection(this, xaConnection, overrideCredentials(props), transactionIsolation, preparedStatementCacheSize);
    }
 
    /**
