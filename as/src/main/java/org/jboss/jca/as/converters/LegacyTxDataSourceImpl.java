@@ -163,7 +163,7 @@ public class LegacyTxDataSourceImpl implements LocalTxDataSource
    {
       timeOut = new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
             allocationRetryWaitMillis, xaResourceTimeout, setTxQueryTimeout,
-            queryTimeout, useTryLock);
+            queryTimeout, useTryLock, 0);
       return this;
    }
    

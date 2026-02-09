@@ -171,7 +171,7 @@ public class LegacyXaDataSourceImp implements XaDataSource
    {
       timeOut = new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
             allocationRetryWaitMillis, xaResourceTimeout, setTxQueryTimeout,
-            queryTimeout, useTryLock);
+            queryTimeout, useTryLock, 0);
       return this;
    }
    

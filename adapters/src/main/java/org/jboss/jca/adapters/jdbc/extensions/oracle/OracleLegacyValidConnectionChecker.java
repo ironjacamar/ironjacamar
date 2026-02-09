@@ -72,4 +72,9 @@ public class OracleLegacyValidConnectionChecker implements ValidConnectionChecke
       // OK
       return null;
    }
+
+    @Override
+    public void setTimeout(int timeout) {
+        // Oracle pingDatabase does not support a timeout parameter
+    }
 }
