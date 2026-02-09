@@ -36,8 +36,17 @@ public interface ValidConnectionChecker
    /**
     * Checks the connection is valid
     *
-    * @param c the connection
+    * @param connection the connection
     * @return Exception when not valid, null when valid
     */
-   SQLException isValidConnection(Connection c);
+   SQLException isValidConnection(Connection connection);
+
+    /**
+     *  Sets the timeout for validation.
+     *
+     * @param timeout the timeout in seconds
+     */
+    default void setTimeout(int timeout){
+        throw new UnsupportedOperationException("Validation timeout not supported");
+    }
 }

@@ -51,6 +51,7 @@ public class MySQLReplicationValidConnectionChecker implements ValidConnectionCh
     */
    private static final long serialVersionUID = 2658231045989623858L;
 
+   private int timeout = 0;
    /**
     * Initiates the ValidConnectionChecker implementation.
     */
@@ -69,7 +70,7 @@ public class MySQLReplicationValidConnectionChecker implements ValidConnectionCh
 
       try
       {
-         isValid = SecurityActions.getMethod(c.getClass(), "isValid", new Class<?>[] {});
+         isValid = SecurityActions.getMethod(c.getClass(), "isValid", new Class<?>[] {Integer.TYPE});
          SecurityActions.setAccessible(isValid);
       }
       catch (Throwable t)
@@ -94,7 +95,7 @@ public class MySQLReplicationValidConnectionChecker implements ValidConnectionCh
       {
          try
          {
-            isValid.invoke(c, new Object[] {});
+            isValid.invoke(c, new Object[] {Integer.valueOf(timeout)});
          }
          catch (Exception e)
          {
@@ -135,6 +136,7 @@ public class MySQLReplicationValidConnectionChecker implements ValidConnectionCh
          try
          {
             stmt = c.createStatement();
+            stmt.setQueryTimeout(timeout);
             rs = stmt.executeQuery("SELECT 1");
          }
          catch (Exception e)
@@ -175,4 +177,10 @@ public class MySQLReplicationValidConnectionChecker implements ValidConnectionCh
 
       return null;
    }
+
+    @Override
+    public void setTimeout(int timeout)
+    {
+        this.timeout = timeout;
+    }
 }

@@ -41,9 +41,6 @@ public class TestValidConnectionChecker implements ValidConnectionChecker
    /** methodInvoked **/
    private static boolean methodInvoked = false;
 
-   /** pingTimeOut **/
-   private final Integer pingTimeOut = null;
-
    /**
     * Get the constructorInvoked.
     *
@@ -65,16 +62,6 @@ public class TestValidConnectionChecker implements ValidConnectionChecker
    }
 
    /**
-    * Get the pingTimeOut.
-    *
-    * @return the pingTimeOut.
-    */
-   public final Integer getPingTimeOut()
-   {
-      return pingTimeOut;
-   }
-
-   /**
     *
     * Create a new TestValidConnectionChecker.
     *
@@ -91,5 +78,4 @@ public class TestValidConnectionChecker implements ValidConnectionChecker
 
       return null;
    }
-
 }

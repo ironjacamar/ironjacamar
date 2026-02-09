@@ -68,23 +68,8 @@ public class JDBC4ValidConnectionChecker implements ValidConnectionChecker, Seri
       return null;
    }
 
-   /**
-    * Get the pingTimeOut.
-    *
-    * @return the pingTimeOut.
-    */
-   public int getPingTimeOut()
+   public void setTimeout(int timeout)
    {
-      return pingTimeout;
-   }
-
-   /**
-    * Set the pingTimeOut.
-    *
-    * @param v The pingTimeOut to set.
-    */
-   public void setPingTimeOut(int v)
-   {
-      this.pingTimeout = v;
+      this.pingTimeout = timeout;
    }
 }

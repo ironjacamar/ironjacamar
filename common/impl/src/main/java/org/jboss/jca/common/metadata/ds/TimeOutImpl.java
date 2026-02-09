@@ -48,6 +48,8 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.TimeOutImp
 
    private final Long useTryLock;
 
+   private final Integer validationTimeoutSeconds;
+
    /**
     * Create a new TimeOutImpl.
     *
@@ -63,13 +65,14 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.TimeOutImp
     */
    public TimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
       Long allocationRetryWaitMillis, Integer xaResourceTimeout, Boolean setTxQueryTimeout, Long queryTimeout,
-      Long useTryLock) throws ValidateException
+      Long useTryLock, Integer validationTimeoutSeconds) throws ValidateException
    {
       super(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry, allocationRetryWaitMillis,
             xaResourceTimeout);
       this.setTxQueryTimeout = setTxQueryTimeout;
       this.queryTimeout = queryTimeout;
       this.useTryLock = useTryLock;
+      this.validationTimeoutSeconds = validationTimeoutSeconds;
       this.validate();
    }
 
@@ -106,7 +109,17 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.TimeOutImp
       return useTryLock;
    }
 
-   @Override
+    /**
+     * Get the validationTimeoutSeconds.
+     *
+     * @return the validationTimeoutSeconds.
+     */
+    @Override
+    public Integer getValidationTimeoutSeconds() {
+        return validationTimeoutSeconds;
+    }
+
+    @Override
    public int hashCode()
    {
       final int prime = 31;
@@ -114,6 +127,7 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.TimeOutImp
       result = prime * result + ((queryTimeout == null) ? 0 : queryTimeout.hashCode());
       result = prime * result + ((setTxQueryTimeout == null) ? 0 : setTxQueryTimeout.hashCode());
       result = prime * result + ((useTryLock == null) ? 0 : useTryLock.hashCode());
+      result = prime * result + ((validationTimeoutSeconds == null) ? 0 : validationTimeoutSeconds.hashCode());
       return result;
    }
 
@@ -147,6 +161,13 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.TimeOutImp
             return false;
       }
       else if (!useTryLock.equals(other.useTryLock))
+         return false;
+      if (validationTimeoutSeconds == null)
+      {
+         if (other.validationTimeoutSeconds != null)
+            return false;
+      }
+      else if (!validationTimeoutSeconds.equals(other.validationTimeoutSeconds))
          return false;
       return true;
    }
@@ -212,6 +233,13 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.TimeOutImp
          sb.append("</").append(TimeOut.Tag.XA_RESOURCE_TIMEOUT).append(">");
       }
 
+      if (validationTimeoutSeconds != null)
+      {
+         sb.append("<").append(TimeOut.Tag.VALIDATION_TIMEOUT_SECONDS).append(">");
+         sb.append(validationTimeoutSeconds);
+         sb.append("</").append(TimeOut.Tag.VALIDATION_TIMEOUT_SECONDS).append(">");
+      }
+
       sb.append("</timeout>");
 
       return sb.toString();
@@ -222,5 +250,8 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.TimeOutImp
    {
       if (this.queryTimeout != null && this.queryTimeout < 0)
          throw new ValidateException(bundle.invalidNegative(TimeOut.Tag.QUERY_TIMEOUT.getLocalName()));
+
+      if (this.validationTimeoutSeconds != null && this.validationTimeoutSeconds < 0)
+         throw new ValidateException(bundle.invalidNegative(TimeOut.Tag.VALIDATION_TIMEOUT_SECONDS.getLocalName()));
    }
 }
