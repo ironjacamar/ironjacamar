@@ -22,13 +22,6 @@
 
 package org.jboss.jca.adapters.jdbc.xa;
 
-import org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnectionFactory;
-import org.jboss.jca.adapters.jdbc.classloading.TCClassLoaderPlugin;
-import org.jboss.jca.adapters.jdbc.spi.URLXASelectorStrategy;
-import org.jboss.jca.adapters.jdbc.spi.XAData;
-import org.jboss.jca.adapters.jdbc.util.Injection;
-import org.jboss.jca.common.metadata.merge.Merger;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,14 +39,23 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import javax.security.auth.Subject;
+import javax.sql.XAConnection;
+import javax.sql.XADataSource;
+
+import org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnectionFactory;
+import org.jboss.jca.adapters.jdbc.classloading.TCClassLoaderPlugin;
+import org.jboss.jca.adapters.jdbc.spi.URLXASelectorStrategy;
+import org.jboss.jca.adapters.jdbc.spi.XAData;
+import org.jboss.jca.adapters.jdbc.util.Injection;
+import org.jboss.jca.common.metadata.merge.Merger;
+
 import static java.security.AccessController.doPrivileged;
+import static org.jboss.jca.adapters.jdbc.util.CredentialsPropertyOverrideUtil.overrideCredentials;
 
 import jakarta.resource.ResourceException;
 import jakarta.resource.spi.ConnectionRequestInfo;
 import jakarta.resource.spi.ManagedConnection;
-import javax.security.auth.Subject;
-import javax.sql.XAConnection;
-import javax.sql.XADataSource;
 
 /**
  * XAManagedConnectionFactory
@@ -543,7 +545,8 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
     */
    protected ManagedConnection newXAManagedConnection(Properties props, XAConnection xaConnection) throws SQLException
    {
-      return new XAManagedConnection(this, xaConnection, props, transactionIsolation, preparedStatementCacheSize);
+      
+      return new XAManagedConnection(this, xaConnection, overrideCredentials(props), transactionIsolation, preparedStatementCacheSize);
    }
 
    /**
