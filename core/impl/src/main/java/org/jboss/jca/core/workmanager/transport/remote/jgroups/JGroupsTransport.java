@@ -52,9 +52,9 @@ import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Response
 
 import org.jboss.logging.Logger;
 
-import org.jgroups.Channel;
-import org.jgroups.MembershipListener;
+import org.jgroups.JChannel;
 import org.jgroups.Message;
+import org.jgroups.Receiver;
 import org.jgroups.View;
 import org.jgroups.blocks.MethodCall;
 import org.jgroups.blocks.MethodLookup;
@@ -70,13 +70,13 @@ import org.jgroups.util.RspList;
  * @author <a href="mailto:stefano.maestri@redhat.com">Stefano Maestri</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Address> implements MembershipListener
+public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Address> implements Receiver
 {
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, JGroupsTransport.class.getName());
 
    /** The Channel used by this transport **/
-   private Channel channel;
+   private JChannel channel;
 
    /** Timeout */
    private long timeout;
@@ -612,7 +612,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
     */
    protected RpcDispatcher createRpcDispatcher()
    {
-      RpcDispatcher dispatcher = new RpcDispatcher(channel, null, this, this);
+      RpcDispatcher dispatcher = new RpcDispatcher(channel, null);
 
       dispatcher.setMethodLookup(new MethodLookup()
       {
@@ -1027,7 +1027,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
     *
     * @return the channel.
     */
-   public Channel getChannel()
+   public JChannel getChannel()
    {
       return channel;
    }
@@ -1037,7 +1037,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
     *
     * @param channel The channel to set.
     */
-   public void setChannel(Channel channel)
+   public void setChannel(JChannel channel)
    {
       this.channel = channel;
    }
@@ -1134,24 +1134,6 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
             }
          }
       }
-   }
-
-   @Override
-   public void block()
-   {
-      log.tracef("block called");
-   }
-
-   @Override
-   public void suspect(org.jgroups.Address address)
-   {
-      log.tracef("suspect called w/ Address=%s", address);
-   }
-
-   @Override
-   public void unblock()
-   {
-      log.tracef("unblock called");
    }
 
    /**
