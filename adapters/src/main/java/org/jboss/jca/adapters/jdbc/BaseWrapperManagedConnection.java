@@ -381,6 +381,7 @@ public abstract class BaseWrapperManagedConnection implements NotifyingManagedCo
                mcf.log.errorResettingAutoCommit(mcf.getJndiName(), e);
             }
          }
+         inLocalTransaction.set(false);
          jdbcReadOnly = readOnly;
          if (jdbcTransactionIsolation != transactionIsolation)
          {
