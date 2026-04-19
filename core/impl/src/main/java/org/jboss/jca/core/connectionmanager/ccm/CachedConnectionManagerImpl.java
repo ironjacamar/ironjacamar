@@ -39,7 +39,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -93,8 +94,8 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
     * behavior of it getting hooked up to an appropriate
     * ManagedConnection on each method invocation.
     */
-   private final ThreadLocal<LinkedList<KeyConnectionAssociation>> currentObjects =
-      new ThreadLocal<LinkedList<KeyConnectionAssociation>>();
+   private final ThreadLocal<List<KeyConnectionAssociation>> currentObjects =
+      new ThreadLocal<List<KeyConnectionAssociation>>();
 
    /**
     * The variable <code>objectToConnectionManagerMap</code> holds the
@@ -257,11 +258,11 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
     */
    private KeyConnectionAssociation peekMetaAwareObject()
    {
-      LinkedList<KeyConnectionAssociation> stack = currentObjects.get();
+      List<KeyConnectionAssociation> stack = currentObjects.get();
 
       if (stack != null && !stack.isEmpty())
       {
-         return stack.getLast();
+         return stack.get(stack.size() - 1);
       }
 
       return null;
@@ -274,8 +275,8 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    @SuppressWarnings("unchecked")
    public void popMetaAwareObject(Set unsharableResources) throws ResourceException
    {
-      LinkedList<KeyConnectionAssociation> stack = currentObjects.get();
-      KeyConnectionAssociation oldKey = stack.removeLast();
+      List<KeyConnectionAssociation> stack = currentObjects.get();
+      KeyConnectionAssociation oldKey = stack.remove(stack.size() - 1);
 
       log.tracef("popped object: %s", oldKey);
 
@@ -414,14 +415,14 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    @SuppressWarnings("unchecked")
    public void pushMetaAwareObject(final Object rawKey, Set unsharableResources) throws ResourceException
    {
-      LinkedList<KeyConnectionAssociation> stack = currentObjects.get();
+      List<KeyConnectionAssociation> stack = currentObjects.get();
       KeyConnectionAssociation key = new KeyConnectionAssociation(rawKey);
 
       if (stack == null)
       {
          log.tracef("new stack for key: %s", key);
 
-         stack = new LinkedList<KeyConnectionAssociation>();
+         stack = new ArrayList<KeyConnectionAssociation>();
          currentObjects.set(stack);
       }
       else if (stack.isEmpty())
@@ -430,14 +431,14 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       }
       else
       {
-         log.tracef("old stack for key: %s", stack.getLast());
+         log.tracef("old stack for key: %s", stack.get(stack.size() - 1));
          log.tracef("new stack for key: %s", key);
       }
 
       if (Tracer.isEnabled())
          Tracer.pushCCMContext(key.toString(), new Throwable("CALLSTACK"));
 
-      stack.addLast(key);
+      stack.add(key);
    }
 
    /**
@@ -712,7 +713,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
     *
     * @return the currentObjects.
     */
-   final ThreadLocal<LinkedList<KeyConnectionAssociation>> getCurrentObjects()
+   final ThreadLocal<List<KeyConnectionAssociation>> getCurrentObjects()
    {
       return currentObjects;
    }

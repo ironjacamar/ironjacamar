@@ -24,7 +24,6 @@ package org.jboss.jca.validator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -136,7 +135,7 @@ public class Validator
             {
                if (result == null)
                {
-                  result = new LinkedList<Failure>();
+                  result = new ArrayList<Failure>();
                }
                result.addAll(failures);
             }
