@@ -128,7 +128,7 @@ public class Validation
                if (jar.endsWith(".jar"))
                   listUrl.add(new File(jar).toURI().toURL());
             }
-            allurls = listUrl.toArray(new URL[listUrl.size()]);
+            allurls = listUrl.toArray(new URL[0]);
          }
          else
             allurls = urls;
@@ -625,7 +625,7 @@ public class Validation
             }
          }
       }
-      return list.toArray(new URL[list.size()]);
+      return list.toArray(new URL[0]);
    }
    
    private static boolean validateClassesInPackage(File root)

@@ -98,7 +98,7 @@ public abstract class AbstractCallback implements Callback
                }
 
                l.add(new GroupPrincipalCallback(groupPrincipalCallback.getSubject(),
-                     gs.toArray(new String[gs.size()])));
+                     gs.toArray(new String[0])));
             }
             else
             {
@@ -111,6 +111,6 @@ public abstract class AbstractCallback implements Callback
          }
       }
 
-      return l.toArray(new javax.security.auth.callback.Callback[l.size()]);
+      return l.toArray(new javax.security.auth.callback.Callback[0]);
    }
 }

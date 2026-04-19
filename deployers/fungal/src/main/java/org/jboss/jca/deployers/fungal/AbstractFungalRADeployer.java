@@ -279,7 +279,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
             }
          }
       }
-      return list.toArray(new URL[list.size()]);
+      return list.toArray(new URL[0]);
    }
 
    @Override

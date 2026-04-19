@@ -201,6 +201,6 @@ public class ClassBundleFactory
          c = c.getSuperclass();
       }
 
-      return result.toArray(new Class<?>[result.size()]);
+      return result.toArray(new Class<?>[0]);
    }
 }

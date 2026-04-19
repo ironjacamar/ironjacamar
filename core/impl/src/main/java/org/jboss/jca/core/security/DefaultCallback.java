@@ -298,7 +298,7 @@ public class DefaultCallback extends AbstractCallback implements Callback
                         {
                            groups.add(st.nextToken().trim());
                         }
-                        defaultGroups = groups.toArray(new String[groups.size()]);
+                        defaultGroups = groups.toArray(new String[0]);
                      }
                   }
                   else if (key.startsWith("map.user"))
