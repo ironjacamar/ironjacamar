@@ -963,7 +963,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        interfaces.add(jakarta.resource.Referenceable.class);
                                        
                                        ao = Proxy.newProxyInstance(SecurityActions.getClassLoader(ao.getClass()),
-                                                                   interfaces.toArray(new Class<?>[interfaces.size()]),
+                                                                   interfaces.toArray(new Class<?>[0]),
                                                                    dih);
                                     }
 
@@ -2031,17 +2031,17 @@ public abstract class AbstractResourceAdapterDeployer
             }
          }
 
-         Object[] cfObjs = cfs.size() > 0 ? cfs.toArray(new Object[cfs.size()]) : null;
-         String[] cfJndis = cfJndiNames.size() > 0 ? cfJndiNames.toArray(new String[cfJndiNames.size()]) : null;
-         ConnectionManager[] cfCM = cfCMs.size() > 0 ? cfCMs.toArray(new ConnectionManager[cfCMs.size()]) : null;
-         Object[] aoObjs = aos.size() > 0 ? aos.toArray(new Object[aos.size()]) : null;
-         String[] aoJndis = aoJndiNames.size() > 0 ? aoJndiNames.toArray(new String[aoJndiNames.size()]) : null;
+         Object[] cfObjs = cfs.size() > 0 ? cfs.toArray(new Object[0]) : null;
+         String[] cfJndis = cfJndiNames.size() > 0 ? cfJndiNames.toArray(new String[0]) : null;
+         ConnectionManager[] cfCM = cfCMs.size() > 0 ? cfCMs.toArray(new ConnectionManager[0]) : null;
+         Object[] aoObjs = aos.size() > 0 ? aos.toArray(new Object[0]) : null;
+         String[] aoJndis = aoJndiNames.size() > 0 ? aoJndiNames.toArray(new String[0]) : null;
          
          return new CommonDeployment(url, deploymentName, activateDeployment,
                                      resourceAdapter, resourceAdapterKey, bootstrapContextIdentifier,
                                      cfObjs, cfJndis, cfCM,
                                      aoObjs, aoJndis,
-                                     recoveryModules.toArray(new XAResourceRecovery[recoveryModules.size()]),
+                                     recoveryModules.toArray(new XAResourceRecovery[0]),
                                      mgtConnector, null, cl, log);
 
       }
@@ -2227,7 +2227,7 @@ public abstract class AbstractResourceAdapterDeployer
          String d = ws.getDomain();
          String dp = ws.getDefaultPrincipal();
          String[] dgs = ws.getDefaultGroups() != null ? 
-            ws.getDefaultGroups().toArray(new String[ws.getDefaultGroups().size()]) : null;
+            ws.getDefaultGroups().toArray(new String[0]) : null;
          Map<String, String> ps = ws.getUserMappings();
          Map<String, String> gs = ws.getGroupMappings();
 

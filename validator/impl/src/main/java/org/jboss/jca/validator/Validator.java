@@ -77,7 +77,7 @@ public class Validator
       List<String> arrayList = new ArrayList<String>();
       arrayList.addAll(Arrays.asList(CLASS_RULES));
       arrayList.addAll(Arrays.asList(OBJECT_RULES)); 
-      allRules = arrayList.toArray(new String[CLASS_RULES.length + OBJECT_RULES.length]);
+      allRules = arrayList.toArray(new String[0]);
    }
 
    /**

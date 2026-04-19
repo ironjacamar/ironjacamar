@@ -333,7 +333,7 @@ public class CodeGenWizard extends Wizard implements INewWizard
             ijJarName.substring(ijJarName.lastIndexOf("/"))), null, null));
       }
 
-      javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), progressMonitor);
+      javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[0]), progressMonitor);
 
       monitor.worked(1);
 

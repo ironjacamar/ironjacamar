@@ -99,7 +99,7 @@ public class ResourceAdapterHelper
             }
          }
       }
-      return list.toArray(new URL[list.size()]);
+      return list.toArray(new URL[0]);
    }
    
    /**

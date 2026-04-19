@@ -356,7 +356,7 @@ public class WorkManagerSecurityTestCase
             List<javax.security.auth.callback.Callback> cbs = new ArrayList<javax.security.auth.callback.Callback>();
             cbs.add(new CallerPrincipalCallback(executionSubject, new SimplePrincipal("eis")));
             cbs.add(new GroupPrincipalCallback(executionSubject, new String[] {"eis"}));
-            handler.handle(cbs.toArray(new javax.security.auth.callback.Callback[cbs.size()]));
+            handler.handle(cbs.toArray(new javax.security.auth.callback.Callback[0]));
          }
          catch (Throwable t)
          {
