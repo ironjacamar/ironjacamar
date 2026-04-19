@@ -73,7 +73,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1358,7 +1358,7 @@ public class Main
     */
    private static URL[] getUrls(File directory) throws MalformedURLException, IOException
    {
-      List<URL> list = new LinkedList<URL>();
+      List<URL> list = new ArrayList<URL>();
 
       if (directory.exists() && directory.isDirectory())
       {

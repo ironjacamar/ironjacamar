@@ -50,7 +50,6 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.jar.JarEntry;
@@ -596,7 +595,7 @@ public class Validation
     */
    private static URL[] getUrls(File directory) throws MalformedURLException, IOException
    {
-      List<URL> list = new LinkedList<URL>();
+      List<URL> list = new ArrayList<URL>();
 
       if (directory.exists() && directory.isDirectory())
       {
