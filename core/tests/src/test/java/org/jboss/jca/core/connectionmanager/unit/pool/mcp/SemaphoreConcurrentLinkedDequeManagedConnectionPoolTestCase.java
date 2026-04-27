@@ -23,7 +23,12 @@
 package org.jboss.jca.core.connectionmanager.unit.pool.mcp;
 
 import javax.resource.ResourceException;
+import javax.resource.spi.ConnectionEventListener;
 import javax.resource.spi.ConnectionRequestInfo;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
@@ -40,6 +45,7 @@ import org.jboss.jca.core.connectionmanager.pool.capacity.WatermarkDecrementer;
 import org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreArrayListManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreConcurrentLinkedDequeManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
+import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnection;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -171,9 +177,169 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPoolTestCase
       Assert.assertEquals(POOL_SIZE, mcp.getActive());
    }
 
+   @Test public void testReturnConnectionDestroyOutsideLock() throws Exception
+   {
+      poolConfig.setValidateOnMatch(false);
+      poolConfig.setUseFastFail(false);
+      poolConfig.setInitialSize(1);
+      poolConfig.setMinSize(1);
+      poolConfig.setMaxSize(1);
+      poolConfig.setPrefill(true);
+      poolConfig.setStrictMin(true);
+
+      SemaphoreConcurrentLinkedDequeManagedConnectionPool mcp = new SemaphoreConcurrentLinkedDequeManagedConnectionPool();
+      mcp.initialize(mcf, cm, null, null, poolConfig, pool);
+
+      waitForChangesToPropagate(mcp, 1);
+
+      ConnectionListener cl = mcp.getConnection(null, null);
+      final Object monitor = new Object();
+      final CountDownLatch removeListenerCalled = new CountDownLatch(1);
+      final CountDownLatch workerCanFinish = new CountDownLatch(1);
+      final AtomicBoolean deadlocked = new AtomicBoolean(false);
+
+      SimpleManagedConnection smc = (SimpleManagedConnection) cl.getManagedConnection();
+
+      Thread workerThread = new Thread(() -> {
+         synchronized (monitor)
+         {
+            removeListenerCalled.countDown();
+            try
+            {
+               workerCanFinish.await(5, TimeUnit.SECONDS);
+            }
+            catch (InterruptedException e)
+            {
+               Thread.currentThread().interrupt();
+            }
+            try
+            {
+               mcp.returnConnection(cl, true);
+            }
+            catch (Exception e)
+            {
+               // expected
+            }
+         }
+      }, "SimulatedRAWorker");
+
+      smc.removeConnectionEventListener(new ConnectionEventListener()
+      {
+         @Override public void connectionClosed(javax.resource.spi.ConnectionEvent event) {}
+         @Override public void connectionErrorOccurred(javax.resource.spi.ConnectionEvent event) {}
+         @Override public void localTransactionStarted(javax.resource.spi.ConnectionEvent event) {}
+         @Override public void localTransactionCommitted(javax.resource.spi.ConnectionEvent event) {}
+         @Override public void localTransactionRolledback(javax.resource.spi.ConnectionEvent event) {}
+      });
+
+      workerThread.start();
+      Assert.assertTrue("Worker thread should have started", removeListenerCalled.await(5, TimeUnit.SECONDS));
+
+      Thread returnThread = new Thread(() -> {
+         try
+         {
+            mcp.returnConnection(cl, true);
+         }
+         catch (Exception e)
+         {
+            // expected
+         }
+      }, "ReturnConnectionThread");
+
+      returnThread.start();
+      workerCanFinish.countDown();
+
+      returnThread.join(5000);
+      workerThread.join(5000);
+
+      if (returnThread.isAlive() || workerThread.isAlive())
+      {
+         deadlocked.set(true);
+         returnThread.interrupt();
+         workerThread.interrupt();
+      }
+
+      Assert.assertFalse("Deadlock detected: returnConnection should not deadlock with external RA monitors",
+            deadlocked.get());
+   }
+
+   @Test public void testConcurrentReturnConnectionAndConnectionErrorOccurred() throws Exception
+   {
+      poolConfig.setValidateOnMatch(false);
+      poolConfig.setUseFastFail(false);
+      poolConfig.setInitialSize(2);
+      poolConfig.setMinSize(2);
+      poolConfig.setMaxSize(2);
+      poolConfig.setPrefill(true);
+      poolConfig.setStrictMin(true);
+
+      SemaphoreConcurrentLinkedDequeManagedConnectionPool mcp = new SemaphoreConcurrentLinkedDequeManagedConnectionPool();
+      mcp.initialize(mcf, cm, null, null, poolConfig, pool);
+
+      waitForChangesToPropagate(mcp, 2);
+
+      ConnectionListener cl1 = mcp.getConnection(null, null);
+      ConnectionListener cl2 = mcp.getConnection(null, null);
+
+      final CountDownLatch bothReady = new CountDownLatch(2);
+      final CountDownLatch go = new CountDownLatch(1);
+      final AtomicBoolean deadlocked = new AtomicBoolean(false);
+
+      Thread thread1 = new Thread(() -> {
+         bothReady.countDown();
+         try
+         {
+            go.await(5, TimeUnit.SECONDS);
+            mcp.returnConnection(cl1, true);
+         }
+         catch (Exception e)
+         {
+            // expected
+         }
+      }, "ReturnConnection-1");
+
+      Thread thread2 = new Thread(() -> {
+         bothReady.countDown();
+         try
+         {
+            go.await(5, TimeUnit.SECONDS);
+            mcp.returnConnection(cl2, true);
+         }
+         catch (Exception e)
+         {
+            // expected
+         }
+      }, "ReturnConnection-2");
+
+      thread1.start();
+      thread2.start();
+
+      Assert.assertTrue("Both threads should be ready", bothReady.await(5, TimeUnit.SECONDS));
+      go.countDown();
+
+      thread1.join(5000);
+      thread2.join(5000);
+
+      if (thread1.isAlive() || thread2.isAlive())
+      {
+         deadlocked.set(true);
+         thread1.interrupt();
+         thread2.interrupt();
+      }
+
+      Assert.assertFalse("Deadlock detected: concurrent returnConnection with kill=true should not deadlock",
+            deadlocked.get());
+   }
+
    private static void waitForChangesToPropagate(SemaphoreConcurrentLinkedDequeManagedConnectionPool mcp) throws InterruptedException
    {
-      while (mcp.getActive() != POOL_SIZE)
+      waitForChangesToPropagate(mcp, POOL_SIZE);
+   }
+
+   private static void waitForChangesToPropagate(SemaphoreConcurrentLinkedDequeManagedConnectionPool mcp, int expectedSize) throws InterruptedException
+   {
+      int maxWait = 50;
+      while (mcp.getActive() != expectedSize && maxWait-- > 0)
       {
          Thread.sleep(100);
       }
