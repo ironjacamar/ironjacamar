@@ -653,8 +653,9 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
    /**
     * {@inheritDoc}
     */
-   public void returnConnection(ConnectionListener cl, boolean kill, boolean cleanup) 
+   public void returnConnection(ConnectionListener cl, boolean kill, boolean cleanup)
    {
+      boolean shouldDestroy = false;
       Lock connectionLock = cl.getLock();
       try
       {
@@ -776,7 +777,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                                                 Tracer.isRecordCallstacks() ?
                                                 new Throwable("CALLSTACK") : null);
             removeConnectionListenerFromPool(clw);
-            cl.destroy();
+            shouldDestroy = true;
          }
 
          if (releasePermit)
@@ -787,6 +788,11 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
       finally
       {
          connectionLock.unlock();
+      }
+
+      if (shouldDestroy)
+      {
+         cl.destroy();
       }
    }
 
