@@ -78,7 +78,7 @@ public class PicketBoxSecurityContext implements SecurityContext
          {
             l.add(role.getRoleName());
          }
-         roles = l.toArray(new String[l.size()]);
+         roles = l.toArray(new String[0]);
       }
 
       return roles;

@@ -177,7 +177,7 @@ public class EndpointImpl implements Endpoint
             if (groups.isEmpty())
                groups.add(Default.class);
 
-            Class[] vargs = groups.toArray(new Class[groups.size()]);
+            Class[] vargs = groups.toArray(new Class[0]);
 
             Set errors = validator.validate(spec, vargs);
 

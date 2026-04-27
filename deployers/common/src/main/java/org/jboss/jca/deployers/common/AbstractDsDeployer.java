@@ -407,13 +407,13 @@ public abstract class AbstractDsDeployer
          return new CommonDeployment(url, deploymentName, true,
                                      resourceAdapter, resourceAdapterKey, 
                                      bootstrapContextIdentifier,
-                                     cfs.toArray(new Object[cfs.size()]),
-                                     jndis.toArray(new String[jndis.size()]),
-                                     cms.toArray(new ConnectionManager[cms.size()]),
+                                     cfs.toArray(new Object[0]),
+                                     jndis.toArray(new String[0]),
+                                     cms.toArray(new ConnectionManager[0]),
                                      null, null,
-                                     recoveryModules.toArray(new XAResourceRecovery[recoveryModules.size()]),
+                                     recoveryModules.toArray(new XAResourceRecovery[0]),
                                      null,
-                                     mgts.toArray(new org.jboss.jca.core.api.management.DataSource[mgts.size()]),
+                                     mgts.toArray(new org.jboss.jca.core.api.management.DataSource[0]),
                                      parentClassLoader, log);
       }
       catch (DeployException de)

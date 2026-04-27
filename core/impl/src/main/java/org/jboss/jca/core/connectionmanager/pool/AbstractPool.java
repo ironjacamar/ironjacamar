@@ -1163,7 +1163,7 @@ public abstract class AbstractPool implements Pool
          }
       }
 
-      return result.toArray(new String[result.size()]);
+      return result.toArray(new String[0]);
    }
 
    /**

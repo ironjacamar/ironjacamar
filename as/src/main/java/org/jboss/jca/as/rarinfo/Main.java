@@ -73,7 +73,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1178,7 +1177,7 @@ public class Main
                if (jar.endsWith(".jar"))
                   listUrl.add(new File(jar).toURI().toURL());
             }
-            allurls = listUrl.toArray(new URL[listUrl.size()]);
+            allurls = listUrl.toArray(new URL[0]);
          }
          else
             allurls = urls;
@@ -1358,7 +1357,7 @@ public class Main
     */
    private static URL[] getUrls(File directory) throws MalformedURLException, IOException
    {
-      List<URL> list = new LinkedList<URL>();
+      List<URL> list = new ArrayList<URL>();
 
       if (directory.exists() && directory.isDirectory())
       {
@@ -1388,7 +1387,7 @@ public class Main
             }
          }
       }
-      return list.toArray(new URL[list.size()]);
+      return list.toArray(new URL[0]);
    }
 
    /**

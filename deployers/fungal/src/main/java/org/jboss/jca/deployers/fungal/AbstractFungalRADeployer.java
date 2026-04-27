@@ -41,7 +41,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -262,7 +261,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
     */
    protected URL[] getUrls(File directory) throws MalformedURLException, IOException
    {
-      List<URL> list = new LinkedList<URL>();
+      List<URL> list = new ArrayList<URL>();
 
       if (directory.exists() && directory.isDirectory())
       {
@@ -280,7 +279,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
             }
          }
       }
-      return list.toArray(new URL[list.size()]);
+      return list.toArray(new URL[0]);
    }
 
    @Override

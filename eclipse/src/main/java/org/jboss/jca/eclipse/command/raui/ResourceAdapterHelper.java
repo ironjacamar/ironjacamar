@@ -58,7 +58,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -82,7 +81,7 @@ public class ResourceAdapterHelper
     */
    private URL[] getURLs(File directory) throws Exception
    {
-      List<URL> list = new LinkedList<URL>();
+      List<URL> list = new ArrayList<URL>();
 
       if (directory.exists() && directory.isDirectory())
       {
@@ -100,7 +99,7 @@ public class ResourceAdapterHelper
             }
          }
       }
-      return list.toArray(new URL[list.size()]);
+      return list.toArray(new URL[0]);
    }
    
    /**

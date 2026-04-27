@@ -50,7 +50,6 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.jar.JarEntry;
@@ -129,7 +128,7 @@ public class Validation
                if (jar.endsWith(".jar"))
                   listUrl.add(new File(jar).toURI().toURL());
             }
-            allurls = listUrl.toArray(new URL[listUrl.size()]);
+            allurls = listUrl.toArray(new URL[0]);
          }
          else
             allurls = urls;
@@ -596,7 +595,7 @@ public class Validation
     */
    private static URL[] getUrls(File directory) throws MalformedURLException, IOException
    {
-      List<URL> list = new LinkedList<URL>();
+      List<URL> list = new ArrayList<URL>();
 
       if (directory.exists() && directory.isDirectory())
       {
@@ -626,7 +625,7 @@ public class Validation
             }
          }
       }
-      return list.toArray(new URL[list.size()]);
+      return list.toArray(new URL[0]);
    }
    
    private static boolean validateClassesInPackage(File root)

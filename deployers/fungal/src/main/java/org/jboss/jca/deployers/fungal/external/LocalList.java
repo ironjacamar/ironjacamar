@@ -71,7 +71,7 @@ public class LocalList implements Command
          if (args != null)
             throw new IllegalArgumentException("Invalid number of arguments");
 
-         return deployments.toArray(new URL[deployments.size()]);
+         return deployments.toArray(new URL[0]);
       }
       catch (Throwable t)
       {

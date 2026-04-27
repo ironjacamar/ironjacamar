@@ -100,7 +100,7 @@ public class BeanValidation
       }
       else
       {
-         Class[] vargs = groupsClasses.toArray(new Class[groupsClasses.size()]);
+         Class[] vargs = groupsClasses.toArray(new Class[0]);
 
          if (log.isTraceEnabled())
             log.tracef("Validating: %s against groups %s", object, Arrays.toString(vargs));

@@ -87,7 +87,7 @@ public class Start extends EISMojo
                urls.add(f.toURI().toURL());
             }
 
-            cl = SecurityActions.createURLCLassLoader(urls.toArray(new URL[urls.size()]), Start.class.getClassLoader());
+            cl = SecurityActions.createURLCLassLoader(urls.toArray(new URL[0]), Start.class.getClassLoader());
             SecurityActions.setThreadContextClassLoader(cl);
          }
 
