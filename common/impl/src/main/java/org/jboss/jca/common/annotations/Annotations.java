@@ -264,6 +264,23 @@ public class Annotations
                log.moreThanOneConnector();
                throw new ValidateException(bundle.moreThanOneConnectorDefined());
             }
+
+            for (Annotation annotation : values)
+            {
+               if (xmlResourceAdapterClass.equals(annotation.getClassName()))
+               {
+                  String raClass = annotation.getClassName();
+                  jakarta.resource.spi.Connector connectorAnnotation =
+                     (jakarta.resource.spi.Connector) annotation.getAnnotation();
+
+                  log.tracef("Processing: %s for %s", connectorAnnotation, raClass);
+
+                  connector = attachConnector(raClass, classLoader, connectorAnnotation, connectionDefinitions,
+                                              configProperties, plainConfigProperties,
+                                              inboundResourceadapter, adminObjs);
+                  break;
+               }
+            }
          }
       }
       else
