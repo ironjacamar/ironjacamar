@@ -50,7 +50,7 @@ public class LocalXAResourceImpl implements LocalXAResource, XAResourceWrapper
 
    /** Product version */
    private String productVersion;
-   
+
    /** Product version */
    private String jndiName;
    
@@ -120,7 +120,7 @@ public class LocalXAResourceImpl implements LocalXAResource, XAResourceWrapper
       catch (ResourceException re)
       {
          connectionManager.returnManagedConnection(cl, true);
-         throw new LocalXAException("commit", XAException.XA_RBROLLBACK, re);
+         throw new LocalXAException("commit", XAException.XAER_RMFAIL, re);
       }
    }
 
