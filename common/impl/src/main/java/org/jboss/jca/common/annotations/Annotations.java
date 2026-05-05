@@ -256,15 +256,6 @@ public class Annotations
             connector = attachConnector(raClass, classLoader, connectorAnnotation, connectionDefinitions,
                                         configProperties, plainConfigProperties, inboundResourceadapter, adminObjs);
          }
-         else if (values.size() == 0)
-         {
-            // JBJCA-240
-            if (xmlResourceAdapterClass == null || xmlResourceAdapterClass.equals(""))
-            {
-               log.noConnector();
-               throw new ValidateException(bundle.noConnectorDefined());
-            }
-         }
          else
          {
             // JBJCA-240
@@ -277,6 +268,12 @@ public class Annotations
       }
       else
       {
+         // JBJCA-240 / JBJCA-1435
+         if (xmlResourceAdapterClass == null || xmlResourceAdapterClass.equals(""))
+         {
+            log.noConnector();
+            throw new ValidateException(bundle.noConnectorDefined());
+         }
          connector = attachConnector(xmlResourceAdapterClass, classLoader, null, connectionDefinitions, null, null,
                                      inboundResourceadapter, adminObjs);
       }
