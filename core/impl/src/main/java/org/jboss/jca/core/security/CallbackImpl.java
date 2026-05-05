@@ -260,6 +260,7 @@ public class CallbackImpl extends AbstractCallback implements Callback
 
       defaultGroups = (String[])in.readObject();
 
+      principals = Collections.synchronizedMap(new HashMap<String, String>());
       int i = in.readInt();
       if (i > 0)
       {
@@ -272,6 +273,7 @@ public class CallbackImpl extends AbstractCallback implements Callback
          }
       }
 
+      groups = Collections.synchronizedMap(new HashMap<String, String>());
       i = in.readInt();
       if (i > 0)
       {
