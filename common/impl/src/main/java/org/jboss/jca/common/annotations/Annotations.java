@@ -973,6 +973,7 @@ public class Annotations
             {
                declaredInterfaces = Collections.emptyList();
             }
+            List<String> aoNames = new ArrayList<String>();
             if (a.adminObjectInterfaces() != null && a.adminObjectInterfaces().length > 0)
             {
                for (Class<?> annotatedInterface : a.adminObjectInterfaces())
@@ -981,8 +982,7 @@ public class Annotations
                       !annotatedInterface.equals(Serializable.class) &&
                       !annotatedInterface.equals(Externalizable.class))
                   {
-                     aoName = annotatedInterface.getName();
-                     break;
+                     aoNames.add(annotatedInterface.getName());
                   }
                }
             }
@@ -993,7 +993,7 @@ public class Annotations
                   if (!declaredInterface.equals(Serializable.class) &&
                       !declaredInterface.equals(Externalizable.class))
                   {
-                     aoName = declaredInterface.getName();
+                     aoNames.add(declaredInterface.getName());
                      break;
                   }
                }
@@ -1008,7 +1008,7 @@ public class Annotations
                   if (aoClassName.equals(((ConfigPropertyImpl) configProperty).getAttachedClassName()))
                   {
                      log.tracef("Attaching: %s (%s)", configProperty, aoClassName);
-                  
+
                      validProperties.add(configProperty);
                   }
                }
@@ -1022,7 +1022,7 @@ public class Annotations
                   if (aoClasses.contains(((ConfigPropertyImpl) configProperty).getAttachedClassName()))
                   {
                      log.tracef("Attaching: %s (%s)", configProperty, aoClassName);
-                  
+
                      validProperties.add(configProperty);
                   }
                }
@@ -1030,10 +1030,21 @@ public class Annotations
 
             validProperties.trimToSize();
 
-            XsdString adminobjectInterface = new XsdString(aoName, null);
-            XsdString adminobjectClass = new XsdString(aoClassName, null);
+            if (aoNames.isEmpty())
+            {
+               XsdString adminobjectClass = new XsdString(aoClassName, null);
+               adminObjs.add(new AdminObjectImpl(null, adminobjectClass, validProperties, null));
+            }
+            else
+            {
+               for (String name : aoNames)
+               {
+                  XsdString adminobjectInterface = new XsdString(name, null);
+                  XsdString adminobjectClass = new XsdString(aoClassName, null);
 
-            adminObjs.add(new AdminObjectImpl(adminobjectInterface, adminobjectClass, validProperties, null));
+                  adminObjs.add(new AdminObjectImpl(adminobjectInterface, adminobjectClass, validProperties, null));
+               }
+            }
          }
       }
 
