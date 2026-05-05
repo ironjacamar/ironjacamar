@@ -28,6 +28,7 @@ import org.jboss.jca.validator.Rule;
 import org.jboss.jca.validator.Severity;
 import org.jboss.jca.validator.Validate;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -63,21 +64,39 @@ public class ASConstructor implements Rule
           Key.ACTIVATION_SPEC == vo.getKey() &&
           vo.getClazz() != null)
       {
+         List<Failure> failures = new ArrayList<Failure>(4);
+         int modifiers = vo.getClazz().getModifiers();
+
+         if (!Modifier.isPublic(modifiers))
+         {
+            failures.add(new Failure(Severity.ERROR, SECTION,
+                                     rb.getString("as.ASConstructor") + " (class must be public)"));
+         }
+
+         if (Modifier.isAbstract(modifiers))
+         {
+            failures.add(new Failure(Severity.ERROR, SECTION,
+                                     rb.getString("as.ASConstructor") + " (class must not be abstract)"));
+         }
+
+         if (Modifier.isFinal(modifiers))
+         {
+            failures.add(new Failure(Severity.ERROR, SECTION,
+                                     rb.getString("as.ASConstructor") + " (class must not be final)"));
+         }
+
          try
          {
             SecurityActions.getConstructor(vo.getClazz(), (Class[])null);
          }
          catch (Throwable t)
          {
-            List<Failure> failures = new ArrayList<Failure>(1);
-
-            Failure failure = new Failure(Severity.ERROR,
-                                          SECTION,
-                                          rb.getString("as.ASConstructor"));
-            failures.add(failure);
-
-            return failures;
+            failures.add(new Failure(Severity.ERROR, SECTION,
+                                     rb.getString("as.ASConstructor")));
          }
+
+         if (!failures.isEmpty())
+            return failures;
       }
 
       return null;
