@@ -244,6 +244,9 @@ public class EndpointImpl implements Endpoint
       if (rar == null)
          throw new ResourceException(bundle.resourceAdapterInstanceNotActive());
 
+      // Deactivate endpoint first to stop message delivery before removing recovery
+      rar.endpointDeactivation(endpointFactory, spec);
+
       if (transactionIntegration != null && transactionIntegration.getRecoveryRegistry() != null && xa)
       {
          XAResourceRecovery xrr = recovery.remove(spec);
@@ -265,7 +268,5 @@ public class EndpointImpl implements Endpoint
             }
          }
       }
-
-      rar.endpointDeactivation(endpointFactory, spec);
    }
 }
