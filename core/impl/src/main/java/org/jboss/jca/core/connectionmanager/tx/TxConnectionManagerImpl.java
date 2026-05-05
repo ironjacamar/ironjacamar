@@ -775,6 +775,11 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
     */
    public int getTransactionTimeout() throws SystemException
    {
+      if (transactionManager instanceof TransactionTimeoutConfiguration)
+      {
+         return ((TransactionTimeoutConfiguration) transactionManager).getTransactionTimeout();
+      }
+
       throw new RuntimeException("NYI: getTransactionTimeout()");
    }
 
