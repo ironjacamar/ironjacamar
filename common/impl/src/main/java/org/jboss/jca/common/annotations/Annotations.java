@@ -1152,7 +1152,7 @@ public class Annotations
       Activation activation = (Activation) annotation.getAnnotation();
       ArrayList<MessageListener> messageListeners = null;
       
-      log.tracef("Processing: %", activation);
+      log.tracef("Processing: %s", activation);
       if (activation.messageListeners() != null)
       {
          messageListeners = new ArrayList<MessageListener>(activation.messageListeners().length);
