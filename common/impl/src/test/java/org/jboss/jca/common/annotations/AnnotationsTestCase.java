@@ -21,13 +21,16 @@
  */
 package org.jboss.jca.common.annotations;
 
-import org.jboss.jca.common.api.validator.ValidateException;
+import org.jboss.jca.common.api.metadata.spec.Connector;
 import org.jboss.jca.common.spi.annotations.repository.Annotation;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
 
 import java.util.Collection;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Tests for {@link Annotations}
@@ -38,10 +41,11 @@ public class AnnotationsTestCase
 {
    /**
     * JBJCA-1435: When no @Connector annotation is found (getAnnotation returns null)
-    * and no xmlResourceAdapterClass is provided, process() should throw ValidateException.
+    * and no xmlResourceAdapterClass is provided, process() should return a connector
+    * with no resource adapter class.
     */
-   @Test(expected = ValidateException.class)
-   public void testNoConnectorAnnotationShouldThrowValidateException() throws Exception
+   @Test
+   public void testNoConnectorAnnotationShouldReturnConnectorWithNoRAClass() throws Exception
    {
       AnnotationRepository repository = new AnnotationRepository()
       {
@@ -53,6 +57,8 @@ public class AnnotationsTestCase
       };
 
       Annotations annotations = new Annotations();
-      annotations.process(repository, null, Thread.currentThread().getContextClassLoader());
+      Connector result = annotations.process(repository, null, Thread.currentThread().getContextClassLoader());
+      assertNotNull(result);
+      assertNull(result.getResourceadapter().getResourceadapterClass());
    }
 }
