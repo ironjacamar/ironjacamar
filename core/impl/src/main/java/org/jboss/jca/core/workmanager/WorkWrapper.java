@@ -273,8 +273,16 @@ public class WorkWrapper implements Runnable
 
          if (workListener != null)
          {
-            WorkEvent event = new WorkEvent(workManager, WorkEvent.WORK_COMPLETED, work, exception);
-            workListener.workCompleted(event);
+            if (exception instanceof WorkRejectedException)
+            {
+               WorkEvent event = new WorkEvent(workManager, WorkEvent.WORK_REJECTED, work, exception);
+               workListener.workRejected(event);
+            }
+            else
+            {
+               WorkEvent event = new WorkEvent(workManager, WorkEvent.WORK_COMPLETED, work, exception);
+               workListener.workCompleted(event);
+            }
          }
 
          securityIntegration.setSecurityContext(oldSC);
