@@ -268,12 +268,6 @@ public class Annotations
       }
       else
       {
-         // JBJCA-240 / JBJCA-1435
-         if (xmlResourceAdapterClass == null || xmlResourceAdapterClass.equals(""))
-         {
-            log.noConnector();
-            throw new ValidateException(bundle.noConnectorDefined());
-         }
          connector = attachConnector(xmlResourceAdapterClass, classLoader, null, connectionDefinitions, null, null,
                                      inboundResourceadapter, adminObjs);
       }
