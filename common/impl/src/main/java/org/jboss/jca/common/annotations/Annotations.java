@@ -95,6 +95,15 @@ public class Annotations
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
    private static CommonLogger log = Logger.getMessageLogger(CommonLogger.class, Annotations.class.getName());
 
+   private static final Set<String> VALID_CONFIG_PROPERTY_TYPES = Set.of(
+      Boolean.class.getName(), String.class.getName(), Integer.class.getName(),
+      Double.class.getName(), Byte.class.getName(), Short.class.getName(),
+      Long.class.getName(), Float.class.getName(), Character.class.getName(),
+      boolean.class.getName(), int.class.getName(), double.class.getName(),
+      byte.class.getName(), short.class.getName(), long.class.getName(),
+      float.class.getName(), char.class.getName()
+   );
+
    private enum Metadatas
    {
       RA, ACTIVATION_SPEC, MANAGED_CONN_FACTORY, ADMIN_OBJECT, PLAIN;
@@ -1233,7 +1242,9 @@ public class Annotations
                
                if (type == null || type.equals(Object.class) || type.equals(field.getType()))
                {
-                  return field.getType().getName();
+                  String typeName = field.getType().getName();
+                  validateConfigPropertyType(typeName, annotation);
+                  return typeName;
                }
                else
                {
@@ -1275,7 +1286,9 @@ public class Annotations
                   {
                      if (type == null || type.equals(Object.class) || type.equals(parameters[0]))
                      {
-                        return parameters[0].getName();
+                        String typeName = parameters[0].getName();
+                        validateConfigPropertyType(typeName, annotation);
+                        return typeName;
                      }
                      else
                      {
@@ -1287,7 +1300,9 @@ public class Annotations
                {
                   if (type == null || type.equals(Object.class) || type.equals(method.getReturnType()))
                   {
-                     return method.getReturnType().getName();
+                     String typeName = method.getReturnType().getName();
+                     validateConfigPropertyType(typeName, annotation);
+                     return typeName;
                   }
                   else
                   {
@@ -1303,6 +1318,22 @@ public class Annotations
       }
 
       throw new IllegalArgumentException(bundle.unknownAnnotation(annotation));
+   }
+
+   /**
+    * Validate that a config property type is one of the spec-allowed types
+    * @param typeName The type name
+    * @param annotation The annotation
+    * @exception ValidateException Thrown if the type is not allowed
+    */
+   private void validateConfigPropertyType(String typeName, Annotation annotation) throws ValidateException
+   {
+      if (!VALID_CONFIG_PROPERTY_TYPES.contains(typeName))
+      {
+         log.warnf("Invalid @ConfigProperty type '%s' on %s.%s. " +
+                    "Valid types: Boolean, String, Integer, Double, Byte, Short, Long, Float, Character",
+                    typeName, annotation.getClassName(), annotation.getMemberName());
+      }
    }
 
    /**
