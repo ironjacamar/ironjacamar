@@ -39,7 +39,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.StringTokenizer;
 
 import org.jboss.logging.Logger;
 
@@ -292,11 +291,11 @@ public class DefaultCallback extends AbstractCallback implements Callback
                   {
                      if (value != null && !value.trim().equals(""))
                      {
-                        StringTokenizer st = new StringTokenizer(",");
-                        List<String> groups = new ArrayList<String>();
-                        while (st.hasMoreTokens())
+                        String[] parts = value.split(",");
+                        List<String> groups = new ArrayList<String>(parts.length);
+                        for (String part : parts)
                         {
-                           groups.add(st.nextToken().trim());
+                           groups.add(part.trim());
                         }
                         defaultGroups = groups.toArray(new String[0]);
                      }
