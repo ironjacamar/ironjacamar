@@ -986,6 +986,18 @@ public class Annotations
                   }
                }
             }
+            else
+            {
+               for (Class<?> declaredInterface : declaredInterfaces)
+               {
+                  if (!declaredInterface.equals(Serializable.class) &&
+                      !declaredInterface.equals(Externalizable.class))
+                  {
+                     aoName = declaredInterface.getName();
+                     break;
+                  }
+               }
+            }
 
             ArrayList<ConfigProperty> validProperties = new ArrayList<ConfigProperty>();
 
