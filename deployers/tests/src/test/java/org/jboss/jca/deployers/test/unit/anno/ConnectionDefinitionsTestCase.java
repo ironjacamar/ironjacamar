@@ -38,6 +38,7 @@ import org.jboss.jca.deployers.test.rars.anno.variants.AnnoConnectionImpl;
 import org.jboss.jca.deployers.test.rars.anno.variants.AnnoConnectionImpl1;
 import org.jboss.jca.deployers.test.rars.anno.variants.AnnoManagedConnection;
 import org.jboss.jca.deployers.test.rars.anno.variants.AnnoManagedConnectionFactory;
+import org.jboss.jca.deployers.test.rars.anno.variants.AnnoResourceAdapter1;
 
 import java.util.List;
 
@@ -64,8 +65,8 @@ public class ConnectionDefinitionsTestCase extends AnnotationsTestBase
    protected JavaArchive createArchive()
    {
       JavaArchive jar = ShrinkWrap.create(JavaArchive.class);
-      jar.addClasses(AnnoManagedConnectionFactory.class, AnnoConnection.class, AnnoConnection1.class,
-         AnnoConnectionImpl.class, AnnoConnectionImpl1.class, AnnoConnectionFactory.class,
+      jar.addClasses(AnnoResourceAdapter1.class, AnnoManagedConnectionFactory.class, AnnoConnection.class,
+         AnnoConnection1.class, AnnoConnectionImpl.class, AnnoConnectionImpl1.class, AnnoConnectionFactory.class,
          AnnoConnectionFactoryImpl.class, AnnoConnectionFactory1.class, AnnoConnectionFactoryImpl1.class,
          AnnoManagedConnection.class);
       return jar;

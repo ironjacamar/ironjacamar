@@ -218,9 +218,10 @@ public class AnnoTestCase extends TestCaseAbstract
    @Test
    public void deployerShouldDeployMutipleAnnotatedConnectionDefinitions() throws Throwable
    {
-      testAnnoArchive(AnnoConnection.class, AnnoConnection1.class, AnnoManagedConnectionFactory.class,
-         AnnoConnectionImpl.class, AnnoConnectionFactory.class, AnnoConnectionFactoryImpl.class,
-         AnnoConnectionImpl1.class, AnnoConnectionFactory1.class, AnnoConnectionFactoryImpl1.class);
+      testAnnoArchive(AnnoResourceAdapter.class, AnnoConnection.class, AnnoConnection1.class,
+         AnnoManagedConnectionFactory.class, AnnoConnectionImpl.class, AnnoConnectionFactory.class,
+         AnnoConnectionFactoryImpl.class, AnnoConnectionImpl1.class, AnnoConnectionFactory1.class,
+         AnnoConnectionFactoryImpl1.class);
 
    }
 
