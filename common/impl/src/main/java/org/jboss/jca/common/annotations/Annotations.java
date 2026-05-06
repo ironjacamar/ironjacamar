@@ -988,6 +988,9 @@ public class Annotations
                      aoNames.add(annotatedInterface.getName());
                   }
                }
+
+               if (aoNames.isEmpty())
+                  continue;
             }
             else
             {
