@@ -42,8 +42,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import static java.security.AccessController.doPrivileged;
+import static org.jboss.jca.adapters.jdbc.util.CredentialsPropertyOverrideUtil.overrideCredentials;
 
 import jakarta.resource.ResourceException;
 import jakarta.resource.spi.ConnectionManager;
@@ -293,6 +295,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
                                                                final Properties copy)
       throws ResourceException
    {
+
       if (driverClass != null && driver == null)
       {
          try
@@ -332,7 +335,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
             SecurityActions.setThreadContextClassLoader(SecurityActions.getClassLoader(d.getClass()));
             try
             {
-               con = d.connect(url, copy);
+               con = d.connect(url, overrideCredentials(copy));
                if (con == null)
                   throw new ResourceException(bundle.wrongDriverClass(d.getClass().getName(), url));
             }
