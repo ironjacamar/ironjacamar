@@ -113,9 +113,10 @@ public abstract class AnnotationsTestBase
          log.info("///Connector:" + c);
          checkConnector(c);
 
-         //getting empty connector
+         //getting empty connector - use the resource adapter class from the annotated connector
          AnnotationRepository ar1 = asf.scan(new URL[] {}, classLoader);
-         Connector c1 = annotations.process(ar1, null, classLoader);
+         String raClass = c.getResourceadapter().getResourceadapterClass();
+         Connector c1 = annotations.process(ar1, raClass, classLoader);
 
          //check merging
          checkConnector(annotations.merge(c, ar1, classLoader));
