@@ -225,19 +225,11 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPoolTestCase
 
       smc.removeConnectionEventListener(new ConnectionEventListener()
       {
-<<<<<<< HEAD
          @Override public void connectionClosed(javax.resource.spi.ConnectionEvent event) {}
          @Override public void connectionErrorOccurred(javax.resource.spi.ConnectionEvent event) {}
          @Override public void localTransactionStarted(javax.resource.spi.ConnectionEvent event) {}
          @Override public void localTransactionCommitted(javax.resource.spi.ConnectionEvent event) {}
          @Override public void localTransactionRolledback(javax.resource.spi.ConnectionEvent event) {}
-=======
-         @Override public void connectionClosed(jakarta.resource.spi.ConnectionEvent event) {}
-         @Override public void connectionErrorOccurred(jakarta.resource.spi.ConnectionEvent event) {}
-         @Override public void localTransactionStarted(jakarta.resource.spi.ConnectionEvent event) {}
-         @Override public void localTransactionCommitted(jakarta.resource.spi.ConnectionEvent event) {}
-         @Override public void localTransactionRolledback(jakarta.resource.spi.ConnectionEvent event) {}
->>>>>>> cfe6276e5 ([JBJCA-1536] Move cl.destroy() outside connectionLock in returnConnection() to prevent ABBA deadlock)
       });
 
       workerThread.start();
