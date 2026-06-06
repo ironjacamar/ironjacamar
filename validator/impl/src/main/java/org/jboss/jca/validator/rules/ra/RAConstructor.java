@@ -81,7 +81,7 @@ public class RAConstructor implements Rule
 
          if (Modifier.isFinal(modifiers))
          {
-            failures.add(new Failure(Severity.ERROR, SECTION,
+            failures.add(new Failure(Severity.WARNING, SECTION,
                                      rb.getString("ra.RAConstructor") + " (class must not be final)"));
          }
 

@@ -81,7 +81,7 @@ public class ASConstructor implements Rule
 
          if (Modifier.isFinal(modifiers))
          {
-            failures.add(new Failure(Severity.ERROR, SECTION,
+            failures.add(new Failure(Severity.WARNING, SECTION,
                                      rb.getString("as.ASConstructor") + " (class must not be final)"));
          }
 
