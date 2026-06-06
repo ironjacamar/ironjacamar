@@ -626,6 +626,9 @@ public class WorkManagerImpl implements WorkManager
       {
          doFirstChecks(work, startTimeout, execContext);
 
+         // JBJCA-1538: Wrap listener to update statistics via callback instead of in finally block
+         WorkListener internalListener = new StatisticsWorkListener(workListener);
+
          if (workListener != null)
          {
             WorkEvent event = new WorkEvent(this, WorkEvent.WORK_ACCEPTED, work, null);
@@ -639,9 +642,9 @@ public class WorkManagerImpl implements WorkManager
             execContext = new ExecutionContext();
          }
 
-         wrapper = createWorkWrapper(securityIntegration, work, execContext, workListener, null, null, creationTime, startTimeout);
+         wrapper = createWorkWrapper(securityIntegration, work, execContext, internalListener, null, null, creationTime, startTimeout);
 
-         setup(wrapper, workListener);
+         setup(wrapper, internalListener);
 
          Executor executor = getExecutor(work);
 
@@ -664,6 +667,7 @@ public class WorkManagerImpl implements WorkManager
       {
          if (exception != null)
          {
+            // Use original workListener for rejected callback, not wrapped one
             if (workListener != null)
             {
                WorkEvent event = new WorkEvent(this, WorkEvent.WORK_REJECTED, work, exception);
@@ -677,8 +681,8 @@ public class WorkManagerImpl implements WorkManager
             throw exception;
          }
 
-         if (wrapper != null)
-            checkWorkCompletionException(wrapper);
+         // JBJCA-1538: Don't check completion here for async work
+         // Statistics are updated via StatisticsWorkListener.workCompleted() callback
       }
    }
 
@@ -1436,5 +1440,54 @@ public class WorkManagerImpl implements WorkManager
     */
    public void toString(StringBuilder sb)
    {
+   }
+
+   /**
+    * Inner WorkListener that updates statistics when work actually completes.
+    * JBJCA-1538: Wrap user-provided WorkListener to update statistics via callback
+    * instead of in scheduleWork's finally block.
+    */
+   private class StatisticsWorkListener implements WorkListener
+   {
+      private final WorkListener delegate;
+
+      public StatisticsWorkListener(WorkListener delegate)
+      {
+         this.delegate = delegate;
+      }
+
+      public void workAccepted(WorkEvent event)
+      {
+         if (delegate != null)
+            delegate.workAccepted(event);
+      }
+
+      public void workRejected(WorkEvent event)
+      {
+         if (delegate != null)
+            delegate.workRejected(event);
+      }
+
+      public void workStarted(WorkEvent event)
+      {
+         if (delegate != null)
+            delegate.workStarted(event);
+      }
+
+      public void workCompleted(WorkEvent event)
+      {
+         // Update statistics when work actually completes
+         if (event.getException() != null)
+         {
+            deltaWorkFailed();
+         }
+         else
+         {
+            deltaWorkSuccessful();
+         }
+
+         if (delegate != null)
+            delegate.workCompleted(event);
+      }
    }
 }

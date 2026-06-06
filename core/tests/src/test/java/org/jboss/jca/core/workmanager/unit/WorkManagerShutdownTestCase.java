@@ -96,9 +96,16 @@ public class WorkManagerShutdownTestCase
       workManager.shutdown();
       assertTrue(workManager.isShutdown());
 
-      assertEquals(2, stat.getWorkSuccessful());
       done1.await();
       done2.await();
+
+      // JBJCA-1538: Statistics now update via callback, wait for async update with timeout
+      long deadline = System.currentTimeMillis() + 5000; // 5 second timeout
+      while (stat.getWorkSuccessful() < 2 && System.currentTimeMillis() < deadline)
+      {
+         Thread.sleep(10);
+      }
+      assertEquals(2, stat.getWorkSuccessful());
       assertTrue(work1.isReleased());
       assertTrue(work2.isReleased());
       assertEquals(0, stat.getWorkActive());
