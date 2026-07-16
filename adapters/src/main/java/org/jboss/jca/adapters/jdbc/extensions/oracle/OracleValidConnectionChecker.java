@@ -22,15 +22,21 @@
 
 package org.jboss.jca.adapters.jdbc.extensions.oracle;
 
-import org.jboss.jca.adapters.jdbc.extensions.novendor.JDBC4ValidConnectionChecker;
+import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
+
+import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import oracle.jdbc.OracleConnection;
 
 /**
- * Implements a valid connection checker for Oracle
+ * Implements a valid connection checker for Oracle using Oracle's native pingDatabase method
  *
  * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class OracleValidConnectionChecker extends JDBC4ValidConnectionChecker
+public class OracleValidConnectionChecker implements ValidConnectionChecker, Serializable
 {
    private static final long serialVersionUID = 1937054230333286884L;
 
@@ -39,7 +45,26 @@ public class OracleValidConnectionChecker extends JDBC4ValidConnectionChecker
     */
    public OracleValidConnectionChecker()
    {
-      super();
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public SQLException isValidConnection(Connection c)
+   {
+      try
+      {
+         int status = ((OracleConnection) c).pingDatabase();
+
+         if (status < 0)
+            return new SQLException("pingDatabase failed status=" + status);
+      }
+      catch (Exception e)
+      {
+         return new SQLException("pingDatabase failed", e);
+      }
+
+      return null;
+   }
 }
