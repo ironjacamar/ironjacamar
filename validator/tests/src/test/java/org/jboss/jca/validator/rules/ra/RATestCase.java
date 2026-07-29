@@ -360,7 +360,7 @@ public class RATestCase extends TestCaseAbstract
          }
 
          final Failure failureRA =
-               new Failure(Severity.ERROR, "19.3", "A ResourceAdapter must have a default constructor", null);
+               new Failure(Severity.ERROR, null, "A ResourceAdapter must have a default constructor", null);
          assertThat(dve.getFailures(), notNullValue());
          assertThat(dve.getFailures(), hasItem(equalTo(failureRA)));
          assertThat(dve.getFailures().size(), is(1));

@@ -40,9 +40,6 @@ import java.util.ResourceBundle;
  */
 public class AOConstructor implements Rule
 {
-   /** Section */
-   private static final String SECTION = "19.3";
-
    /**
     * Constructor
     */
@@ -72,7 +69,7 @@ public class AOConstructor implements Rule
             List<Failure> failures = new ArrayList<Failure>(1);
 
             Failure failure = new Failure(Severity.ERROR,
-                                          SECTION,
+                                          null,
                                           rb.getString("ao.AOConstructor"));
             failures.add(failure);
 

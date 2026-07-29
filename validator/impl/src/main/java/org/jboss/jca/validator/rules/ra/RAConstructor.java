@@ -41,8 +41,6 @@ import java.util.ResourceBundle;
  */
 public class RAConstructor implements Rule
 {
-   /** Section */
-   private static final String SECTION = "19.3";
 
    /**
     * Constructor
@@ -69,20 +67,14 @@ public class RAConstructor implements Rule
 
          if (!Modifier.isPublic(modifiers))
          {
-            failures.add(new Failure(Severity.ERROR, SECTION,
+            failures.add(new Failure(Severity.ERROR, null,
                                      rb.getString("ra.RAConstructor") + " (class must be public)"));
          }
 
          if (Modifier.isAbstract(modifiers))
          {
-            failures.add(new Failure(Severity.ERROR, SECTION,
+            failures.add(new Failure(Severity.ERROR, null,
                                      rb.getString("ra.RAConstructor") + " (class must not be abstract)"));
-         }
-
-         if (Modifier.isFinal(modifiers))
-         {
-            failures.add(new Failure(Severity.WARNING, SECTION,
-                                     rb.getString("ra.RAConstructor") + " (class must not be final)"));
          }
 
          try
@@ -91,7 +83,7 @@ public class RAConstructor implements Rule
          }
          catch (Throwable t)
          {
-            failures.add(new Failure(Severity.ERROR, SECTION,
+            failures.add(new Failure(Severity.ERROR, null,
                                      rb.getString("ra.RAConstructor")));
          }
 
