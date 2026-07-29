@@ -40,9 +40,6 @@ import java.util.ResourceBundle;
  */
 public class AONull implements Rule
 {
-   /** Section */
-   private static final String SECTION = "19.3";
-
    /**
     * Constructor
     */
@@ -78,14 +75,14 @@ public class AONull implements Rule
             if (code != null)
             {
                failure = new Failure(Severity.ERROR,
-                                     SECTION,
+                                     null,
                                      rb.getString("ao.AONull"),
                                      code);
             }
             else
             {
                failure = new Failure(Severity.ERROR,
-                                     SECTION,
+                                     null,
                                      rb.getString("ao.AONull"));
             }
 

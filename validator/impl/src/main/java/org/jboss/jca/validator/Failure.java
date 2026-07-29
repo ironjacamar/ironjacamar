@@ -131,10 +131,13 @@ public class Failure implements Serializable
       }
       sb = sb.append(NEW_LINE);
 
-      sb = sb.append(rb.getString("section"));
-      sb = sb.append(": ");
-      sb = sb.append(section);
-      sb = sb.append(NEW_LINE);
+      if (section != null)
+      {
+         sb = sb.append(rb.getString("section"));
+         sb = sb.append(": ");
+         sb = sb.append(section);
+         sb = sb.append(NEW_LINE);
+      }
 
       sb = sb.append(rb.getString("description"));
       sb = sb.append(": ");
