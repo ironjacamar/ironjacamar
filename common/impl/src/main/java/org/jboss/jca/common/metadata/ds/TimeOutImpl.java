@@ -65,6 +65,14 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.TimeOutImp
     */
    public TimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
       Long allocationRetryWaitMillis, Integer xaResourceTimeout, Boolean setTxQueryTimeout, Long queryTimeout,
+      Long useTryLock) throws ValidateException
+   {
+      this(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry, allocationRetryWaitMillis,
+            xaResourceTimeout, setTxQueryTimeout, queryTimeout, useTryLock, null);
+   }
+
+   public TimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
+      Long allocationRetryWaitMillis, Integer xaResourceTimeout, Boolean setTxQueryTimeout, Long queryTimeout,
       Long useTryLock, Integer validationTimeoutSeconds) throws ValidateException
    {
       super(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry, allocationRetryWaitMillis,
