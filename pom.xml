@@ -75,7 +75,7 @@
 
         <version.com.fasterxml.classmate>1.7.3</version.com.fasterxml.classmate>
         <version.org.ironjacamar.fungal>0.12.0.Final</version.org.ironjacamar.fungal>
-        <version.com.h2database>2.4.240</version.com.h2database>
+        <version.com.h2database>2.5.250</version.com.h2database>
         <version.com.oracle.database.jdbc>23.26.3.0.0</version.com.oracle.database.jdbc>
         <version.jakarta.validation>2.0.2</version.jakarta.validation>
         <version.jakarta.xml.bind>4.0.5</version.jakarta.xml.bind>
