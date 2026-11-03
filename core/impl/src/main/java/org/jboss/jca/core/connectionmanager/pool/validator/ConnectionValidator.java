@@ -145,7 +145,16 @@ public class ConnectionValidator
     */
    public void stop() throws Throwable
    {
-      instance.shutdown.set(true);
+      instance.lock.lock();
+      try
+      {
+         instance.shutdown.set(true);
+         instance.condition.signalAll();
+      }
+      finally
+      {
+         instance.lock.unlock();
+      }
 
       if (!isExternal)
       {
