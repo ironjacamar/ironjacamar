@@ -290,6 +290,7 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
       bcbc.setXATerminator(getXATerminator());
       bcbc.setName(getName());
       bcbc.setWorkManagerName(getWorkManagerName());
+      bcbc.timers = null;
 
       return bcbc;
    }
