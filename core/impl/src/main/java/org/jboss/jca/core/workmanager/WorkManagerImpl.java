@@ -405,6 +405,9 @@ public class WorkManagerImpl implements WorkManager
    public WorkManager clone() throws CloneNotSupportedException
    {
       WorkManagerImpl wm = (WorkManagerImpl) super.clone();
+      wm.shutdown = new AtomicBoolean(shutdown.get());
+      wm.activeWorkWrappers = new HashSet<WorkWrapper>();
+      wm.validatedWork = new HashSet<String>();
       wm.setId(getId());
       wm.setName(getName());
       wm.setShortRunningThreadPool(getShortRunningThreadPool());
