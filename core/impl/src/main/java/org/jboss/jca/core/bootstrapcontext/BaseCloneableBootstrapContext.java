@@ -291,6 +291,7 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
       bcbc.setName(getName());
       bcbc.setWorkManagerName(getWorkManagerName());
       bcbc.supportedContexts = new HashSet<Class>(this.supportedContexts);
+      bcbc.timers = null;
 
       return bcbc;
    }
