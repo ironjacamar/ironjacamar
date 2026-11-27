@@ -6,6 +6,7 @@
                  factoryClass="java.util.concurrent.Executors">
       <parameter>2</parameter>
     </constructor>
+    <stop method="shutdownNow"/>
   </bean>
 
   <bean name="NamingBeanImpl" class="org.jnp.server.NamingBeanImpl">
@@ -44,6 +45,7 @@
 
     <!-- The thread pool service used to control the bootstrap lookups -->
     <property name="lookupExector"><inject bean="LookupPool"/></property>
+    <stop method="stop"/>
   </bean>
 
 </deployment>
